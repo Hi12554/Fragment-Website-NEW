@@ -521,8 +521,16 @@
         .release-card > p { color: var(--text-gray); line-height: 1.7; }
         .release-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 28px 0; }
         .release-meta div { padding: 14px; border-radius: 12px; background: rgba(255,255,255,0.045); }
+        .release-meta .release-changelog-tile { grid-column: 1 / -1; }
         .release-meta span { display: block; margin-bottom: 6px; color: #777797; font: 0.65rem 'JetBrains Mono', monospace; text-transform: uppercase; }
         .release-meta strong { font-size: 0.9rem; }
+        .release-changelog-list {
+            padding-left: 16px;
+            color: var(--text-gray);
+            font-size: 0.78rem;
+            line-height: 1.45;
+        }
+        .release-changelog-list li + li { margin-top: 4px; }
         .release-actions { display: flex; flex-wrap: wrap; gap: 12px; }
         .release-actions .card-btn { display: inline-block; }
         .release-actions .secondary-btn { color: white; background: #202033; }
@@ -770,6 +778,7 @@
                         <div><span>VirusTotal scan</span><strong>0/68 detections</strong></div>
                         <div><span>UNC score</span><strong>99%</strong></div>
                         <div><span>sUNC score</span><strong>96%</strong></div>
+                        <div class="release-changelog-tile"><span>v1.0.6 Changelog</span><ul class="release-changelog-list"><li>Added a Halloween theme.</li><li>Added a Luau error checker.</li><li>Added search to Settings.</li></ul></div>
                     </div>
                     <div class="release-actions">
                         <a href="/Fragment_1.0.6_x64-setup.exe" class="card-btn" download>Download v1.0.6</a>
