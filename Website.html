@@ -602,6 +602,17 @@
         }
 
         .status-container { max-width: 700px; margin: 0 auto; }
+        .incident-history { max-width: 700px; margin: 50px auto 0; }
+        .incident-history h2 { margin-bottom: 16px; font-size: 1.4rem; }
+        .incident-history-message { margin-bottom: 14px; color: var(--text-gray); }
+        .incident-list { display: grid; gap: 12px; }
+        .incident-entry { padding: 18px 20px; border: 1px solid var(--card-border); border-radius: 12px; background: var(--glass); }
+        .incident-entry-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+        .incident-entry h3 { font-size: 1rem; }
+        .incident-entry-status { color: #7fe0ac; font: 700 0.7rem 'JetBrains Mono', monospace; text-transform: uppercase; }
+        .incident-entry-status[data-state="ongoing"] { color: #ff8585; }
+        .incident-entry-summary { margin-top: 10px; color: var(--text-gray); line-height: 1.6; }
+        .incident-entry-dates { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 12px; color: var(--text-muted); font: 0.7rem 'JetBrains Mono', monospace; }
         .status-row {
             display: flex; justify-content: space-between; align-items: center;
             padding: 25px; border-bottom: 1px solid var(--card-border);
@@ -922,6 +933,11 @@
                 <p>Current status of the Fragment Velocity API.</p>
             </div>
             <div class="status-container" id="status-content"></div>
+            <section class="incident-history" aria-labelledby="incident-history-heading">
+                <h2 id="incident-history-heading">Incident History</h2>
+                <p class="incident-history-message" id="incident-history-message" role="status">Loading incident history...</p>
+                <div class="incident-list" id="incident-list"></div>
+            </section>
         </section>
 
         <!-- Tests Page -->
@@ -1151,6 +1167,69 @@
                     <span><span class="status-indicator ${item.status}"></span> ${item.label}<a class="status-action" href="${item.actionUrl}" target="_blank" rel="noopener noreferrer">Downgrade Roblox</a></span>
                 </div>
             `).join('');
+            loadIncidentHistory();
+        }
+
+        async function loadIncidentHistory() {
+            const message = document.getElementById('incident-history-message');
+            const list = document.getElementById('incident-list');
+            message.textContent = 'Loading incident history...';
+            list.replaceChildren();
+
+            try {
+                const response = await fetch('/api/incidents', { cache: 'no-store' });
+                if (!response.ok) throw new Error('Incident history request failed');
+
+                const data = await response.json();
+                if (!data || !Array.isArray(data.incidents)) throw new Error('Invalid incident history');
+                if (data.incidents.length === 0) {
+                    message.textContent = 'No incidents recorded.';
+                    return;
+                }
+
+                message.textContent = '';
+                data.incidents.forEach(incident => {
+                    const entry = document.createElement('article');
+                    entry.className = 'incident-entry';
+
+                    const header = document.createElement('div');
+                    header.className = 'incident-entry-header';
+
+                    const service = document.createElement('h3');
+                    service.textContent = typeof incident.service === 'string' ? incident.service : 'Service update';
+
+                    const status = document.createElement('span');
+                    const isOngoing = incident.status === 'ongoing';
+                    status.className = 'incident-entry-status';
+                    status.dataset.state = isOngoing ? 'ongoing' : 'resolved';
+                    status.textContent = isOngoing ? 'Ongoing' : 'Resolved';
+                    header.append(service, status);
+                    entry.append(header);
+
+                    if (typeof incident.summary === 'string' && incident.summary) {
+                        const summary = document.createElement('p');
+                        summary.className = 'incident-entry-summary';
+                        summary.textContent = incident.summary;
+                        entry.append(summary);
+                    }
+
+                    const dates = document.createElement('div');
+                    dates.className = 'incident-entry-dates';
+                    [['Started', incident.startedAt], ['Resolved', incident.resolvedAt]].forEach(([label, value]) => {
+                        if (typeof value !== 'string') return;
+                        const date = new Date(value);
+                        if (Number.isNaN(date.getTime())) return;
+                        const time = document.createElement('time');
+                        time.dateTime = date.toISOString();
+                        time.textContent = `${label}: ${date.toLocaleString()}`;
+                        dates.append(time);
+                    });
+                    if (dates.childElementCount) entry.append(dates);
+                    list.append(entry);
+                });
+            } catch {
+                message.textContent = 'Incident history is temporarily unavailable.';
+            }
         }
 
         function loadTestsPage() {
