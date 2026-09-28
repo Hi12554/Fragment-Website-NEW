@@ -713,8 +713,8 @@
                     <span class="roblox-version-dot" aria-hidden="true"></span>
                     <div class="roblox-version-details">
                         <span class="roblox-version-label">CURRENT ROBLOX VERSION | WINDOWS</span>
-                        <strong class="roblox-version-value" id="roblox-windows-version">Checking...</strong>
-                        <span class="roblox-version-build" id="roblox-windows-build">Loading Windows build...</span>
+                        <strong class="roblox-version-value" id="roblox-windows-build">Loading Windows build...</strong>
+                        <span class="roblox-version-build" id="roblox-windows-version">Loading Roblox version...</span>
                     </div>
                 </div>
             </div>
@@ -1075,12 +1075,12 @@
                     throw new Error('Windows version data is unavailable');
                 }
 
-                versionElement.textContent = windowsVersion;
                 buildElement.textContent = windowsBuild;
+                versionElement.textContent = `Roblox version: ${windowsVersion}`;
                 widget.dataset.state = 'ready';
             } catch {
-                versionElement.textContent = 'Unavailable';
-                buildElement.textContent = 'Could not load current Windows version';
+                buildElement.textContent = 'Unavailable';
+                versionElement.textContent = 'Could not load current Windows version';
                 widget.dataset.state = 'error';
             }
         }
