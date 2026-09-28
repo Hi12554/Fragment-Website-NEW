@@ -1221,7 +1221,10 @@
                         if (Number.isNaN(date.getTime())) return;
                         const time = document.createElement('time');
                         time.dateTime = date.toISOString();
-                        time.textContent = `${label}: ${date.toLocaleString()}`;
+                        const displayValue = label === 'Started' && typeof incident.startedAtLabel === 'string'
+                            ? incident.startedAtLabel
+                            : date.toLocaleString();
+                        time.textContent = `${label}: ${displayValue}`;
                         dates.append(time);
                     });
                     if (dates.childElementCount) entry.append(dates);
