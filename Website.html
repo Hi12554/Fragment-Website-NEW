@@ -515,6 +515,7 @@
         .velocity-status-label { display: flex; align-items: center; gap: 10px; }
         .velocity-status-label::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #ff6868; box-shadow: 0 0 12px #ff6868; }
         .velocity-status-bar .status-action { margin-left: 0; white-space: nowrap; }
+        .mobile-downgrade-notice { display: none; }
 
         .release-card { padding: 38px; }
         .release-card h2 { margin-bottom: 12px; font-size: 2rem; }
@@ -727,7 +728,8 @@
             .release-actions { flex-direction: column; }
             .release-actions .card-btn { text-align: center; }
             .release-actions .download-installer { display: none; }
-            .mobile-download-notice {
+            .mobile-download-notice,
+            .mobile-downgrade-notice {
                 display: block;
                 padding: 14px 16px;
                 border: 1px solid rgba(215, 122, 45, 0.35);
@@ -735,9 +737,11 @@
                 color: var(--pumpkin-soft);
                 background: rgba(215, 122, 45, 0.08);
                 font-size: 0.9rem;
+                font-family: 'Inter', sans-serif;
                 line-height: 1.5;
             }
             .velocity-status-bar { flex-direction: column; align-items: flex-start; gap: 8px; margin: -28px 0 48px; padding: 16px; }
+            .velocity-status-bar .status-action { display: none; }
             .status-row { align-items: flex-start; flex-direction: column; gap: 12px; padding: 18px; }
             .status-action { margin-left: 8px; }
             .footer-content { flex-direction: column; }
@@ -845,6 +849,7 @@
             <div class="velocity-status-bar">
                 <span class="velocity-status-label">FRAGMENT VELOCITY API STATUS</span>
                 <a class="status-action" href="https://roblox-downgrader.onrender.com/?channel=LIVE&amp;binaryType=WindowsPlayer&amp;version=version-e7d81637d42c4b23&amp;compressZip=true&amp;compressionLevel=5" target="_blank" rel="noopener noreferrer">DOWN (ROBLOX DOWNGRADE REQUIRED)</a>
+                <span class="mobile-downgrade-notice" role="status">Roblox downgrade unavailable on mobile. Use a Windows PC.</span>
             </div>
             <div class="release-history" id="release-history">
                 <button class="release-history-toggle" type="button" onclick="toggleReleaseHistory()" aria-expanded="false" aria-controls="release-history-content"><span class="release-history-heading"><span>Release History</span><span class="release-current-version">Current version: v1.0.6</span></span></button>
