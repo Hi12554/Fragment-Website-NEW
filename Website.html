@@ -535,6 +535,7 @@
         .release-actions .card-btn { display: inline-block; }
         .release-actions .secondary-btn { color: white; background: #202033; }
         .release-actions .secondary-btn:hover { background: #30304b; }
+        .mobile-download-notice { display: none; }
 
         .release-history {
             max-width: 900px;
@@ -685,6 +686,60 @@
             text-align: center;
         }
         @media (max-width: 650px) {
+            .nav-capsule,
+            nav.initial .nav-capsule,
+            nav.scrolled .nav-capsule {
+                width: 100%;
+                height: auto;
+                min-height: 72px;
+                padding: 10px 14px;
+                border: 0;
+                border-bottom: 1px solid rgba(255,255,255,0.08);
+                border-radius: 0;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 6px;
+            }
+            nav.scrolled { top: 0; }
+            .nav-logo { font-size: 1.05rem; }
+            .nav-links {
+                width: 100%;
+                gap: 2px;
+                overflow-x: auto;
+                overscroll-behavior-x: contain;
+                scrollbar-width: none;
+            }
+            .nav-links::-webkit-scrollbar { display: none; }
+            .nav-links a { flex: 0 0 auto; padding: 8px 11px; }
+            .nav-links .discord-btn { padding: 8px 12px !important; }
+            main { margin-top: 90px; }
+            .page { padding: 48px 5%; }
+            .section-center { margin-bottom: 48px; }
+            .section-center h1 { font-size: clamp(2.4rem, 12vw, 4rem); letter-spacing: -2px; }
+            .section-center p { font-size: 1rem; }
+            .grid { grid-template-columns: minmax(0, 1fr); gap: 16px; margin-bottom: 56px; }
+            .card { padding: 32px 24px; }
+            .download-panel { grid-template-columns: minmax(0, 1fr); }
+            .executor-preview { min-height: 0; padding: 18px; }
+            .release-card { padding: 22px; }
+            .release-meta { grid-template-columns: minmax(0, 1fr); }
+            .release-meta .release-changelog-tile { grid-column: auto; }
+            .release-actions { flex-direction: column; }
+            .release-actions .card-btn { text-align: center; }
+            .release-actions .download-installer { display: none; }
+            .mobile-download-notice {
+                display: block;
+                padding: 14px 16px;
+                border: 1px solid rgba(215, 122, 45, 0.35);
+                border-radius: 12px;
+                color: var(--pumpkin-soft);
+                background: rgba(215, 122, 45, 0.08);
+                font-size: 0.9rem;
+                line-height: 1.5;
+            }
+            .velocity-status-bar { flex-direction: column; align-items: flex-start; gap: 8px; margin: -28px 0 48px; padding: 16px; }
+            .status-row { align-items: flex-start; flex-direction: column; gap: 12px; padding: 18px; }
+            .status-action { margin-left: 8px; }
             .footer-content { flex-direction: column; }
         }
     </style>
@@ -781,7 +836,8 @@
                         <div class="release-changelog-tile"><span>v1.0.6 Changelog</span><ul class="release-changelog-list"><li>Added a Halloween theme.</li><li>Added a Luau error checker.</li><li>Added search to Settings.</li></ul></div>
                     </div>
                     <div class="release-actions">
-                        <a href="/Fragment_1.0.6_x64-setup.exe" class="card-btn" download>Download v1.0.6</a>
+                        <a href="/Fragment_1.0.6_x64-setup.exe" class="card-btn download-installer" download>Download v1.0.6</a>
+                        <p class="mobile-download-notice" role="status">Download unavailable on mobile. Use a Windows PC to download Fragment.</p>
                         <a href="https://www.virustotal.com/gui/file/8809c81548f67242f72dc1da8c21237a3187584d4fad6c08e1963c62adf78363" class="card-btn secondary-btn" target="_blank" rel="noopener noreferrer">View VirusTotal</a>
                     </div>
                 </div>
