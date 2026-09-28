@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fragment | The Gold Standard of Execution</title>
-    <link rel="icon" type="image/png" href="/Fragment-Website-NEW/fragment-halloween.png">
+    <link rel="icon" type="image/png" href="/fragment-halloween.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&family=JetBrains+Mono&display=swap" rel="stylesheet">
@@ -108,12 +108,21 @@
         }
 
         .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
             font-weight: 900; 
             font-size: 1.3rem; 
             letter-spacing: -1px; 
             cursor: pointer; 
             transition: var(--transition);
             color: white;
+        }
+
+        .nav-logo img {
+            width: 36px;
+            height: 36px;
+            object-fit: contain;
         }
 
         .nav-links { display: flex; gap: 5px; align-items: center; }
@@ -636,7 +645,7 @@
 
     <nav id="main-nav" class="initial">
         <div class="nav-capsule">
-            <div class="nav-logo" onclick="showPage('home')">FRAGMENT</div>
+            <div class="nav-logo" onclick="showPage('home')"><img src="/fragment-halloween.png" alt="">FRAGMENT</div>
             <div class="nav-links">
                 <a href="/home" onclick="navigateToPage(event, 'home')" id="link-home" class="active">Home</a>
                 <a href="/download" onclick="navigateToPage(event, 'download')" id="link-download">Download</a>
