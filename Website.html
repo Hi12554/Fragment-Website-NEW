@@ -108,21 +108,12 @@
         }
 
         .nav-logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
             font-weight: 900; 
             font-size: 1.3rem; 
             letter-spacing: -1px; 
             cursor: pointer; 
             transition: var(--transition);
             color: white;
-        }
-
-        .nav-logo img {
-            width: 36px;
-            height: 36px;
-            object-fit: contain;
         }
 
         .nav-links { display: flex; gap: 5px; align-items: center; }
@@ -645,7 +636,7 @@
 
     <nav id="main-nav" class="initial">
         <div class="nav-capsule">
-            <div class="nav-logo" onclick="showPage('home')"><img src="/fragment-halloween.png" alt="">FRAGMENT</div>
+            <div class="nav-logo" onclick="showPage('home')">FRAGMENT</div>
             <div class="nav-links">
                 <a href="/home" onclick="navigateToPage(event, 'home')" id="link-home" class="active">Home</a>
                 <a href="/download" onclick="navigateToPage(event, 'download')" id="link-download">Download</a>
