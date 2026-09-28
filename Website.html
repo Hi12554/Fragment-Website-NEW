@@ -624,7 +624,8 @@
         .up { background: #00ff88; box-shadow: 0 0 10px #00ff88; }
         .down { background: #ff4444; box-shadow: 0 0 10px #ff4444; }
 
-        .test-table { width: 100%; border-collapse: collapse; margin-top: 50px; background: var(--card-bg); border-radius: 24px; overflow: hidden; }
+        .test-table-wrap { max-width: 100%; margin-top: 50px; overflow-x: auto; border-radius: 24px; }
+        .test-table { width: 100%; min-width: 560px; border-collapse: collapse; margin-top: 0; background: var(--card-bg); border-radius: 24px; overflow: hidden; }
         .test-table th { text-align: left; color: var(--text-gray); padding: 25px; border-bottom: 1px solid var(--card-border); font-weight: 500; }
         .test-table td { padding: 25px; border-bottom: 1px solid var(--card-border); font-weight: 300; }
         .test-info {
@@ -640,7 +641,14 @@
         .test-result { color: #8b84ff; font-family: 'JetBrains Mono', monospace; font-weight: 700 !important; }
         .test-link { color: #aaa8ff; text-decoration: none; font-size: 0.8rem; }
         .test-link:hover { color: white; text-decoration: underline; }
+        .sunc-results { max-width: 1200px; margin: 48px auto 0; }
+        .sunc-results h2 { margin-bottom: 20px; font-size: 1.5rem; }
+        .sunc-widget-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+        .sunc-widget-panel { min-width: 0; }
+        .sunc-widget-title { margin-bottom: 10px; color: var(--text-gray); font: 700 0.75rem 'JetBrains Mono', monospace; }
+        .sunc-widget-frame { display: block; width: 100%; height: 610px; border: 1px solid var(--card-border); border-radius: 12px; background: #0c0b0a; }
         @media (max-width: 650px) { .test-info { grid-template-columns: 1fr; } }
+        @media (max-width: 760px) { .sunc-widget-grid { grid-template-columns: minmax(0, 1fr); } }
 
         .faq-container { max-width: 800px; margin: 0 auto; }
         .faq-item { border-bottom: 1px solid var(--card-border); padding: 25px 0; cursor: pointer; }
@@ -926,7 +934,22 @@
                 <div><span>API Version Tested</span><strong>v1.3.7</strong></div>
                 <div><span>Roblox Version Tested</span><strong>version-e7d81637d42c4b23</strong></div>
             </div>
-            <table class="test-table" id="tests-content"></table>
+            <div class="test-table-wrap">
+                <table class="test-table" id="tests-content"></table>
+            </div>
+            <section class="sunc-results" aria-labelledby="sunc-results-heading">
+                <h2 id="sunc-results-heading">sUNC Test References</h2>
+                <div class="sunc-widget-grid">
+                    <figure class="sunc-widget-panel">
+                        <figcaption class="sunc-widget-title">+SUNC TEST 1</figcaption>
+                        <iframe class="sunc-widget-frame" title="sUNC Test 1 result" src="https://sunc.rubis.app/widget/" loading="lazy" allowfullscreen data-scrap-id="OmPm1WrAEopRmS02" data-key="g2MurDxb51tEkGpCDQGNfcNCuoPJeDnY" onload="loadSuncResult(this)"></iframe>
+                    </figure>
+                    <figure class="sunc-widget-panel">
+                        <figcaption class="sunc-widget-title">+SUNC TEST 2</figcaption>
+                        <iframe class="sunc-widget-frame" title="sUNC Test 2 result" src="https://sunc.rubis.app/widget/" loading="lazy" allowfullscreen data-scrap-id="OmPm1WrAEopRmS02" data-key="g2MurDxb51tEkGpCDQGNfcNCuoPJeDnY" onload="loadSuncResult(this)"></iframe>
+                    </figure>
+                </div>
+            </section>
         </section>
 
         <!-- Socials Page -->
@@ -1028,6 +1051,18 @@
                 nav.classList.remove('scrolled');
                 nav.classList.add('initial');
             }
+        }
+
+        function loadSuncResult(iframe) {
+            const { scrapId, key } = iframe.dataset;
+            if (!iframe.contentWindow || !scrapId || !key) return;
+
+            window.setTimeout(() => {
+                iframe.contentWindow.postMessage({
+                    type: 'sunc-widget:loadScrap',
+                    payload: { scrapId, key }
+                }, 'https://sunc.rubis.app');
+            }, 300);
         }
 
         const FragmentAPI = {
