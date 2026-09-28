@@ -304,6 +304,55 @@
             background: #30304b;
         }
 
+        .roblox-version {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            max-width: 100%;
+            margin-top: 24px;
+            padding: 12px 16px;
+            border: 1px solid rgba(215, 122, 45, 0.22);
+            border-radius: 12px;
+            background: rgba(215, 122, 45, 0.05);
+            text-align: left;
+        }
+
+        .roblox-version-dot {
+            flex: 0 0 8px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--pumpkin-soft);
+            box-shadow: 0 0 10px currentColor;
+        }
+
+        .roblox-version[data-state="error"] .roblox-version-dot {
+            background: #ff6868;
+        }
+
+        .roblox-version-details {
+            display: grid;
+            gap: 4px;
+            min-width: 0;
+        }
+
+        .roblox-version-label {
+            color: var(--pumpkin-soft);
+            font: 700 0.65rem 'JetBrains Mono', monospace;
+        }
+
+        .roblox-version-value {
+            color: var(--text-white);
+            font: 700 0.9rem 'JetBrains Mono', monospace;
+            overflow-wrap: anywhere;
+        }
+
+        .roblox-version-build {
+            color: var(--text-muted);
+            font: 0.65rem 'JetBrains Mono', monospace;
+            overflow-wrap: anywhere;
+        }
+
         .about-message {
             max-width: 900px;
             margin: 0 auto 18px;
@@ -660,6 +709,14 @@
             <div class="section-center">
                 <h1 style="margin-top: 40px;">Fragment Executor<br><span class="halloween-mark">Halloween Edition</span></h1>
                 <p>A free and keyless Roblox executor made by the people, for the people.</p>
+                <div class="roblox-version" id="roblox-version" role="status" aria-live="polite" data-state="loading">
+                    <span class="roblox-version-dot" aria-hidden="true"></span>
+                    <div class="roblox-version-details">
+                        <span class="roblox-version-label">CURRENT ROBLOX VERSION | WINDOWS</span>
+                        <strong class="roblox-version-value" id="roblox-windows-version">Checking...</strong>
+                        <span class="roblox-version-build" id="roblox-windows-build">Loading Windows build...</span>
+                    </div>
+                </div>
             </div>
             <div class="home-actions">
                 <button onclick="showPage('download')" class="card-btn">Download</button>
@@ -1001,6 +1058,35 @@
             html += `</tbody>`;
             container.innerHTML = html;
         }
+
+        async function updateWindowsVersion() {
+            const widget = document.getElementById('roblox-version');
+            const versionElement = document.getElementById('roblox-windows-version');
+            const buildElement = document.getElementById('roblox-windows-build');
+
+            try {
+                const response = await fetch('https://weao.xyz/api/versions/current', { cache: 'no-store' });
+                if (!response.ok) throw new Error('Version API request failed');
+
+                const data = await response.json();
+                const windowsVersion = data.WindowsResponse && data.WindowsResponse.version;
+                const windowsBuild = (data.WindowsResponse && data.WindowsResponse.clientVersionUpload) || data.Windows;
+                if (typeof windowsVersion !== 'string' || typeof windowsBuild !== 'string') {
+                    throw new Error('Windows version data is unavailable');
+                }
+
+                versionElement.textContent = windowsVersion;
+                buildElement.textContent = windowsBuild;
+                widget.dataset.state = 'ready';
+            } catch {
+                versionElement.textContent = 'Unavailable';
+                buildElement.textContent = 'Could not load current Windows version';
+                widget.dataset.state = 'error';
+            }
+        }
+
+        updateWindowsVersion();
+        setInterval(updateWindowsVersion, 4 * 60 * 60 * 1000);
     </script>
 </body>
 </html>
