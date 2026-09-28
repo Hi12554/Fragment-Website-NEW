@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fragment | The Gold Standard of Execution</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0c0b0a;
+            --text-white: #f2efe8;
+            --text-gray: #b7b0a7;
+            --text-muted: #7d736d;
+            --accent: #d77a2d;
+            --accent-strong: #c7651d;
+            --accent-2: #8b5e37;
+            --card-bg: #121212;
+            --card-border: rgba(255, 255, 255, 0.08);
+            --transition: all 0.3s ease;
+            --glass: rgba(255, 255, 255, 0.025);
+            --pumpkin-soft: #f0a15d;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        
+        body { 
+            background: linear-gradient(180deg, #0a0a0a 0%, #111111 100%);
+            color: var(--text-white); 
+            overflow-x: hidden; 
+            scroll-behavior: smooth; 
+        }
+
+        body::before {
+            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background:
+                radial-gradient(circle at 18% 8%, rgba(215, 122, 45, 0.12), transparent 18%),
+                radial-gradient(circle at 78% 12%, rgba(210, 130, 70, 0.07), transparent 16%);
+            opacity: 1; pointer-events: none; z-index: 9999;
+        }
+
+        body::after {
+            content: ""; position: fixed; inset: 0; pointer-events: none;
+            background: linear-gradient(90deg, rgba(255,255,255,0.015) 0, rgba(255,255,255,0.015) 1px, transparent 1px, transparent 32px);
+            opacity: 0.2;
+        }
+
+        /* NAVIGATION SYSTEM */
+        nav {
+            position: fixed; 
+            top: 0; 
+            left: 50%; 
+            transform: translateX(-50%);
+            width: 100%; 
+            max-width: none;
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            z-index: 1000;
+            transition: var(--transition);
+            pointer-events: none; /* Allows clicking through the nav container to the capsule */
+        }
+
+        /* The actual visible bar */
+        .nav-capsule {
+            pointer-events: auto;
+            display: flex; 
+            gap: 20px; 
+            align-items: center; 
+            background: rgba(15, 15, 15, 0.88);
+            backdrop-filter: blur(12px);
+            padding: 0 20px; 
+            border-radius: 0 0 100px 100px; 
+            border: 1px solid rgba(255,255,255,0.06);
+            border-top: none;
+            transition: var(--transition);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+            height: 80px;
+        }
+
+        /* State 1: Connected to the very top */
+        nav.initial .nav-capsule {
+            width: 100%;
+            justify-content: center;
+            background: rgba(10, 10, 10, 0.96);
+            border-radius: 0;
+            border: none;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            padding: 0 40px;
+            box-shadow: none;
+        }
+
+        /* State 2: Scrolled - Drop down into pill */
+        nav.scrolled {
+            top: 20px; 
+        }
+
+        nav.scrolled .nav-capsule {
+            width: fit-content;
+            border-radius: 100px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(18, 18, 18, 0.9);
+            padding: 10px 25px;
+            height: 60px;
+            transform: translateY(0);
+        }
+
+        .nav-logo {
+            font-weight: 900; 
+            font-size: 1.3rem; 
+            letter-spacing: -1px; 
+            cursor: pointer; 
+            transition: var(--transition);
+            color: white;
+        }
+
+        .nav-links { display: flex; gap: 5px; align-items: center; }
+        
+        .nav-links a {
+            color: var(--text-gray); 
+            text-decoration: none; 
+            font-size: 0.75rem;
+            font-weight: 500; 
+            transition: var(--transition); 
+            cursor: pointer;
+            padding: 8px 16px; 
+            border-radius: 100px;
+        }
+        
+        .nav-links a:hover, .nav-links a.active { 
+            color: var(--text-white); 
+            background: rgba(255,255,255,0.03);
+        }
+
+        .nav-links a:not(.nav-btn):hover {
+            transform: translateY(-1px);
+            box-shadow: none;
+        }
+
+        .nav-btn {
+            background: var(--accent) !important; 
+            color: #140d09 !important;
+            padding: 8px 18px !important; 
+            border-radius: 100px !important; 
+            font-weight: 700 !important;
+            box-shadow: none;
+        }
+
+        .discord-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #2f2f2f !important;
+            color: white !important;
+        }
+
+        .discord-btn:hover {
+            background: #3a3a3a !important;
+            box-shadow: none;
+        }
+
+        .discord-btn svg {
+            width: 17px;
+            height: 17px;
+            fill: currentColor;
+        }
+
+        main { margin-top: 100px; }
+        .page { display: none; padding: 80px 5%; animation: slideUp 0.6s ease-out; max-width: 1300px; margin: 0 auto; min-height: 80vh; }
+        .page.active { display: block; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+        .section-center { text-align: center; max-width: 900px; margin: 0 auto 80px auto; }
+        .section-center h1 { font-size: clamp(3rem, 8vw, 6rem); font-weight: 900; line-height: 0.9; letter-spacing: -4px; margin-bottom: 20px; }
+        .section-center p { color: var(--text-gray); font-size: 1.2rem; font-weight: 300; }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 24px;
+            padding: 8px 14px;
+            border: 1px solid rgba(215, 122, 45, 0.22);
+            border-radius: 100px;
+            color: var(--pumpkin-soft);
+            background: rgba(215, 122, 45, 0.05);
+            font: 700 0.7rem 'JetBrains Mono', monospace;
+            letter-spacing: 1.2px;
+        }
+
+        .status-badge::before {
+            content: "";
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: currentColor;
+            box-shadow: 0 0 10px currentColor;
+        }
+
+        .halloween-mark {
+            display: inline-block;
+            margin-top: 8px;
+            color: var(--pumpkin-soft);
+            font-size: 0.9rem;
+            letter-spacing: 0.26em;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; margin-bottom: 100px; }
+        
+        .card {
+            background: #131313; border: 1px solid var(--card-border);
+            padding: 50px 40px; border-radius: 28px; transition: var(--transition);
+            text-align: center;
+            display: flex; flex-direction: column; align-items: center;
+            box-shadow: none;
+        }
+        .card:hover { border-color: rgba(255,255,255,0.14); background: #161616; transform: translateY(-4px); box-shadow: none; }
+        .card h3 { font-size: 1.8rem; margin-bottom: 15px; font-weight: 800; letter-spacing: -1px; }
+        .card p { color: var(--text-gray); line-height: 1.7; font-weight: 300; margin-bottom: 30px; }
+        
+        .card-btn {
+            background: var(--accent); color: #140d09;
+            text-decoration: none; padding: 15px 40px; border-radius: 100px;
+            font-weight: 700; font-size: 1rem; transition: var(--transition);
+            cursor: pointer; border: none; box-shadow: none;
+        }
+        .card-btn:hover { transform: translateY(-1px); box-shadow: none; }
+
+        .credit-section {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 24px 26px;
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .credit-profile {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .credit-icon {
+            width: 58px;
+            height: 58px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 18px;
+            background: linear-gradient(135deg, #5865f2, #4752c4);
+            box-shadow: 0 12px 28px rgba(88, 101, 242, 0.28);
+        }
+
+        .credit-icon svg {
+            width: 28px;
+            height: 28px;
+            fill: white;
+        }
+
+        .credit-info {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .credit-label {
+            color: var(--text-gray);
+            font: 700 0.7rem 'JetBrains Mono', monospace;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .credit-name {
+            color: var(--text-white);
+            text-decoration: none;
+            font-size: clamp(1.3rem, 2vw, 1.8rem);
+            font-weight: 800;
+            letter-spacing: -0.04em;
+        }
+
+        .credit-name:hover {
+            color: #dfe3ff;
+        }
+
+        .home-actions {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin: 0 auto 35px;
+        }
+
+        .home-actions .secondary-btn {
+            color: white;
+            background: #202033;
+        }
+
+        .home-actions .secondary-btn:hover {
+            background: #30304b;
+        }
+
+        .about-message {
+            max-width: 900px;
+            margin: 0 auto 18px;
+            padding: 30px 34px;
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            background: linear-gradient(145deg, #101019, #080808);
+            color: #c5c5cc;
+            font-size: 1rem;
+            line-height: 1.9;
+            box-shadow: 0 18px 45px rgba(0, 0, 0, 0.25);
+        }
+
+        .about-note {
+            display: block;
+            margin-top: 2em;
+            color: #aaa8c8;
+            font-size: 0.9rem;
+            line-height: 1.7;
+        }
+        .about-note strong { color: #c3c0ff; }
+
+        .download-panel {
+            display: grid;
+            grid-template-columns: minmax(280px, 0.9fr) minmax(320px, 1.1fr);
+            gap: 25px;
+            align-items: stretch;
+            margin-bottom: 80px;
+        }
+
+        .executor-preview, .release-card, .release-history {
+            background: linear-gradient(145deg, #17172a, #0a0a0d);
+            border: 1px solid #262640;
+            border-radius: 24px;
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+        }
+
+        .executor-preview {
+            min-height: 360px;
+            padding: 24px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .preview-topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .preview-topbar { color: #d8d8e8; font-size: 0.75rem; font-weight: 700; }
+        .preview-brand { display: flex; align-items: center; gap: 8px; }
+        .preview-brand-mark {
+            display: grid;
+            place-items: center;
+            width: 24px;
+            height: 24px;
+            border-radius: 7px;
+            color: white;
+            background: #5b55e8;
+            font-size: 0.65rem;
+        }
+        .preview-version { color: #777797; font: 0.65rem 'JetBrains Mono', monospace; }
+        .preview-heading { margin: 42px 0 28px; }
+        .preview-heading small { color: #6e6e8d; font: 0.65rem 'JetBrains Mono', monospace; letter-spacing: 1px; }
+        .preview-heading h2 { margin-top: 8px; font-size: 2rem; letter-spacing: -1px; }
+        .preview-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .preview-stat { padding: 16px; border: 1px solid #282844; border-radius: 14px; background: rgba(255,255,255,0.035); }
+        .preview-stat strong { display: block; color: #8b84ff; font-size: 2rem; }
+        .preview-stat span { color: #777797; font: 0.65rem 'JetBrains Mono', monospace; letter-spacing: 1px; }
+        .preview-image-button {
+            display: block;
+            width: 100%;
+            padding: 0;
+            margin: 18px 0 0;
+            border: 0;
+            border-radius: 14px;
+            background: transparent;
+            cursor: zoom-in;
+        }
+        .preview-image {
+            display: block;
+            width: 100%;
+            height: auto;
+            max-height: 230px;
+            object-fit: contain;
+            border: 1px solid #282844;
+            border-radius: 14px;
+            transition: var(--transition);
+        }
+        .preview-image-button:hover .preview-image {
+            border-color: #716bff;
+            box-shadow: 0 0 24px rgba(113, 107, 255, 0.25);
+            transform: scale(1.015);
+        }
+        .image-lightbox {
+            position: fixed;
+            inset: 0;
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            background: rgba(0, 0, 0, 0.88);
+            backdrop-filter: blur(8px);
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .image-lightbox.open, .image-lightbox.closing {
+            display: flex;
+            visibility: visible;
+            pointer-events: auto;
+        }
+        .image-lightbox.open { opacity: 1; }
+        .image-lightbox.closing { opacity: 0; }
+        .image-lightbox img {
+            display: block;
+            max-width: min(1100px, 95vw);
+            max-height: 90vh;
+            border: 1px solid #44446b;
+            border-radius: 16px;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.65);
+            opacity: 0;
+            transform: scale(0.9) translateY(18px);
+            transition: opacity 0.35s ease, transform 0.35s ease;
+        }
+        .image-lightbox.open img {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+        .lightbox-close {
+            position: absolute;
+            top: 20px;
+            right: 24px;
+            width: 42px;
+            height: 42px;
+            border: 1px solid #44446b;
+            border-radius: 50%;
+            color: white;
+            background: #17172a;
+            font-size: 1.5rem;
+            line-height: 1;
+            cursor: pointer;
+        }
+        .velocity-status-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            padding: 18px 24px;
+            margin: -55px 0 80px;
+            border: 1px solid #3a2932;
+            border-radius: 16px;
+            background: #171116;
+            color: #9d8e98;
+            font: 0.7rem 'JetBrains Mono', monospace;
+            letter-spacing: 1px;
+        }
+        .velocity-status-label { display: flex; align-items: center; gap: 10px; }
+        .velocity-status-label::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #ff6868; box-shadow: 0 0 12px #ff6868; }
+        .velocity-status-value { color: #ff8585; font-weight: 700; }
+
+        .release-card { padding: 38px; }
+        .release-card h2 { margin-bottom: 12px; font-size: 2rem; }
+        .release-card > p { color: var(--text-gray); line-height: 1.7; }
+        .release-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 28px 0; }
+        .release-meta div { padding: 14px; border-radius: 12px; background: rgba(255,255,255,0.045); }
+        .release-meta span { display: block; margin-bottom: 6px; color: #777797; font: 0.65rem 'JetBrains Mono', monospace; text-transform: uppercase; }
+        .release-meta strong { font-size: 0.9rem; }
+        .release-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+        .release-actions .card-btn { display: inline-block; }
+        .release-actions .secondary-btn { color: white; background: #202033; }
+        .release-actions .secondary-btn:hover { background: #30304b; }
+
+        .release-history {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0;
+            overflow: hidden;
+        }
+        .release-history-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            padding: 22px 28px;
+            border: 0;
+            color: white;
+            background: transparent;
+            cursor: pointer;
+            font: 800 1.25rem 'Inter', sans-serif;
+            text-align: left;
+        }
+        .release-history-heading { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; }
+        .release-current-version {
+            padding: 5px 9px;
+            border: 1px solid #3c3970;
+            border-radius: 6px;
+            color: #a09bff;
+            background: rgba(113, 107, 255, 0.1);
+            font: 600 0.65rem 'JetBrains Mono', monospace;
+        }
+        .release-history-toggle::after { content: "+"; color: #8b84ff; font-size: 1.5rem; font-weight: 400; transition: transform 0.35s ease; }
+        .release-history.open .release-history-toggle::after { content: "-"; transform: rotate(180deg); }
+        .release-history-toggle:focus-visible { outline: 2px solid #8b84ff; outline-offset: -2px; }
+        .release-history-content {
+            max-height: 0;
+            overflow: hidden;
+            padding: 0 28px;
+            border-top: 1px solid transparent;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: max-height 0.45s ease, padding 0.45s ease, border-color 0.45s ease, opacity 0.35s ease, transform 0.45s ease;
+        }
+        .release-history.open .release-history-content {
+            max-height: 440px;
+            overflow-y: auto;
+            padding: 22px 28px 28px;
+            border-top-color: #262640;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .release-history-content::-webkit-scrollbar { width: 8px; }
+        .release-history-content::-webkit-scrollbar-track { background: transparent; }
+        .release-history-content::-webkit-scrollbar-thumb { border-radius: 8px; background: #3a385f; }
+        .release-entry { padding: 0 0 28px 22px; margin: 0 0 28px 7px; border-left: 1px solid #38385c; position: relative; }
+        .release-entry:last-child { padding-bottom: 0; margin-bottom: 0; }
+        .release-entry::before { content: ""; position: absolute; top: 0; left: -5px; width: 9px; height: 9px; border-radius: 50%; background: #6d67ff; box-shadow: 0 0 14px #6d67ff; }
+        .release-entry h3 { margin-bottom: 5px; font-size: 1.05rem; }
+        .release-entry time { color: #8585a1; font: 0.7rem 'JetBrains Mono', monospace; }
+        .release-entry ul { margin-top: 12px; padding-left: 18px; color: var(--text-gray); line-height: 1.7; font-size: 0.9rem; }
+
+        @media (max-width: 760px) {
+            .download-panel { grid-template-columns: 1fr; }
+            .release-card { padding: 25px; }
+        }
+
+        .status-container { max-width: 700px; margin: 0 auto; }
+        .status-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 25px; border-bottom: 1px solid var(--card-border);
+            background: var(--glass); margin-bottom: 10px; border-radius: 12px;
+        }
+        .status-action {
+            display: inline-block;
+            margin-left: 16px;
+            padding: 8px 14px;
+            border-radius: 8px;
+            color: white;
+            background: #302d70;
+            text-decoration: none;
+            font-size: 0.75rem;
+            font-weight: 700;
+            transition: var(--transition);
+        }
+        .status-action:hover { background: #4943a0; transform: translateY(-2px); }
+        .status-indicator { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 10px; }
+        .up { background: #00ff88; box-shadow: 0 0 10px #00ff88; }
+        .down { background: #ff4444; box-shadow: 0 0 10px #ff4444; }
+
+        .test-table { width: 100%; border-collapse: collapse; margin-top: 50px; background: var(--card-bg); border-radius: 24px; overflow: hidden; }
+        .test-table th { text-align: left; color: var(--text-gray); padding: 25px; border-bottom: 1px solid var(--card-border); font-weight: 500; }
+        .test-table td { padding: 25px; border-bottom: 1px solid var(--card-border); font-weight: 300; }
+        .test-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            max-width: 900px;
+            margin: 0 auto 25px;
+        }
+        .test-info div { padding: 16px 20px; border: 1px solid var(--card-border); border-radius: 12px; background: var(--glass); }
+        .test-info span { display: block; margin-bottom: 6px; color: var(--text-gray); font-size: 0.75rem; }
+        .test-info strong { font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; }
+        .test-result { color: #8b84ff; font-family: 'JetBrains Mono', monospace; font-weight: 700 !important; }
+        .test-link { color: #aaa8ff; text-decoration: none; font-size: 0.8rem; }
+        .test-link:hover { color: white; text-decoration: underline; }
+        @media (max-width: 650px) { .test-info { grid-template-columns: 1fr; } }
+
+        .faq-container { max-width: 800px; margin: 0 auto; }
+        .faq-item { border-bottom: 1px solid var(--card-border); padding: 25px 0; cursor: pointer; }
+        .faq-question { font-weight: 600; font-size: 1.1rem; display: flex; justify-content: space-between; }
+        .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; color: var(--text-gray); font-weight: 300; }
+        .faq-item.open .faq-answer { max-height: 200px; margin-top: 15px; }
+
+        footer {
+            position: relative;
+            padding: 42px 5% 24px;
+            color: var(--text-gray);
+            font-size: 0.8rem;
+            border-top: 1px solid var(--card-border);
+            background: linear-gradient(180deg, rgba(10, 10, 16, 0.55), rgba(0, 0, 0, 0.95));
+        }
+        .footer-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 25px;
+            max-width: 1200px;
+            margin: 0 auto 35px;
+        }
+        .footer-brand { color: white; font-size: 1.15rem; font-weight: 900; letter-spacing: 1px; }
+        .footer-tagline { margin-top: 7px; color: #777784; font-size: 0.85rem; }
+        .footer-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+        .footer-links a {
+            padding: 10px 15px;
+            border-radius: 8px;
+            color: var(--text-gray);
+            text-decoration: none;
+            transition: var(--transition);
+            font-size: 0.9rem;
+        }
+        .footer-links a:hover { color: white; background: var(--glass); transform: translateY(-2px); }
+        .footer-copy {
+            max-width: 1200px;
+            padding-top: 20px;
+            margin: 0 auto;
+            border-top: 1px solid #15151d;
+            color: #555562;
+            font: 0.65rem 'JetBrains Mono', monospace;
+            letter-spacing: 0.5px;
+            text-align: center;
+        }
+        @media (max-width: 650px) {
+            .footer-content { flex-direction: column; }
+        }
+    </style>
+</head>
+<body onscroll="handleScroll()">
+
+    <nav id="main-nav" class="initial">
+        <div class="nav-capsule">
+            <div class="nav-logo" onclick="showPage('home')">FRAGMENT</div>
+            <div class="nav-links">
+                <a href="/home" onclick="navigateToPage(event, 'home')" id="link-home" class="active">Home</a>
+                <a href="/download" onclick="navigateToPage(event, 'download')" id="link-download">Download</a>
+                <a href="/about" onclick="navigateToPage(event, 'about')" id="link-about">About</a>
+                <a href="/build" onclick="navigateToPage(event, 'build')" id="link-build">Build</a>
+                <a href="/status" onclick="navigateToPage(event, 'status')" id="link-status">Status</a>
+                <a href="/tests" onclick="navigateToPage(event, 'tests')" id="link-tests">Tests</a>
+                <a href="/socials" onclick="navigateToPage(event, 'socials')" id="link-socials">Socials</a>
+                <a href="/credits" onclick="navigateToPage(event, 'credits')" id="link-credits">Credits</a>
+                <a href="https://discord.gg/VvSK3zUHZP" class="nav-btn discord-btn" target="_blank" rel="noopener noreferrer">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.54 5.27A16.9 16.9 0 0 0 15.4 4l-.5 1.02a15.3 15.3 0 0 0-5.8 0L8.6 4a16.9 16.9 0 0 0-4.14 1.27C1.84 9.17 1.13 12.98 1.48 16.74a16.7 16.7 0 0 0 5.1 2.57l1.24-1.69a10.3 10.3 0 0 1-1.95-.94l.48-.37c3.76 1.76 7.83 1.76 11.54 0l.49.37c-.62.37-1.27.69-1.96.94l1.24 1.69a16.7 16.7 0 0 0 5.1-2.57c.41-4.36-.7-8.13-3.22-11.47ZM8.66 14.58c-1.1 0-2-.99-2-2.2s.88-2.2 2-2.2c1.13 0 2.02.99 2 2.2 0 1.21-.88 2.2-2 2.2Zm6.68 0c-1.1 0-2-.99-2-2.2s.88-2.2 2-2.2c1.13 0 2.02.99 2 2.2s-.88 2.2-2 2.2Z"/></svg>
+                    Join Discord
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <!-- Home Page -->
+        <section id="home" class="page active">
+            <div class="section-center">
+                <h1 style="margin-top: 40px;">Fragment Executor<br><span class="halloween-mark">Halloween Edition</span></h1>
+                <p>A fast, stable, and reliable Roblox executor made by the people, for the people.</p>
+            </div>
+            <div class="home-actions">
+                <button onclick="showPage('download')" class="card-btn">Download</button>
+                <button onclick="showPage('build')" class="card-btn secondary-btn">Developer API</button>
+            </div>
+            <div class="grid">
+                <div class="card">
+                    <h3>Hyper Performance</h3>
+                    <p>Fast, stable, and reliable script execution.</p>
+                </div>
+                <div class="card">
+                    <h3>Hyperion Safe</h3>
+                    <p>Bypasses Roblox's Byfron/Hyperion anti-cheat.</p>
+                </div>
+                <div class="card">
+                    <h3>Keyless & Ad-Free</h3>
+                    <p>No keys. No ads. No nonsense. Just download, extract, run, and inject - that's it. Note: Velocity API requires a key, but that key system is Velocity's, not ours.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Download Page -->
+        <section id="download" class="page">
+            <div class="section-center">
+                <h1>Download Fragment</h1>
+                <p>Fragment Velocity API for Roblox. Compatible with Windows 10/11.</p>
+            </div>
+            <div class="download-panel">
+                <div class="executor-preview" role="img" aria-label="Fragment executor preview showing 99 percent UNC and 96 percent sUNC test results">
+                    <div class="preview-topbar">
+                        <div class="preview-brand"><span class="preview-brand-mark">F</span> Fragment</div>
+                        <span class="preview-version">v1.0.5</span>
+                    </div>
+                    <div class="preview-heading">
+                        <small>FRAGMENT VELOCITY API</small>
+                        <h2>Executor</h2>
+                    </div>
+                    <div class="preview-stats">
+                        <div class="preview-stat"><strong>99%</strong><span>UNC</span></div>
+                        <div class="preview-stat"><strong>96%</strong><span>sUNC</span></div>
+                    </div>
+                    <button class="preview-image-button" type="button" onclick="openImageLightbox()" aria-label="Open larger Fragment executor preview">
+                        <img class="preview-image" src="https://cdn.phototourl.com/free/2026-09-23-adc4bf13-a597-41f3-92ce-be19fc41a670.png" alt="Fragment executor interface preview">
+                    </button>
+                </div>
+                <div class="release-card">
+                    <h2>Fragment v1.0.5</h2>
+                    <p>The latest Fragment version.</p>
+                    <div class="release-meta">
+                        <div><span>Supported Roblox version</span><strong>version-e7d81637d42c4b23</strong></div>
+                        <div><span>VirusTotal scan</span><strong>0/68 detections</strong></div>
+                        <div><span>UNC score</span><strong>99%</strong></div>
+                        <div><span>sUNC score</span><strong>96%</strong></div>
+                    </div>
+                    <div class="release-actions">
+                        <a href="https://www.mediafire.com/file/nbsypkucqtvb90h/Fragment_1.0.5_x64-setup.exe/file" class="card-btn" target="_blank" rel="noopener noreferrer">Download v1.0.5</a>
+                        <a href="https://www.virustotal.com/gui/file/1caefd8a0e8c319b214a9aa0bac16428033c9a6fb94b4d43a7e6f5eaf3f41c3d?nocache=1" class="card-btn secondary-btn" target="_blank" rel="noopener noreferrer">View VirusTotal</a>
+                    </div>
+                </div>
+            </div>
+            <div class="velocity-status-bar">
+                <span class="velocity-status-label">FRAGMENT VELOCITY API STATUS</span>
+                <span class="velocity-status-value">DOWN (ROBLOX DOWNGRADE REQUIRED)</span>
+            </div>
+            <div class="release-history" id="release-history">
+                <button class="release-history-toggle" type="button" onclick="toggleReleaseHistory()" aria-expanded="false" aria-controls="release-history-content"><span class="release-history-heading"><span>Release History</span><span class="release-current-version">Current version: v1.0.5</span></span></button>
+                <div class="release-history-content" id="release-history-content">
+                <div class="release-entry">
+                    <h3>v1.0.5</h3><time>September 22nd, 2026</time>
+                    <ul><li>Added saved navigation settings for explorer side, app bar position, startup page, tab order, and tab label visibility.</li><li>Added Recent Scripts with persistent history, search, reopen, and delete controls.</li><li>Added custom styled startup page and navigation controls.</li><li>Improved app version reporting across the frontend, update checker, Tauri metadata, and Rust backend.</li></ul>
+                </div>
+                <div class="release-entry">
+                    <h3>v1.0.4</h3><time>September 10th, 2026</time>
+                    <ul><li>Overhauled the Home UI with tabs, focused sections, and sidebar links.</li><li>Added UNC and sUNC testing tools with scripts, results, and Workspace actions.</li><li>Added Fragment Velocity API status and update notifications.</li><li>Added a force updater that checks GitHub for newer releases.</li></ul>
+                </div>
+                <div class="release-entry">
+                    <h3>v1.0.3</h3><time>September 7th, 2026</time>
+                    <ul><li>Added file shortcuts in Settings for executor folders.</li><li>Made inject and execute keybinds work across every page.</li><li>Added a collapsible Workspace explorer with live folder contents and Monaco file editing.</li></ul>
+                </div>
+                <div class="release-entry">
+                    <h3>v1.0.2</h3><time>September 5th, 2026</time>
+                    <ul><li>New UI.</li></ul>
+                </div>
+                <div class="release-entry">
+                    <h3>v1.0.1</h3><time>August 1st, 2026</time>
+                    <ul><li>Added a force updater for new releases.</li><li>Added update logs for Xeno and Velocity API Bridge.</li><li>Added a settings page overhaul and quick links to the home page.</li></ul>
+                </div>
+                <div class="release-entry">
+                    <h3>v1.0.0</h3><time>June 3, 2026</time>
+                    <ul><li>Release.</li></ul>
+                </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Page -->
+        <section id="about" class="page">
+            <div class="section-center">
+                <h1>Our Mission</h1>
+                <p>Fragment focuses on fast, stable execution with a simple, no-ads, no-key experience.</p>
+            </div>
+            <div class="about-message">
+                Fragment was built for developers and power users who demand performance, stability, and creative freedom in Roblox scripting. We saw a landscape cluttered with malware-ridden, ad-infested executors hiding behind paywalls and key systems - and decided to build something different. No link bypasses. No waiting. Just download, extract, run, and inject. We believe powerful software should be accessible to everyone, without friction or compromise. Fragment is, and always will be, completely keyless and ad-free.
+                <span class="about-note"><strong>Note:</strong> The Velocity API integration requires a key - that key system belongs to Velocity, not us. Fragment itself has no key system of any kind.</span>
+            </div>
+        </section>
+
+        <!-- Build Page -->
+        <section id="build" class="page">
+            <div class="section-center">
+                <h1>Fragment API Hub</h1>
+                <p>Download the latest Fragment Velocity API for your executor.</p>
+            </div>
+            <div class="grid" id="build-nav-content"></div>
+        </section>
+
+        <!-- Status Page -->
+        <section id="status" class="page">
+            <div class="section-center">
+                <h1>Statuses</h1>
+                <p>Current status of the Fragment Velocity API.</p>
+            </div>
+            <div class="status-container" id="status-content"></div>
+        </section>
+
+        <!-- Tests Page -->
+        <section id="tests" class="page">
+            <div class="section-center">
+                <h1>Test Results</h1>
+                <p>Fragment Velocity API test results.</p>
+            </div>
+            <div class="test-info">
+                <div><span>API Version Tested</span><strong>v1.3.7</strong></div>
+                <div><span>Roblox Version Tested</span><strong>version-e7d81637d42c4b23</strong></div>
+            </div>
+            <table class="test-table" id="tests-content"></table>
+        </section>
+
+        <!-- Socials Page -->
+        <section id="socials" class="page">
+            <div class="section-center">
+                <h1>Community</h1>
+                <p>Join the community and stay updated with the latest releases.</p>
+            </div>
+            <div class="grid">
+                <div class="card">
+                    <h3>Discord</h3>
+                    <p>The main community page with update logs, announcements, and everything else related to Fragment.</p>
+                    <a href="https://discord.gg/VvSK3zUHZP" class="card-btn" target="_blank" rel="noopener noreferrer">Join Server</a>
+                </div>
+                <div class="card">
+                    <h3>YouTube</h3>
+                    <p>Watch Fragment showcases and updates.</p>
+                    <a href="https://www.youtube.com/@FragmentExecutor" class="card-btn" target="_blank" rel="noopener noreferrer">Visit YouTube</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Credits Page -->
+        <section id="credits" class="page">
+            <div class="section-center">
+                <h1>Credits</h1>
+                <p>The person behind Fragment.</p>
+            </div>
+            <div class="credit-section">
+                <div class="credit-profile">
+                    <img class="credit-icon" src="https://cdn.discordapp.com/avatars/1132477120665370674/00c878ea66e11aaceb7f94c93973c7f0.webp?size=1280" alt="popfork1 profile avatar" />
+                    <div class="credit-info">
+                        <span class="credit-label">Developer</span>
+                        <a class="credit-name" href="https://discord.com/users/1132477120665370674" target="_blank" rel="noopener noreferrer">popfork1</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer style="margin-top: 50px;">
+        <div class="footer-content">
+            <div>
+                <div class="footer-brand">FRAGMENT</div>
+                <div class="footer-tagline">The best free and keyless executor.</div>
+            </div>
+            <div class="footer-links">
+                <a href="https://discord.gg/VvSK3zUHZP" target="_blank" rel="noopener noreferrer">Discord</a>
+                <a href="https://www.youtube.com/@FragmentExecutor" target="_blank" rel="noopener noreferrer">YouTube</a>
+                <a href="/download" onclick="navigateToPage(event, 'download')">Download</a>
+                <a href="/about" onclick="navigateToPage(event, 'about')">About</a>
+            </div>
+        </div>
+        <div class="footer-copy">&copy; 2026 FRAGMENT</div>
+    </footer>
+
+    <div id="image-lightbox" class="image-lightbox" role="dialog" aria-modal="true" aria-label="Expanded executor preview" onclick="closeImageLightbox(event)">
+        <button class="lightbox-close" type="button" aria-label="Close expanded image" onclick="closeImageLightbox()">&times;</button>
+        <img src="https://cdn.phototourl.com/free/2026-09-23-adc4bf13-a597-41f3-92ce-be19fc41a670.png" alt="Expanded Fragment executor interface preview" onclick="event.stopPropagation()">
+    </div>
+
+    <script>
+        function openImageLightbox() {
+            const lightbox = document.getElementById('image-lightbox');
+            lightbox.classList.remove('closing');
+            lightbox.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeImageLightbox(event) {
+            if (event && event.target.id !== 'image-lightbox' && !event.target.closest('.lightbox-close')) return;
+            const lightbox = document.getElementById('image-lightbox');
+            if (!lightbox.classList.contains('open')) return;
+            lightbox.classList.remove('open');
+            lightbox.classList.add('closing');
+            lightbox.addEventListener('transitionend', () => {
+                lightbox.classList.remove('closing');
+            }, { once: true });
+            document.body.style.overflow = '';
+        }
+
+        function toggleReleaseHistory() {
+            const history = document.getElementById('release-history');
+            const toggle = history.querySelector('.release-history-toggle');
+            const isOpen = history.classList.toggle('open');
+            toggle.setAttribute('aria-expanded', isOpen);
+        }
+
+        document.addEventListener('keydown', event => {
+            if (event.key === 'Escape') closeImageLightbox();
+        });
+
+        function handleScroll() {
+            const nav = document.getElementById('main-nav');
+            if (window.scrollY > 50) {
+                nav.classList.remove('initial');
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+                nav.classList.add('initial');
+            }
+        }
+
+        const FragmentAPI = {
+            getNavAPIs: () => [
+                {
+                    name: "Fragment Velocity API",
+                    desc: "Want to make your own executor? Don't worry! With Fragment Velocity API, you can make your own in just a few minutes. There is no need for an injector or module because it uses Velocity!",
+                    downloadUrl: "https://www.mediafire.com/file/bpqcy5ywaqbpx36/Fragment_Velocity_API_Files.zip/file",
+                    btnText: "Download"
+                }
+            ],
+            getStatusData: () => [
+                { name: "Fragment Velocity API", status: "down", label: "Roblox Downgrade Required", actionUrl: "https://roblox-downgrader.onrender.com?channel=LIVE&binaryType=WindowsPlayer&version=version-e7d81637d42c4b23&compressZip=true&compressionLevel=5" },
+            ],
+            getTestsData: () => [
+                { name: "+UNC TEST 1", result: "99% (81/82)" },
+                { name: "+UNC TEST 2", result: "99% (81/82)" },
+                { name: "+SUNC TEST 1", result: "96% (83/86)", link: "https://r.sunc.su/DvzMlXNpYP" },
+                { name: "+SUNC TEST 2", result: "96% (83/86)", link: "https://r.sunc.su/DvzMlXNpYP" },
+                { name: "+MYRAD TEST 1", result: "100% (140/140)" },
+                { name: "+MYRAD TEST 2", result: "100% (140/140)" },
+                { name: "+VULNERABILITY TEST 1", result: "100% (159/159)" },
+                { name: "+VULNERABILITY TEST 2", result: "100% (159/159)" },
+            ]
+        };
+
+        function getPageFromPath() {
+            const pathPage = window.location.pathname.replace(/^\/+|\/+$/g, '');
+            const page = document.getElementById(pathPage);
+            return page && page.classList.contains('page') ? pathPage : 'home';
+        }
+
+        function navigateToPage(event, pageId) {
+            event.preventDefault();
+            showPage(pageId);
+        }
+
+        function showPage(pageId, updateUrl = true) {
+            const page = document.getElementById(pageId);
+            if (!page || !page.classList.contains('page')) pageId = 'home';
+
+            if (updateUrl && window.location.pathname !== `/${pageId}`) {
+                window.history.pushState({ pageId }, '', `/${pageId}`);
+            }
+
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+
+            document.querySelectorAll('.nav-links a').forEach(l => l.classList.remove('active'));
+            const activeLink = document.getElementById('link-' + pageId);
+            if(activeLink) activeLink.classList.add('active');
+
+            if(pageId === 'build') loadBuildPage();
+            if(pageId === 'status') loadStatusPage();
+            if(pageId === 'tests') loadTestsPage();
+
+            window.scrollTo(0, 0);
+        }
+
+        window.addEventListener('popstate', () => showPage(getPageFromPath(), false));
+
+        const initialPage = getPageFromPath();
+        if (window.location.pathname !== `/${initialPage}`) {
+            window.history.replaceState({ pageId: initialPage }, '', `/${initialPage}`);
+        }
+        showPage(initialPage, false);
+
+        function loadBuildPage() {
+            const apiData = FragmentAPI.getNavAPIs();
+            const container = document.getElementById('build-nav-content');
+            container.innerHTML = apiData.map(api => `
+                <div class="card">
+                    <h3>${api.name}</h3>
+                    <p>${api.desc}</p>
+                    <a href="${api.downloadUrl}" class="card-btn" target="_blank" rel="noopener noreferrer">${api.btnText}</a>
+                </div>
+            `).join('');
+        }
+
+        function loadStatusPage() {
+            const data = FragmentAPI.getStatusData();
+            const container = document.getElementById('status-content');
+            container.innerHTML = data.map(item => `
+                <div class="status-row">
+                    <span>${item.name}</span>
+                    <span><span class="status-indicator ${item.status}"></span> ${item.label}<a class="status-action" href="${item.actionUrl}" target="_blank" rel="noopener noreferrer">Downgrade Roblox</a></span>
+                </div>
+            `).join('');
+        }
+
+        function loadTestsPage() {
+            const data = FragmentAPI.getTestsData();
+            const container = document.getElementById('tests-content');
+            let html = `<thead><tr><th>Test</th><th>Result</th><th>Reference</th></tr></thead><tbody>`;
+            html += data.map(row => `
+                <tr>
+                    <td>${row.name}</td>
+                    <td class="test-result">${row.result}</td>
+                    <td>${row.link ? `<a class="test-link" href="${row.link}" target="_blank" rel="noopener noreferrer">View result</a>` : "-"}</td>
+                </tr>
+            `).join('');
+            html += `</tbody>`;
+            container.innerHTML = html;
+        }
+    </script>
+</body>
+</html>

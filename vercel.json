@@ -1,0 +1,13 @@
+{
+  "rewrites": [
+    { "source": "/", "destination": "/Website.html" },
+    { "source": "/home", "destination": "/Website.html" },
+    { "source": "/download", "destination": "/Website.html" },
+    { "source": "/about", "destination": "/Website.html" },
+    { "source": "/build", "destination": "/Website.html" },
+    { "source": "/status", "destination": "/Website.html" },
+    { "source": "/tests", "destination": "/Website.html" },
+    { "source": "/socials", "destination": "/Website.html" },
+    { "source": "/credits", "destination": "/Website.html" }
+  ]
+}
