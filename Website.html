@@ -602,19 +602,17 @@
         }
 
         .status-container { max-width: 700px; margin: 0 auto; }
-        .incident-history { max-width: 700px; margin: 64px auto 0; padding-top: 28px; border-top: 1px solid var(--card-border); }
-        .incident-history h2 { padding-left: 13px; margin-bottom: 18px; border-left: 3px solid var(--accent); font-size: 1.5rem; font-weight: 800; }
-        .incident-history-message { padding: 15px 18px; margin-bottom: 14px; border: 1px dashed rgba(255,255,255,0.14); border-radius: 10px; color: var(--text-gray); background: rgba(255,255,255,0.02); }
+        .incident-history { max-width: 700px; margin: 50px auto 0; }
+        .incident-history h2 { margin-bottom: 16px; font-size: 1.4rem; }
+        .incident-history-message { margin-bottom: 14px; color: var(--text-gray); }
         .incident-list { display: grid; gap: 12px; }
-        .incident-entry { padding: 20px 22px; border: 1px solid var(--card-border); border-left: 3px solid var(--accent); border-radius: 10px; background: linear-gradient(110deg, rgba(215,122,45,0.07), rgba(255,255,255,0.015)); }
-        .incident-entry[data-state="ongoing"] { border-left-color: #ef7168; background: linear-gradient(110deg, rgba(239,113,104,0.08), rgba(255,255,255,0.015)); }
-        .incident-entry[data-state="resolved"] { border-left-color: #58bd86; background: linear-gradient(110deg, rgba(88,189,134,0.07), rgba(255,255,255,0.015)); }
+        .incident-entry { padding: 18px 20px; border: 1px solid var(--card-border); border-radius: 12px; background: var(--glass); }
         .incident-entry-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
-        .incident-entry h3 { font-size: 1.05rem; font-weight: 700; }
-        .incident-entry-status { flex: 0 0 auto; padding: 6px 10px; border: 1px solid rgba(88,189,134,0.28); border-radius: 999px; color: #8ce0b1; background: rgba(88,189,134,0.08); font: 700 0.65rem 'JetBrains Mono', monospace; text-transform: uppercase; }
-        .incident-entry-status[data-state="ongoing"] { border-color: rgba(239,113,104,0.3); color: #ff9b92; background: rgba(239,113,104,0.09); }
-        .incident-entry-summary { margin-top: 12px; color: var(--text-gray); line-height: 1.6; }
-        .incident-entry-dates { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 14px; color: #a39a91; font: 0.72rem 'JetBrains Mono', monospace; }
+        .incident-entry h3 { font-size: 1rem; }
+        .incident-entry-status { color: #7fe0ac; font: 700 0.7rem 'JetBrains Mono', monospace; text-transform: uppercase; }
+        .incident-entry-status[data-state="ongoing"] { color: #ff8585; }
+        .incident-entry-summary { margin-top: 10px; color: var(--text-gray); line-height: 1.6; }
+        .incident-entry-dates { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 12px; color: var(--text-muted); font: 0.7rem 'JetBrains Mono', monospace; }
         .status-row {
             display: flex; justify-content: space-between; align-items: center;
             padding: 25px; border-bottom: 1px solid var(--card-border);
@@ -748,9 +746,6 @@
             .release-meta .release-changelog-tile { grid-column: auto; }
             .release-actions { flex-direction: column; }
             .release-actions .card-btn { text-align: center; }
-            .incident-history { margin-top: 42px; padding-top: 22px; }
-            .incident-entry { padding: 16px; }
-            .incident-entry-header { align-items: flex-start; }
             .release-actions .download-installer { display: none; }
             .mobile-download-notice,
             .mobile-downgrade-notice {
@@ -1205,7 +1200,6 @@
 
                     const status = document.createElement('span');
                     const isOngoing = incident.status === 'ongoing';
-                    entry.dataset.state = isOngoing ? 'ongoing' : 'resolved';
                     status.className = 'incident-entry-status';
                     status.dataset.state = isOngoing ? 'ongoing' : 'resolved';
                     status.textContent = isOngoing ? 'Ongoing' : 'Resolved';
