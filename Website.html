@@ -209,6 +209,38 @@
             font-weight: 700;
         }
 
+        .home-velocity-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            margin-bottom: 18px;
+            padding: 8px 12px;
+            border: 1px solid rgba(183, 176, 167, 0.2);
+            border-radius: 100px;
+            color: var(--text-muted);
+            background: rgba(255, 255, 255, 0.03);
+            font: 700 0.68rem 'JetBrains Mono', monospace;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        .home-velocity-status::before {
+            content: "";
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+        .home-velocity-status[data-state="up"] {
+            border-color: rgba(104, 190, 135, 0.35);
+            color: #83d1a4;
+            background: rgba(104, 190, 135, 0.08);
+        }
+        .home-velocity-status[data-state="down"] {
+            border-color: rgba(255, 104, 104, 0.35);
+            color: #ff8585;
+            background: rgba(255, 104, 104, 0.08);
+        }
+
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; margin-bottom: 100px; }
         
         .card {
@@ -896,7 +928,8 @@
         <!-- Home Page -->
         <section id="home" class="page active">
             <div class="section-center">
-                <h1 style="margin-top: 40px;">Fragment Executor<br><span class="halloween-mark">Halloween Theme</span></h1>
+                <div class="home-velocity-status" id="home-velocity-status" data-state="loading" role="status" aria-live="polite">Checking Velocity status...</div>
+                <h1 style="margin-top: 18px;">Fragment Executor<br><span class="halloween-mark">Halloween Theme</span></h1>
                 <p>A free and keyless Roblox executor made by the people, for the people.</p>
                 <div class="roblox-version" id="roblox-version" role="status" aria-live="polite" data-state="loading">
                     <span class="roblox-version-dot" aria-hidden="true"></span>
@@ -1331,7 +1364,7 @@
 
             if(pageId === 'build') loadBuildPage();
             if(pageId === 'status') loadStatusPage();
-                        if(pageId === 'download') loadVelocityStatus();
+            if(pageId === 'home' || pageId === 'download') loadVelocityStatus();
             if(pageId === 'tests') loadTestsPage();
 
             window.scrollTo(0, 0);
@@ -1368,6 +1401,7 @@
             const statusText = document.getElementById('velocity-status-text');
             const statusAction = document.getElementById('velocity-status-action');
             const mobileNotice = document.getElementById('mobile-downgrade-notice');
+            const homeStatus = document.getElementById('home-velocity-status');
 
             try {
                 const response = await fetch('/api/status', { cache: 'no-store' });
@@ -1376,23 +1410,34 @@
                 const state = data && ['up', 'down'].includes(data.velocity) ? data.velocity : 'unknown';
                 const label = state === 'up' ? 'Operational' : state === 'down' ? 'Roblox downgrade required' : 'Status unavailable';
                 const bannerLabel = state === 'up' ? 'UP (OPERATIONAL)' : state === 'down' ? 'DOWN (ROBLOX DOWNGRADE REQUIRED)' : 'STATUS UNAVAILABLE';
+                const homeLabel = state === 'up' ? 'Velocity is up' : state === 'down' ? 'Velocity is down' : 'Velocity status unavailable';
 
-                container.innerHTML = `
-                    <div class="status-row">
-                        <span>Fragment Velocity API</span>
-                        <span><span class="status-indicator ${state}"></span>${label}${state === 'down' ? '<a class="status-action" href="https://roblox-downgrader.onrender.com/?channel=LIVE&amp;binaryType=WindowsPlayer&amp;version=version-e7d81637d42c4b23&amp;compressZip=true&amp;compressionLevel=5" target="_blank" rel="noopener noreferrer">Downgrade Roblox</a>' : ''}</span>
-                    </div>
-                `;
-                banner.dataset.state = state;
-                statusText.textContent = bannerLabel;
-                statusAction.hidden = state !== 'down';
-                mobileNotice.hidden = state !== 'down';
+                if (container) {
+                    container.innerHTML = `
+                        <div class="status-row">
+                            <span>Fragment Velocity API</span>
+                            <span><span class="status-indicator ${state}"></span>${label}${state === 'down' ? '<a class="status-action" href="https://roblox-downgrader.onrender.com/?channel=LIVE&amp;binaryType=WindowsPlayer&amp;version=version-e7d81637d42c4b23&amp;compressZip=true&amp;compressionLevel=5" target="_blank" rel="noopener noreferrer">Downgrade Roblox</a>' : ''}</span>
+                        </div>
+                    `;
+                }
+                if (banner) banner.dataset.state = state;
+                if (statusText) statusText.textContent = bannerLabel;
+                if (statusAction) statusAction.hidden = state !== 'down';
+                if (mobileNotice) mobileNotice.hidden = state !== 'down';
+                if (homeStatus) {
+                    homeStatus.dataset.state = state;
+                    homeStatus.textContent = homeLabel;
+                }
             } catch {
-                container.innerHTML = '<div class="status-row"><span>Fragment Velocity API</span><span><span class="status-indicator unknown"></span>Status unavailable</span></div>';
-                banner.dataset.state = 'unknown';
-                statusText.textContent = 'STATUS UNAVAILABLE';
-                statusAction.hidden = true;
-                mobileNotice.hidden = true;
+                if (container) container.innerHTML = '<div class="status-row"><span>Fragment Velocity API</span><span><span class="status-indicator unknown"></span>Status unavailable</span></div>';
+                if (banner) banner.dataset.state = 'unknown';
+                if (statusText) statusText.textContent = 'STATUS UNAVAILABLE';
+                if (statusAction) statusAction.hidden = true;
+                if (mobileNotice) mobileNotice.hidden = true;
+                if (homeStatus) {
+                    homeStatus.dataset.state = 'unknown';
+                    homeStatus.textContent = 'Velocity status unavailable';
+                }
             }
         }
 
