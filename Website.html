@@ -578,10 +578,23 @@
             font: 0.7rem 'JetBrains Mono', monospace;
             letter-spacing: 1px;
         }
+        .velocity-status-bar[data-state="up"] {
+            border-color: rgba(104, 190, 135, 0.35);
+            background: #111a14;
+            color: #83d1a4;
+        }
+        .velocity-status-bar[data-state="unknown"] {
+            border-color: var(--card-border);
+            background: #141414;
+            color: var(--text-muted);
+        }
         .velocity-status-label { display: flex; align-items: center; gap: 10px; }
         .velocity-status-label::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #ff6868; box-shadow: 0 0 12px #ff6868; }
+        .velocity-status-bar[data-state="up"] .velocity-status-label::before { background: #83d1a4; box-shadow: 0 0 12px #83d1a4; }
+        .velocity-status-bar[data-state="unknown"] .velocity-status-label::before { background: var(--text-muted); box-shadow: none; }
         .velocity-status-bar .status-action { margin-left: 0; white-space: nowrap; }
         .mobile-downgrade-notice { display: none; }
+        .velocity-status-bar [hidden] { display: none; }
 
         .release-card { padding: 38px; }
         .release-card h2 { margin-bottom: 12px; font-size: 2rem; }
@@ -932,10 +945,11 @@
                     </div>
                 </div>
             </div>
-            <div class="velocity-status-bar">
+            <div class="velocity-status-bar" id="velocity-status-bar" data-state="unknown">
                 <span class="velocity-status-label">FRAGMENT VELOCITY API STATUS</span>
-                <a class="status-action" href="https://roblox-downgrader.onrender.com/?channel=LIVE&amp;binaryType=WindowsPlayer&amp;version=version-e7d81637d42c4b23&amp;compressZip=true&amp;compressionLevel=5" target="_blank" rel="noopener noreferrer">DOWN (ROBLOX DOWNGRADE REQUIRED)</a>
-                <span class="mobile-downgrade-notice" role="status">Roblox downgrade unavailable on mobile. Use a Windows PC.</span>
+                <span id="velocity-status-text">Checking status...</span>
+                <a class="status-action" id="velocity-status-action" href="https://roblox-downgrader.onrender.com/?channel=LIVE&amp;binaryType=WindowsPlayer&amp;version=version-e7d81637d42c4b23&amp;compressZip=true&amp;compressionLevel=5" target="_blank" rel="noopener noreferrer" hidden>Downgrade Roblox</a>
+                <span class="mobile-downgrade-notice" id="mobile-downgrade-notice" role="status" hidden>Roblox downgrade unavailable on mobile. Use a Windows PC.</span>
             </div>
             <div class="release-history" id="release-history">
                 <button class="release-history-toggle" type="button" onclick="toggleReleaseHistory()" aria-expanded="false" aria-controls="release-history-content"><span class="release-history-heading"><span>Release History</span><span class="release-current-version">Current version: v1.0.6</span></span></button>
@@ -1230,9 +1244,6 @@
                     btnText: "Download"
                 }
             ],
-            getStatusData: () => [
-                { name: "Fragment Velocity API", status: "down", label: "Roblox Downgrade Required", actionUrl: "https://roblox-downgrader.onrender.com?channel=LIVE&binaryType=WindowsPlayer&version=version-e7d81637d42c4b23&compressZip=true&compressionLevel=5" },
-            ],
             getTestsData: () => [
                 { name: "+UNC TEST 1", result: "99% (81/82)" },
                 { name: "+UNC TEST 2", result: "99% (81/82)" },
@@ -1273,6 +1284,7 @@
 
             if(pageId === 'build') loadBuildPage();
             if(pageId === 'status') loadStatusPage();
+                        if(pageId === 'download') loadVelocityStatus();
             if(pageId === 'tests') loadTestsPage();
 
             window.scrollTo(0, 0);
@@ -1299,15 +1311,42 @@
         }
 
         function loadStatusPage() {
-            const data = FragmentAPI.getStatusData();
-            const container = document.getElementById('status-content');
-            container.innerHTML = data.map(item => `
-                <div class="status-row">
-                    <span>${item.name}</span>
-                    <span><span class="status-indicator ${item.status}"></span> ${item.label}<a class="status-action" href="${item.actionUrl}" target="_blank" rel="noopener noreferrer">Downgrade Roblox</a></span>
-                </div>
-            `).join('');
+            loadVelocityStatus();
             loadIncidentHistory();
+        }
+
+        async function loadVelocityStatus() {
+            const container = document.getElementById('status-content');
+            const banner = document.getElementById('velocity-status-bar');
+            const statusText = document.getElementById('velocity-status-text');
+            const statusAction = document.getElementById('velocity-status-action');
+            const mobileNotice = document.getElementById('mobile-downgrade-notice');
+
+            try {
+                const response = await fetch('/api/status', { cache: 'no-store' });
+                if (!response.ok) throw new Error('Status request failed');
+                const data = await response.json();
+                const state = data && ['up', 'down'].includes(data.velocity) ? data.velocity : 'unknown';
+                const label = state === 'up' ? 'Operational' : state === 'down' ? 'Roblox downgrade required' : 'Status unavailable';
+                const bannerLabel = state === 'up' ? 'UP (OPERATIONAL)' : state === 'down' ? 'DOWN (ROBLOX DOWNGRADE REQUIRED)' : 'STATUS UNAVAILABLE';
+
+                container.innerHTML = `
+                    <div class="status-row">
+                        <span>Fragment Velocity API</span>
+                        <span><span class="status-indicator ${state}"></span>${label}${state === 'down' ? '<a class="status-action" href="https://roblox-downgrader.onrender.com/?channel=LIVE&amp;binaryType=WindowsPlayer&amp;version=version-e7d81637d42c4b23&amp;compressZip=true&amp;compressionLevel=5" target="_blank" rel="noopener noreferrer">Downgrade Roblox</a>' : ''}</span>
+                    </div>
+                `;
+                banner.dataset.state = state;
+                statusText.textContent = bannerLabel;
+                statusAction.hidden = state !== 'down';
+                mobileNotice.hidden = state !== 'down';
+            } catch {
+                container.innerHTML = '<div class="status-row"><span>Fragment Velocity API</span><span><span class="status-indicator unknown"></span>Status unavailable</span></div>';
+                banner.dataset.state = 'unknown';
+                statusText.textContent = 'STATUS UNAVAILABLE';
+                statusAction.hidden = true;
+                mobileNotice.hidden = true;
+            }
         }
 
         async function loadIncidentHistory() {
@@ -1361,8 +1400,9 @@
                         if (Number.isNaN(date.getTime())) return;
                         const time = document.createElement('time');
                         time.dateTime = date.toISOString();
-                        const displayValue = label === 'Started' && typeof incident.startedAtLabel === 'string'
-                            ? incident.startedAtLabel
+                        const labelKey = `${label.toLowerCase()}AtLabel`;
+                        const displayValue = typeof incident[labelKey] === 'string'
+                            ? incident[labelKey]
                             : date.toLocaleString();
                         time.textContent = `${label}: ${displayValue}`;
                         dates.append(time);

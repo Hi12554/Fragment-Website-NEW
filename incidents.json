@@ -3,8 +3,12 @@
     {
       "service": "Fragment",
       "status": "ongoing",
+      "status": "resolved",
       "startedAt": "2026-09-14T02:30:00-06:00",
-      "startedAtLabel": "Monday, September 14, 2026 2:30 AM CST"
+      "startedAtLabel": "Monday, September 14, 2026 2:30 AM CST",
+      "summary": "Velocity is back online and the service has been restored.",
+      "resolvedAt": "2026-09-29",
+      "resolvedAtLabel": "September 29, 2026"
     }
   ]
 }
