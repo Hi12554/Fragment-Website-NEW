@@ -255,6 +255,42 @@
             color: #ff8585;
             background: rgba(255, 104, 104, 0.08);
         }
+        .executor-safety.verified {
+            border-color: rgba(104, 190, 135, 0.35);
+            color: #83d1a4;
+            background: rgba(104, 190, 135, 0.08);
+        }
+
+        .executor-filter {
+            display: flex;
+            justify-content: center;
+            gap: 4px;
+            width: fit-content;
+            max-width: 100%;
+            padding: 4px;
+            margin: -38px auto 32px;
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.03);
+        }
+        .executor-filter button {
+            padding: 10px 16px;
+            border: 0;
+            border-radius: 8px;
+            color: var(--text-gray);
+            background: transparent;
+            font: 600 0.8rem 'Inter', sans-serif;
+            cursor: pointer;
+        }
+        .executor-filter button[aria-pressed="true"] {
+            color: #140d09;
+            background: var(--accent);
+        }
+        .executor-filter button:focus-visible {
+            outline: 2px solid var(--pumpkin-soft);
+            outline-offset: 2px;
+        }
+        .executor-card[hidden] { display: none; }
 
         .credit-section {
             max-width: 700px;
@@ -936,40 +972,45 @@
         <section id="executors" class="page">
             <div class="section-center">
                 <h1>Other Executors</h1>
-                <p>Download the latest files for Madium, Velocity, Solora, and Xeno. Security labels are unverified and are not scan results.</p>
+                <p>Download the latest files for Madium, Velocity, Solora, and Xeno. Status labels are site classifications, not independent scan results.</p>
             </div>
-            <div class="grid">
-                <div class="card">
+            <div class="executor-filter" id="executor-filters" role="group" aria-label="Filter executors by status">
+                <button type="button" data-filter="all" aria-pressed="true" onclick="filterExecutors('all')">All</button>
+                <button type="button" data-filter="verified" aria-pressed="false" onclick="filterExecutors('verified')">Verified</button>
+                <button type="button" data-filter="rat" aria-pressed="false" onclick="filterExecutors('rat')">Potential RAT</button>
+            </div>
+            <div class="grid" id="executor-grid">
+                <div class="card executor-card" data-safety="rat">
                     <h3>Madium</h3>
                     <span class="executor-safety warning">Potential RAT</span>
                     <p>Installer-1.1.0.exe</p>
                     <a href="/Executors/Installer-1.1.0.exe" class="card-btn" download>Download</a>
                 </div>
-                <div class="card">
+                <div class="card executor-card" data-safety="verified">
                     <h3>Velocity Internal</h3>
-                    <span class="executor-safety">Unverified</span>
+                    <span class="executor-safety verified">Verified</span>
                     <p>Velocity.7z</p>
                     <a href="/Executors/Velocity.7z" class="card-btn" download>Download</a>
                 </div>
-                <div class="card">
+                <div class="card executor-card" data-safety="verified">
                     <h3>Velocity External</h3>
-                    <span class="executor-safety">Unverified</span>
+                    <span class="executor-safety verified">Verified</span>
                     <p>velext_v1 (1).exe</p>
                     <a href="/Executors/velext_v1%20(1).exe" class="card-btn" download>Download</a>
                 </div>
-                <div class="card">
+                <div class="card executor-card" data-safety="verified">
                     <h3>Solora</h3>
-                    <span class="executor-safety">Unverified</span>
+                    <span class="executor-safety verified">Verified</span>
                     <p>SolaraV3.exe</p>
                     <a href="/Executors/SolaraV3.exe" class="card-btn" download>Download</a>
                 </div>
-                <div class="card">
+                <div class="card executor-card" data-safety="rat">
                     <h3>Xeno New UI</h3>
                     <span class="executor-safety warning">Potential RAT</span>
                     <p>Xeno-v1.3.60.exe</p>
                     <a href="/Executors/Xeno-v1.3.60.exe" class="card-btn" download>Download</a>
                 </div>
-                <div class="card">
+                <div class="card executor-card" data-safety="rat">
                     <h3>Xeno Old UI</h3>
                     <span class="executor-safety warning">Potential RAT</span>
                     <p>Xeno-v1.3.60 (legacy UI).zip</p>
@@ -1126,6 +1167,15 @@
             const toggle = history.querySelector('.release-history-toggle');
             const isOpen = history.classList.toggle('open');
             toggle.setAttribute('aria-expanded', isOpen);
+        }
+
+        function filterExecutors(filter) {
+            document.querySelectorAll('#executor-grid .executor-card').forEach(card => {
+                card.hidden = filter !== 'all' && card.dataset.safety !== filter;
+            });
+            document.querySelectorAll('#executor-filters [data-filter]').forEach(button => {
+                button.setAttribute('aria-pressed', String(button.dataset.filter === filter));
+            });
         }
 
         document.addEventListener('keydown', event => {
