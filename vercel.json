@@ -7,6 +7,7 @@
     { "source": "/api/incidents", "destination": "/incidents.json" },
     { "source": "/home", "destination": "/Website.html" },
     { "source": "/download", "destination": "/Website.html" },
+    { "source": "/executors", "destination": "/Website.html" },
     { "source": "/about", "destination": "/Website.html" },
     { "source": "/build", "destination": "/Website.html" },
     { "source": "/status", "destination": "/Website.html" },
