@@ -1170,8 +1170,22 @@
         }
 
         function filterExecutors(filter) {
+            let staggerIndex = 0;
+            const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
             document.querySelectorAll('#executor-grid .executor-card').forEach(card => {
-                card.hidden = filter !== 'all' && card.dataset.safety !== filter;
+                card.getAnimations().forEach(animation => animation.cancel());
+                const isVisible = filter === 'all' || card.dataset.safety === filter;
+                card.hidden = !isVisible;
+                if (!isVisible || reduceMotion) return;
+
+                card.animate([
+                    { opacity: 0, transform: 'translateY(14px) scale(0.985)' },
+                    { opacity: 1, transform: 'translateY(0) scale(1)' }
+                ], {
+                    duration: 340,
+                    delay: staggerIndex++ * 45,
+                    easing: 'cubic-bezier(0.22, 1, 0.36, 1)'
+                });
             });
             document.querySelectorAll('#executor-filters [data-filter]').forEach(button => {
                 button.setAttribute('aria-pressed', String(button.dataset.filter === filter));
