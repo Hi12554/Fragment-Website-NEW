@@ -744,7 +744,8 @@
         .incident-entry-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
         .incident-entry h3 { font-size: 1rem; }
         .incident-entry-status { color: #7fe0ac; font: 700 0.7rem 'JetBrains Mono', monospace; text-transform: uppercase; }
-        .incident-entry-status[data-state="ongoing"] { color: #ff8585; }
+        .incident-entry-status[data-state="ongoing"],
+        .incident-entry-status[data-state="down"] { color: #ff8585; }
         .incident-entry-summary { margin-top: 10px; color: var(--text-gray); line-height: 1.6; }
         .incident-entry-dates { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 12px; color: var(--text-muted); font: 0.7rem 'JetBrains Mono', monospace; }
         .status-row {
@@ -1148,7 +1149,7 @@
                 <div id="velocity-status-content"></div>
                 <div class="status-row">
                     <span>Discord Bot</span>
-                    <span><span class="status-indicator up"></span>Up</span>
+                    <span><span class="status-indicator up"></span>Operational</span>
                 </div>
             </div>
             <section class="incident-history" aria-labelledby="incident-history-heading">
@@ -1476,10 +1477,11 @@
                     service.textContent = typeof incident.service === 'string' ? incident.service : 'Service update';
 
                     const status = document.createElement('span');
-                    const isOngoing = incident.status === 'ongoing';
+                    const statusLabels = { ongoing: 'Ongoing', resolved: 'Resolved', down: 'Down', up: 'Up' };
+                    const statusState = Object.hasOwn(statusLabels, incident.status) ? incident.status : 'resolved';
                     status.className = 'incident-entry-status';
-                    status.dataset.state = isOngoing ? 'ongoing' : 'resolved';
-                    status.textContent = isOngoing ? 'Ongoing' : 'Resolved';
+                    status.dataset.state = statusState;
+                    status.textContent = statusLabels[statusState];
                     header.append(service, status);
                     entry.append(header);
 
@@ -1492,13 +1494,16 @@
 
                     const dates = document.createElement('div');
                     dates.className = 'incident-entry-dates';
-                    [['Started', incident.startedAt], ['Resolved', incident.resolvedAt]].forEach(([label, value]) => {
+                    const dateEntries = ['down', 'up'].includes(statusState)
+                        ? [['Reported', incident.reportedAt]]
+                        : [['Started', incident.startedAt], ['Resolved', incident.resolvedAt]];
+                    dateEntries.forEach(([label, value]) => {
                         if (typeof value !== 'string') return;
                         const date = new Date(value);
                         if (Number.isNaN(date.getTime())) return;
                         const time = document.createElement('time');
                         time.dateTime = date.toISOString();
-                        const labelKey = `${label.toLowerCase()}AtLabel`;
+                        const labelKey = label === 'Reported' ? 'reportedAtLabel' : `${label.toLowerCase()}AtLabel`;
                         const displayValue = typeof incident[labelKey] === 'string'
                             ? incident[labelKey]
                             : date.toLocaleString();

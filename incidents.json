@@ -1,14 +1,18 @@
 {
   "incidents": [
     {
-      "service": "Fragment",
-      "status": "ongoing",
-      "status": "resolved",
-      "startedAt": "2026-09-14T02:30:00-06:00",
-      "startedAtLabel": "Monday, September 14, 2026 2:30 AM CST",
-      "summary": "Fragment Velocity API is back up and is updated for the latest Roblox version.",
-      "resolvedAt": "2026-09-29",
-      "resolvedAtLabel": "September 29, 2026"
+      "service": "Fragment Velocity API",
+      "status": "down",
+      "reportedAt": "2026-09-14T02:30:00-06:00",
+      "reportedAtLabel": "Monday, September 14, 2026 2:30 AM CST",
+      "summary": "The service went down and required a Roblox downgrade."
+    },
+    {
+      "service": "Fragment Velocity API",
+      "status": "up",
+      "reportedAt": "2026-09-29",
+      "reportedAtLabel": "September 29, 2026",
+      "summary": "The service came back up and was updated for the latest Roblox version."
     }
   ]
 }
