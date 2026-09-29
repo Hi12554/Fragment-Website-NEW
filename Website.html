@@ -928,7 +928,7 @@
         <!-- Home Page -->
         <section id="home" class="page active">
             <div class="section-center">
-                <div class="home-velocity-status" id="home-velocity-status" data-state="loading" role="status" aria-live="polite">Checking Velocity status...</div>
+                <div class="home-velocity-status" id="home-velocity-status" data-state="loading" role="status" aria-live="polite">CHECKING...</div>
                 <h1 style="margin-top: 18px;">Fragment Executor<br><span class="halloween-mark">Halloween Theme</span></h1>
                 <p>A free and keyless Roblox executor made by the people, for the people.</p>
                 <div class="roblox-version" id="roblox-version" role="status" aria-live="polite" data-state="loading">
@@ -1410,7 +1410,7 @@
                 const state = data && ['up', 'down'].includes(data.velocity) ? data.velocity : 'unknown';
                 const label = state === 'up' ? 'Operational' : state === 'down' ? 'Roblox downgrade required' : 'Status unavailable';
                 const bannerLabel = state === 'up' ? 'UP (OPERATIONAL)' : state === 'down' ? 'DOWN (ROBLOX DOWNGRADE REQUIRED)' : 'STATUS UNAVAILABLE';
-                const homeLabel = state === 'up' ? 'Velocity is up' : state === 'down' ? 'Velocity is down' : 'Velocity status unavailable';
+                const homeLabel = state === 'up' ? 'UP' : state === 'down' ? 'DOWN' : 'STATUS UNAVAILABLE';
 
                 if (container) {
                     container.innerHTML = `
@@ -1436,7 +1436,7 @@
                 if (mobileNotice) mobileNotice.hidden = true;
                 if (homeStatus) {
                     homeStatus.dataset.state = 'unknown';
-                    homeStatus.textContent = 'Velocity status unavailable';
+                    homeStatus.textContent = 'STATUS UNAVAILABLE';
                 }
             }
         }
