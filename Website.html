@@ -281,6 +281,7 @@
             background: transparent;
             font: 600 0.8rem 'Inter', sans-serif;
             cursor: pointer;
+            transition: color 180ms ease, background-color 180ms ease;
         }
         .executor-filter button[aria-pressed="true"] {
             color: #140d09;
@@ -291,6 +292,9 @@
             outline-offset: 2px;
         }
         .executor-card[hidden] { display: none; }
+        @media (prefers-reduced-motion: reduce) {
+            .executor-filter button { transition: none; }
+        }
 
         .credit-section {
             max-width: 700px;
@@ -1170,7 +1174,6 @@
         }
 
         function filterExecutors(filter) {
-            let staggerIndex = 0;
             const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
             document.querySelectorAll('#executor-grid .executor-card').forEach(card => {
                 card.getAnimations().forEach(animation => animation.cancel());
@@ -1179,12 +1182,11 @@
                 if (!isVisible || reduceMotion) return;
 
                 card.animate([
-                    { opacity: 0, transform: 'translateY(14px) scale(0.985)' },
-                    { opacity: 1, transform: 'translateY(0) scale(1)' }
+                    { opacity: 0 },
+                    { opacity: 1 }
                 ], {
-                    duration: 340,
-                    delay: staggerIndex++ * 45,
-                    easing: 'cubic-bezier(0.22, 1, 0.36, 1)'
+                    duration: 200,
+                    easing: 'ease-out'
                 });
             });
             document.querySelectorAll('#executor-filters [data-filter]').forEach(button => {
