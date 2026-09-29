@@ -230,6 +230,29 @@
         }
         .card-btn:hover { transform: translateY(-1px); box-shadow: none; }
 
+        .executor-official-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .executor-official-links a {
+            padding: 10px 12px;
+            border: 1px solid var(--card-border);
+            border-radius: 100px;
+            color: var(--text-white);
+            background: rgba(255, 255, 255, 0.04);
+            text-decoration: none;
+            font-size: 0.78rem;
+            font-weight: 700;
+            transition: var(--transition);
+        }
+        .executor-official-links a:hover {
+            border-color: rgba(215, 122, 45, 0.45);
+            background: rgba(215, 122, 45, 0.12);
+        }
+
         .executor-safety {
             display: inline-flex;
             align-items: center;
@@ -1003,36 +1026,60 @@
                     <span class="executor-safety warning">Potential RAT</span>
                     <p>Installer-1.1.0.exe</p>
                     <a href="/Executors/Installer-1.1.0.exe" class="card-btn" download>Download</a>
+                    <div class="executor-official-links">
+                        <a href="https://discord.gg/olemad" target="_blank" rel="noopener noreferrer">Official Discord</a>
+                        <a href="https://getmadium.net/" target="_blank" rel="noopener noreferrer">Official Website</a>
+                    </div>
                 </div>
                 <div class="card executor-card" data-safety="verified">
                     <h3>Velocity Internal</h3>
                     <span class="executor-safety verified">Verified</span>
                     <p>Velocity.7z</p>
                     <a href="/Executors/Velocity.7z" class="card-btn" download>Download</a>
+                    <div class="executor-official-links">
+                        <a href="https://discord.gg/velocityide" target="_blank" rel="noopener noreferrer">Official Discord</a>
+                        <a href="https://getvelocity.llc/" target="_blank" rel="noopener noreferrer">Official Website</a>
+                    </div>
                 </div>
                 <div class="card executor-card" data-safety="verified">
                     <h3>Velocity External</h3>
                     <span class="executor-safety verified">Verified</span>
                     <p>velext_v1 (1).exe</p>
                     <a href="/Executors/velext_v1%20(1).exe" class="card-btn" download>Download</a>
+                    <div class="executor-official-links">
+                        <a href="https://discord.gg/velocityide" target="_blank" rel="noopener noreferrer">Official Discord</a>
+                        <a href="https://getvelocity.llc/" target="_blank" rel="noopener noreferrer">Official Website</a>
+                    </div>
                 </div>
                 <div class="card executor-card" data-safety="verified">
                     <h3>Solora</h3>
                     <span class="executor-safety verified">Verified</span>
                     <p>SolaraV3.exe</p>
                     <a href="/Executors/SolaraV3.exe" class="card-btn" download>Download</a>
+                    <div class="executor-official-links">
+                        <a href="https://getsolara.dev/community" target="_blank" rel="noopener noreferrer">Stoat Community</a>
+                        <a href="https://getsolara.dev/" target="_blank" rel="noopener noreferrer">Official Website</a>
+                    </div>
                 </div>
                 <div class="card executor-card" data-safety="rat">
                     <h3>Xeno New UI</h3>
                     <span class="executor-safety warning">Potential RAT</span>
                     <p>Xeno-v1.3.60.exe</p>
                     <a href="/Executors/Xeno-v1.3.60.exe" class="card-btn" download>Download</a>
+                    <div class="executor-official-links">
+                        <a href="https://discord.gg/xe-no" target="_blank" rel="noopener noreferrer">Official Discord</a>
+                        <a href="https://www.xeno.now/" target="_blank" rel="noopener noreferrer">Official Website</a>
+                    </div>
                 </div>
                 <div class="card executor-card" data-safety="rat">
                     <h3>Xeno Old UI</h3>
                     <span class="executor-safety warning">Potential RAT</span>
                     <p>Xeno-v1.3.60 (legacy UI).zip</p>
                     <a href="/Executors/Xeno-v1.3.60%20(legacy%20UI).zip" class="card-btn" download>Download</a>
+                    <div class="executor-official-links">
+                        <a href="https://discord.gg/xe-no" target="_blank" rel="noopener noreferrer">Official Discord</a>
+                        <a href="https://www.xeno.now/" target="_blank" rel="noopener noreferrer">Official Website</a>
+                    </div>
                 </div>
             </div>
         </section>
