@@ -230,6 +230,32 @@
         }
         .card-btn:hover { transform: translateY(-1px); box-shadow: none; }
 
+        .executor-safety {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            margin-bottom: 16px;
+            padding: 7px 10px;
+            border: 1px solid rgba(183, 176, 167, 0.2);
+            border-radius: 100px;
+            color: var(--text-gray);
+            background: rgba(255, 255, 255, 0.03);
+            font: 700 0.68rem 'JetBrains Mono', monospace;
+            text-transform: uppercase;
+        }
+        .executor-safety::before {
+            content: "";
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+        .executor-safety.warning {
+            border-color: rgba(255, 104, 104, 0.35);
+            color: #ff8585;
+            background: rgba(255, 104, 104, 0.08);
+        }
+
         .credit-section {
             max-width: 700px;
             margin: 0 auto;
@@ -910,36 +936,42 @@
         <section id="executors" class="page">
             <div class="section-center">
                 <h1>Other Executors</h1>
-                <p>Download the latest files for Madium, Velocity, Solora, and Xeno.</p>
+                <p>Download the latest files for Madium, Velocity, Solora, and Xeno. Security labels are unverified and are not scan results.</p>
             </div>
             <div class="grid">
                 <div class="card">
                     <h3>Madium</h3>
+                    <span class="executor-safety warning">Potential RAT</span>
                     <p>Installer-1.1.0.exe</p>
                     <a href="/Executors/Installer-1.1.0.exe" class="card-btn" download>Download</a>
                 </div>
                 <div class="card">
                     <h3>Velocity Internal</h3>
+                    <span class="executor-safety">Unverified</span>
                     <p>Velocity.7z</p>
                     <a href="/Executors/Velocity.7z" class="card-btn" download>Download</a>
                 </div>
                 <div class="card">
                     <h3>Velocity External</h3>
+                    <span class="executor-safety">Unverified</span>
                     <p>velext_v1 (1).exe</p>
                     <a href="/Executors/velext_v1%20(1).exe" class="card-btn" download>Download</a>
                 </div>
                 <div class="card">
                     <h3>Solora</h3>
+                    <span class="executor-safety">Unverified</span>
                     <p>SolaraV3.exe</p>
                     <a href="/Executors/SolaraV3.exe" class="card-btn" download>Download</a>
                 </div>
                 <div class="card">
                     <h3>Xeno New UI</h3>
+                    <span class="executor-safety warning">Potential RAT</span>
                     <p>Xeno-v1.3.60.exe</p>
                     <a href="/Executors/Xeno-v1.3.60.exe" class="card-btn" download>Download</a>
                 </div>
                 <div class="card">
                     <h3>Xeno Old UI</h3>
+                    <span class="executor-safety warning">Potential RAT</span>
                     <p>Xeno-v1.3.60 (legacy UI).zip</p>
                     <a href="/Executors/Xeno-v1.3.60%20(legacy%20UI).zip" class="card-btn" download>Download</a>
                 </div>
