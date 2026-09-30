@@ -1324,13 +1324,26 @@
         }
 
         let executorFilterSequence = 0;
+        let previousExecutorSearchTerm = '';
 
         function filterExecutors(filter) {
             const activeFilter = filter || document.querySelector('#executor-filters [aria-pressed="true"]').dataset.filter;
-            const searchTerm = document.getElementById('executor-search-input').value.trim().toLocaleLowerCase();
+            const searchInput = document.getElementById('executor-search-input');
+            const searchTerm = searchInput.value.trim().toLocaleLowerCase();
+            const searchChanged = searchTerm !== previousExecutorSearchTerm;
+            previousExecutorSearchTerm = searchTerm;
             const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
             const filterSequence = ++executorFilterSequence;
             let visibleCount = 0;
+
+            if (searchChanged && !reduceMotion) {
+                searchInput.getAnimations().forEach(animation => animation.cancel());
+                searchInput.animate([
+                    { transform: 'scale(1)' },
+                    { transform: 'scale(1.015)' },
+                    { transform: 'scale(1)' }
+                ], { duration: 220, easing: 'ease-out' });
+            }
 
             document.querySelectorAll('#executor-grid .executor-card').forEach(card => {
                 card.getAnimations().forEach(animation => animation.cancel());
@@ -1344,11 +1357,11 @@
                 if (isVisible) {
                     card.hidden = false;
                     visibleCount++;
-                    if (!wasVisible && !reduceMotion) {
+                    if ((!wasVisible || searchChanged) && !reduceMotion) {
                         card.animate([
-                            { opacity: 0, transform: 'translateY(8px)' },
+                            { opacity: searchChanged ? 0.72 : 0, transform: 'translateY(8px)' },
                             { opacity: 1, transform: 'translateY(0)' }
-                        ], { duration: 180, easing: 'ease-out' });
+                        ], { duration: searchChanged ? 220 : 180, easing: 'ease-out' });
                     }
                 } else if (wasVisible && !reduceMotion) {
                     const animation = card.animate([
