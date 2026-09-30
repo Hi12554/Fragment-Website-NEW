@@ -899,8 +899,32 @@
         .sunc-widget-panel { min-width: 0; }
         .sunc-widget-title { margin-bottom: 10px; color: var(--text-gray); font: 700 0.75rem 'JetBrains Mono', monospace; }
         .sunc-widget-frame { display: block; width: 100%; height: 610px; border: 1px solid var(--card-border); border-radius: 12px; background: #0c0b0a; }
+        .discord-widget-wrap {
+            display: grid;
+            place-items: center;
+            width: min(100%, 370px);
+            padding: 8px;
+            margin: 0 auto 70px;
+            border: 1px solid rgba(215, 122, 45, 0.3);
+            border-radius: 18px;
+            background: linear-gradient(145deg, rgba(215, 122, 45, 0.08), rgba(255, 255, 255, 0.025));
+            box-shadow: 0 18px 48px rgba(0, 0, 0, 0.32);
+        }
+        .discord-widget {
+            display: block;
+            width: 350px;
+            max-width: 100%;
+            height: 500px;
+            border: 0;
+            border-radius: 11px;
+            background: #1e1f22;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.3);
+        }
         @media (max-width: 650px) { .test-info { grid-template-columns: 1fr; } }
-        @media (max-width: 760px) { .sunc-widget-grid { grid-template-columns: minmax(0, 1fr); } }
+        @media (max-width: 760px) {
+            .sunc-widget-grid { grid-template-columns: minmax(0, 1fr); }
+            .discord-widget-wrap { margin-bottom: 48px; }
+        }
 
         .faq-container { max-width: 800px; margin: 0 auto; }
         .faq-item { border-bottom: 1px solid var(--card-border); padding: 25px 0; cursor: pointer; }
@@ -1064,6 +1088,16 @@
                     <h3>Keyless & Ad-Free</h3>
                     <p>No keys. No ads. No nonsense. Just download, run, and inject. Note: Velocity API requires a key, but that key system is Velocity's, not ours.</p>
                 </div>
+            </div>
+            <div class="discord-widget-wrap">
+                <iframe
+                    class="discord-widget"
+                    src="https://discord.com/widget?id=1470588320386912402&amp;theme=dark"
+                    title="Fragment Discord server"
+                    allowtransparency="true"
+                    frameborder="0"
+                    sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"
+                    loading="lazy"></iframe>
             </div>
         </section>
 
