@@ -322,31 +322,94 @@
             width: min(100%, 480px);
             margin: -38px auto 20px;
         }
-        .executor-search span {
+        .executor-search > span:first-child {
             color: var(--text-gray);
             font: 700 0.68rem 'JetBrains Mono', monospace;
             text-transform: uppercase;
         }
         .executor-search input {
             width: 100%;
-            min-height: 44px;
-            padding: 11px 14px;
+            min-height: 48px;
+            padding: 12px 14px;
             border: 1px solid var(--card-border);
             border-radius: 10px;
             color: var(--text-white);
             background: rgba(255, 255, 255, 0.04);
-            font: 0.9rem 'Inter', sans-serif;
+            font: 1rem 'Inter', sans-serif;
             transition: border-color 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
         }
-        .executor-search input::placeholder { color: var(--text-muted); }
-        .executor-search span { transition: color 180ms ease; }
-        .executor-search:focus-within span { color: var(--pumpkin-soft); }
-        .executor-search input:focus-visible {
-            outline: none;
+        .executor-search-field {
+            position: relative;
+            display: block;
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.04);
+            transition: border-color 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
+        }
+        .executor-search-field:focus-within {
             border-color: rgba(240, 161, 93, 0.65);
             background: rgba(255, 255, 255, 0.06);
             box-shadow: 0 0 0 3px rgba(215, 122, 45, 0.14);
         }
+        .executor-search-field input {
+            position: relative;
+            z-index: 2;
+            display: block;
+            border: 0;
+            background: transparent;
+            color: transparent;
+            -webkit-text-fill-color: transparent;
+            caret-color: transparent;
+            line-height: 22px;
+            font-kerning: none;
+            font-variant-ligatures: none;
+            letter-spacing: normal;
+            transition: none;
+        }
+        .executor-search-input-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            display: block;
+            padding: 12px 14px;
+            overflow: hidden;
+            color: var(--text-white);
+            font: 1rem 'Inter', sans-serif;
+            line-height: 22px;
+            font-kerning: none;
+            font-variant-ligatures: none;
+            letter-spacing: normal;
+            white-space: pre;
+            pointer-events: none;
+        }
+        .executor-search-character {
+            animation: executorCharacterType 240ms ease-out both;
+        }
+        .executor-search-caret {
+            position: relative;
+        }
+        .executor-search-caret::after {
+            position: absolute;
+            top: -0.1em;
+            left: 0;
+            width: 1px;
+            height: 1.2em;
+            background: var(--text-white);
+            content: "";
+            animation: executorCaretBlink 1s steps(2, start) infinite;
+        }
+        @keyframes executorCharacterType {
+            from { opacity: 0; color: var(--pumpkin-soft); }
+            to { opacity: 1; color: var(--text-white); }
+        }
+        @keyframes executorCaretBlink { to { visibility: hidden; } }
+        .executor-search input::placeholder {
+            color: var(--text-muted);
+            -webkit-text-fill-color: var(--text-muted);
+        }
+        .executor-search > span:first-child { transition: color 180ms ease; }
+        .executor-search:focus-within > span:first-child { color: var(--pumpkin-soft); }
+        .executor-search-field input:focus-visible { outline: none; }
 
         .executor-filter {
             display: flex;
@@ -387,8 +450,10 @@
         }
         @media (prefers-reduced-motion: reduce) {
             .executor-filter button { transition: none; }
-            .executor-search input,
-            .executor-search span { transition: none; }
+            .executor-search-field { transition: none; }
+            .executor-search > span:first-child { transition: none; }
+            .executor-search-character { animation: none; }
+            .executor-search-caret::after { animation: none; }
         }
 
         .credit-section {
@@ -1091,7 +1156,10 @@
             </div>
             <label class="executor-search" for="executor-search-input">
                 <span>Search executors</span>
-                <input id="executor-search-input" type="search" placeholder="Name or filename" autocomplete="off" oninput="filterExecutors()">
+                <span class="executor-search-field">
+                    <input id="executor-search-input" type="search" placeholder="Name or filename" autocomplete="off" oninput="handleExecutorSearchInput()" onfocus="updateExecutorSearchOverlay()" onblur="updateExecutorSearchOverlay()" onkeyup="updateExecutorSearchOverlay()" onclick="updateExecutorSearchOverlay()" onselect="updateExecutorSearchOverlay()">
+                    <span class="executor-search-input-overlay" id="executor-search-input-overlay" aria-hidden="true"></span>
+                </span>
             </label>
             <div class="executor-filter" id="executor-filters" role="group" aria-label="Filter executors by status">
                 <button type="button" data-filter="all" aria-pressed="true" onclick="filterExecutors('all')">All</button>
@@ -1326,6 +1394,57 @@
         let executorFilterSequence = 0;
         let previousExecutorSearchTerm = '';
 
+        function updateExecutorSearchOverlay(animateInsertedCharacters = false) {
+            const input = document.getElementById('executor-search-input');
+            const overlay = document.getElementById('executor-search-input-overlay');
+            const previousCharacters = Array.from(input.dataset.previousValue || '');
+            const currentCharacters = Array.from(input.value);
+            let commonPrefix = 0;
+            let commonSuffix = 0;
+
+            while (commonPrefix < previousCharacters.length &&
+                commonPrefix < currentCharacters.length &&
+                previousCharacters[commonPrefix] === currentCharacters[commonPrefix]) {
+                commonPrefix++;
+            }
+            while (commonSuffix < previousCharacters.length - commonPrefix &&
+                commonSuffix < currentCharacters.length - commonPrefix &&
+                previousCharacters[previousCharacters.length - 1 - commonSuffix] ===
+                    currentCharacters[currentCharacters.length - 1 - commonSuffix]) {
+                commonSuffix++;
+            }
+
+            const insertedEnd = currentCharacters.length - commonSuffix;
+            const caretIndex = input.selectionStart ?? currentCharacters.length;
+            const characterElements = [];
+            currentCharacters.forEach((character, index) => {
+                if (index === caretIndex && document.activeElement === input) {
+                    const caret = document.createElement('span');
+                    caret.className = 'executor-search-caret';
+                    characterElements.push(caret);
+                }
+
+                const element = document.createElement('span');
+                element.textContent = character;
+                if (animateInsertedCharacters && index >= commonPrefix && index < insertedEnd) {
+                    element.className = 'executor-search-character';
+                }
+                characterElements.push(element);
+            });
+            if (caretIndex >= currentCharacters.length && document.activeElement === input) {
+                const caret = document.createElement('span');
+                caret.className = 'executor-search-caret';
+                characterElements.push(caret);
+            }
+            overlay.replaceChildren(...characterElements);
+            input.dataset.previousValue = input.value;
+        }
+
+        function handleExecutorSearchInput() {
+            updateExecutorSearchOverlay(true);
+            filterExecutors();
+        }
+
         function filterExecutors(filter) {
             const activeFilter = filter || document.querySelector('#executor-filters [aria-pressed="true"]').dataset.filter;
             const searchInput = document.getElementById('executor-search-input');
@@ -1335,15 +1454,6 @@
             const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
             const filterSequence = ++executorFilterSequence;
             let visibleCount = 0;
-
-            if (searchChanged && !reduceMotion) {
-                searchInput.getAnimations().forEach(animation => animation.cancel());
-                searchInput.animate([
-                    { transform: 'scale(1)' },
-                    { transform: 'scale(1.015)' },
-                    { transform: 'scale(1)' }
-                ], { duration: 220, easing: 'ease-out' });
-            }
 
             document.querySelectorAll('#executor-grid .executor-card').forEach(card => {
                 card.getAnimations().forEach(animation => animation.cancel());
