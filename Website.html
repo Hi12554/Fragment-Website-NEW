@@ -316,6 +316,33 @@
             background: rgba(104, 190, 135, 0.08);
         }
 
+        .executor-search {
+            display: grid;
+            gap: 7px;
+            width: min(100%, 480px);
+            margin: -38px auto 20px;
+        }
+        .executor-search span {
+            color: var(--text-gray);
+            font: 700 0.68rem 'JetBrains Mono', monospace;
+            text-transform: uppercase;
+        }
+        .executor-search input {
+            width: 100%;
+            min-height: 44px;
+            padding: 11px 14px;
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            color: var(--text-white);
+            background: rgba(255, 255, 255, 0.04);
+            font: 0.9rem 'Inter', sans-serif;
+        }
+        .executor-search input::placeholder { color: var(--text-muted); }
+        .executor-search input:focus-visible {
+            outline: 2px solid var(--pumpkin-soft);
+            outline-offset: 2px;
+        }
+
         .executor-filter {
             display: flex;
             justify-content: center;
@@ -323,7 +350,7 @@
             width: fit-content;
             max-width: 100%;
             padding: 4px;
-            margin: -38px auto 32px;
+            margin: 0 auto 32px;
             border: 1px solid var(--card-border);
             border-radius: 12px;
             background: rgba(255, 255, 255, 0.03);
@@ -347,6 +374,12 @@
             outline-offset: 2px;
         }
         .executor-card[hidden] { display: none; }
+        .executor-empty-state {
+            grid-column: 1 / -1;
+            padding: 24px;
+            color: var(--text-gray);
+            text-align: center;
+        }
         @media (prefers-reduced-motion: reduce) {
             .executor-filter button { transition: none; }
         }
@@ -1049,6 +1082,10 @@
                 <h1>Other Executors</h1>
                 <p>Download the latest files for Madium, Velocity, Solora, and Xeno.</p>
             </div>
+            <label class="executor-search" for="executor-search-input">
+                <span>Search executors</span>
+                <input id="executor-search-input" type="search" placeholder="Name or filename" autocomplete="off" oninput="filterExecutors(null, false)">
+            </label>
             <div class="executor-filter" id="executor-filters" role="group" aria-label="Filter executors by status">
                 <button type="button" data-filter="all" aria-pressed="true" onclick="filterExecutors('all')">All</button>
                 <button type="button" data-filter="verified" aria-pressed="false" onclick="filterExecutors('verified')">Verified</button>
@@ -1115,6 +1152,7 @@
                         <a href="https://www.xeno.now/" target="_blank" rel="noopener noreferrer">Official Website</a>
                     </div>
                 </div>
+                <p class="executor-empty-state" id="executor-empty-state" role="status" hidden>No executors match your search and filter.</p>
             </div>
         </section>
 
@@ -1278,13 +1316,23 @@
             toggle.setAttribute('aria-expanded', isOpen);
         }
 
-        function filterExecutors(filter) {
+        function filterExecutors(filter, animate = true) {
+            const activeFilter = filter || document.querySelector('#executor-filters [aria-pressed="true"]').dataset.filter;
+            const searchTerm = document.getElementById('executor-search-input').value.trim().toLocaleLowerCase();
             const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            let visibleCount = 0;
+
             document.querySelectorAll('#executor-grid .executor-card').forEach(card => {
                 card.getAnimations().forEach(animation => animation.cancel());
-                const isVisible = filter === 'all' || card.dataset.safety === filter;
+                const cardName = card.querySelector('h3').textContent;
+                const fileName = card.querySelector('p').textContent;
+                const matchesSearch = `${cardName} ${fileName}`.toLocaleLowerCase().includes(searchTerm);
+                const matchesFilter = activeFilter === 'all' || card.dataset.safety === activeFilter;
+                const isVisible = matchesSearch && matchesFilter;
                 card.hidden = !isVisible;
-                if (!isVisible || reduceMotion) return;
+                if (!isVisible) return;
+                visibleCount++;
+                if (reduceMotion || !animate) return;
 
                 card.animate([
                     { opacity: 0 },
@@ -1294,8 +1342,9 @@
                     easing: 'ease-out'
                 });
             });
+            document.getElementById('executor-empty-state').hidden = visibleCount > 0;
             document.querySelectorAll('#executor-filters [data-filter]').forEach(button => {
-                button.setAttribute('aria-pressed', String(button.dataset.filter === filter));
+                button.setAttribute('aria-pressed', String(button.dataset.filter === activeFilter));
             });
         }
 
