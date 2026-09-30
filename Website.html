@@ -336,11 +336,16 @@
             color: var(--text-white);
             background: rgba(255, 255, 255, 0.04);
             font: 0.9rem 'Inter', sans-serif;
+            transition: border-color 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
         }
         .executor-search input::placeholder { color: var(--text-muted); }
+        .executor-search span { transition: color 180ms ease; }
+        .executor-search:focus-within span { color: var(--pumpkin-soft); }
         .executor-search input:focus-visible {
-            outline: 2px solid var(--pumpkin-soft);
-            outline-offset: 2px;
+            outline: none;
+            border-color: rgba(240, 161, 93, 0.65);
+            background: rgba(255, 255, 255, 0.06);
+            box-shadow: 0 0 0 3px rgba(215, 122, 45, 0.14);
         }
 
         .executor-filter {
@@ -382,6 +387,8 @@
         }
         @media (prefers-reduced-motion: reduce) {
             .executor-filter button { transition: none; }
+            .executor-search input,
+            .executor-search span { transition: none; }
         }
 
         .credit-section {
@@ -1084,7 +1091,7 @@
             </div>
             <label class="executor-search" for="executor-search-input">
                 <span>Search executors</span>
-                <input id="executor-search-input" type="search" placeholder="Name or filename" autocomplete="off" oninput="filterExecutors(null, false)">
+                <input id="executor-search-input" type="search" placeholder="Name or filename" autocomplete="off" oninput="filterExecutors()">
             </label>
             <div class="executor-filter" id="executor-filters" role="group" aria-label="Filter executors by status">
                 <button type="button" data-filter="all" aria-pressed="true" onclick="filterExecutors('all')">All</button>
@@ -1316,31 +1323,44 @@
             toggle.setAttribute('aria-expanded', isOpen);
         }
 
-        function filterExecutors(filter, animate = true) {
+        let executorFilterSequence = 0;
+
+        function filterExecutors(filter) {
             const activeFilter = filter || document.querySelector('#executor-filters [aria-pressed="true"]').dataset.filter;
             const searchTerm = document.getElementById('executor-search-input').value.trim().toLocaleLowerCase();
             const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            const filterSequence = ++executorFilterSequence;
             let visibleCount = 0;
 
             document.querySelectorAll('#executor-grid .executor-card').forEach(card => {
                 card.getAnimations().forEach(animation => animation.cancel());
+                const wasVisible = !card.hidden;
                 const cardName = card.querySelector('h3').textContent;
                 const fileName = card.querySelector('p').textContent;
                 const matchesSearch = `${cardName} ${fileName}`.toLocaleLowerCase().includes(searchTerm);
                 const matchesFilter = activeFilter === 'all' || card.dataset.safety === activeFilter;
                 const isVisible = matchesSearch && matchesFilter;
-                card.hidden = !isVisible;
-                if (!isVisible) return;
-                visibleCount++;
-                if (reduceMotion || !animate) return;
 
-                card.animate([
-                    { opacity: 0 },
-                    { opacity: 1 }
-                ], {
-                    duration: 200,
-                    easing: 'ease-out'
-                });
+                if (isVisible) {
+                    card.hidden = false;
+                    visibleCount++;
+                    if (!wasVisible && !reduceMotion) {
+                        card.animate([
+                            { opacity: 0, transform: 'translateY(8px)' },
+                            { opacity: 1, transform: 'translateY(0)' }
+                        ], { duration: 180, easing: 'ease-out' });
+                    }
+                } else if (wasVisible && !reduceMotion) {
+                    const animation = card.animate([
+                        { opacity: 1, transform: 'translateY(0)' },
+                        { opacity: 0, transform: 'translateY(-6px)' }
+                    ], { duration: 140, easing: 'ease-in', fill: 'forwards' });
+                    animation.onfinish = () => {
+                        if (filterSequence === executorFilterSequence) card.hidden = true;
+                    };
+                } else {
+                    card.hidden = true;
+                }
             });
             document.getElementById('executor-empty-state').hidden = visibleCount > 0;
             document.querySelectorAll('#executor-filters [data-filter]').forEach(button => {
