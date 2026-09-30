@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <link href="/Review%20Handler/feedback.css" rel="stylesheet">
     <style>
         :root {
             --bg: #0c0b0a;
@@ -1049,6 +1050,7 @@
             <div class="home-actions">
                 <button onclick="showPage('download')" class="card-btn">Download</button>
                 <button onclick="showPage('build')" class="card-btn secondary-btn">Developer API</button>
+                <button type="button" onclick="openFeedbackModal()" class="card-btn secondary-btn">Rate Website</button>
             </div>
             <div class="grid">
                 <div class="card">
@@ -1354,6 +1356,7 @@
                 <a href="/download" onclick="navigateToPage(event, 'download')">Download</a>
                 <a href="/executors" onclick="navigateToPage(event, 'executors')">Other Executors</a>
                 <a href="/about" onclick="navigateToPage(event, 'about')">About</a>
+                <a href="#feedback-modal" onclick="openFeedbackModal(event)">Rate Website</a>
             </div>
         </div>
         <div class="footer-copy">&copy; 2026 FRAGMENT</div>
@@ -1364,6 +1367,36 @@
         <img src="https://cdn.phototourl.com/member/2026-09-28-39b34afa-63c3-4505-a3cb-7f26784b7991.png" alt="Expanded Fragment executor interface preview" onclick="event.stopPropagation()">
     </div>
 
+    <div id="feedback-modal" class="feedback-modal" hidden onclick="handleFeedbackBackdrop(event)">
+        <section class="feedback-dialog" role="dialog" aria-modal="true" aria-labelledby="feedback-title" aria-describedby="feedback-intro">
+            <button class="feedback-close" type="button" aria-label="Close feedback" onclick="closeFeedbackModal()">&times;</button>
+            <form id="feedback-form" novalidate onsubmit="submitWebsiteFeedback(event)">
+                <h2 id="feedback-title">Rate the website</h2>
+                <p class="feedback-dialog-intro" id="feedback-intro">How was your experience?</p>
+                <fieldset class="feedback-rating">
+                    <legend>Choose a rating (required)</legend>
+                    <div class="feedback-stars">
+                        <label class="feedback-star"><input type="radio" name="rating" value="1" onchange="updateFeedbackStars()"><span aria-hidden="true">&#9733;</span><span class="sr-only">1 star</span></label>
+                        <label class="feedback-star"><input type="radio" name="rating" value="2" onchange="updateFeedbackStars()"><span aria-hidden="true">&#9733;</span><span class="sr-only">2 stars</span></label>
+                        <label class="feedback-star"><input type="radio" name="rating" value="3" onchange="updateFeedbackStars()"><span aria-hidden="true">&#9733;</span><span class="sr-only">3 stars</span></label>
+                        <label class="feedback-star"><input type="radio" name="rating" value="4" onchange="updateFeedbackStars()"><span aria-hidden="true">&#9733;</span><span class="sr-only">4 stars</span></label>
+                        <label class="feedback-star"><input type="radio" name="rating" value="5" onchange="updateFeedbackStars()"><span aria-hidden="true">&#9733;</span><span class="sr-only">5 stars</span></label>
+                    </div>
+                </fieldset>
+                <label class="feedback-message-label" for="feedback-message">Message (optional)</label>
+                <textarea class="feedback-message" id="feedback-message" name="message" maxlength="1000" placeholder="Share any suggestions..."></textarea>
+                <div class="feedback-honeypot" aria-hidden="true"><label for="feedback-website">Leave this field empty</label><input id="feedback-website" name="website" tabindex="-1" autocomplete="off"></div>
+                <p class="feedback-privacy">Your rating and message will be sent to the Fragment Discord team.</p>
+                <p class="feedback-status" id="feedback-status" role="status" aria-live="polite"></p>
+                <div class="feedback-actions">
+                    <button class="feedback-cancel" type="button" onclick="closeFeedbackModal()">Cancel</button>
+                    <button class="card-btn" id="feedback-submit" type="submit">Send Feedback</button>
+                </div>
+            </form>
+        </section>
+    </div>
+
+    <script src="/Review%20Handler/feedback.js"></script>
     <script>
         function openImageLightbox() {
             const lightbox = document.getElementById('image-lightbox');
