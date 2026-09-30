@@ -76,6 +76,16 @@ async function submitWebsiteFeedback(event) {
     }
 }
 
+document.addEventListener('click', event => {
+    if (event.defaultPrevented || event.button !== 0) return;
+    const downloadLink = event.target instanceof Element
+        ? event.target.closest('a[download]')
+        : null;
+    if (!downloadLink) return;
+
+    window.setTimeout(openFeedbackModal, 0);
+});
+
 document.addEventListener('keydown', event => {
     const modal = document.getElementById('feedback-modal');
     if (modal.hidden) return;
