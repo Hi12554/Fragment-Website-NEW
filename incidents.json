@@ -9,7 +9,7 @@
     },
     {
       "service": "Fragment Velocity API",
-      "status": "resolved",
+      "status": "up",
       "startedAt": "2026-09-25T11:00:15-05:00",
       "startedAtLabel": "Friday, September 25, 2026 11:00:15 AM CDT",
       "summary": "Fragment Velocity API was down and required a Roblox downgrade to use it.",
