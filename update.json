@@ -1,9 +1,7 @@
 {
-  "CurrentVersion": "1.0.6",
+  "CurrentVersion": "1.0.7",
   "Changelogs": [
-    "Added a Halloween theme",
-    "Added a Luau error checker",
-    "Added search to Settings."
+    "Updated the backend URLs"
   ],
   "DownloadUrl": "https://www.use-fragment.lol/download"
 }
