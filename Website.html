@@ -753,10 +753,6 @@
         .velocity-status-label::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #ff6868; box-shadow: 0 0 12px #ff6868; }
         .velocity-status-bar[data-state="up"] .velocity-status-label::before { background: #83d1a4; box-shadow: 0 0 12px #83d1a4; }
         .velocity-status-bar[data-state="unknown"] .velocity-status-label::before { background: var(--text-muted); box-shadow: none; }
-        .velocity-status-bar .status-action { margin-left: 0; white-space: nowrap; }
-        .mobile-downgrade-notice { display: none; }
-        .velocity-status-bar [hidden] { display: none; }
-
         .release-card { padding: 38px; }
         .release-card h2 { margin-bottom: 12px; font-size: 2rem; }
         .release-card > p { color: var(--text-gray); line-height: 1.7; }
@@ -859,19 +855,6 @@
             padding: 25px; border-bottom: 1px solid var(--card-border);
             background: var(--glass); margin-bottom: 10px; border-radius: 12px;
         }
-        .status-action {
-            display: inline-block;
-            margin-left: 16px;
-            padding: 8px 14px;
-            border-radius: 8px;
-            color: white;
-            background: #302d70;
-            text-decoration: none;
-            font-size: 0.75rem;
-            font-weight: 700;
-            transition: var(--transition);
-        }
-        .status-action:hover { background: #4943a0; transform: translateY(-2px); }
         .status-indicator { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 10px; }
         .up { background: #00ff88; box-shadow: 0 0 10px #00ff88; }
         .down { background: #ff4444; box-shadow: 0 0 10px #ff4444; }
@@ -988,8 +971,7 @@
             .release-actions { flex-direction: column; }
             .release-actions .card-btn { text-align: center; }
             .release-actions .download-installer { display: none; }
-            .mobile-download-notice,
-            .mobile-downgrade-notice {
+            .mobile-download-notice {
                 display: block;
                 padding: 14px 16px;
                 border: 1px solid rgba(215, 122, 45, 0.35);
@@ -1001,9 +983,7 @@
                 line-height: 1.5;
             }
             .velocity-status-bar { flex-direction: column; align-items: flex-start; gap: 8px; margin: -28px 0 48px; padding: 16px; }
-            .velocity-status-bar .status-action { display: none; }
             .status-row { align-items: flex-start; flex-direction: column; gap: 12px; padding: 18px; }
-            .status-action { margin-left: 8px; }
             .footer-content { flex-direction: column; }
         }
     </style>
@@ -1111,8 +1091,6 @@
             <div class="velocity-status-bar" id="velocity-status-bar" data-state="unknown">
                 <span class="velocity-status-label">FRAGMENT VELOCITY API STATUS</span>
                 <span id="velocity-status-text">Checking status...</span>
-                <a class="status-action" id="velocity-status-action" href="https://roblox-downgrader.onrender.com?channel=LIVE&amp;binaryType=WindowsPlayer&amp;version=version-2366ba214ec740ca&amp;compressZip=true&amp;compressionLevel=5" target="_blank" rel="noopener noreferrer" hidden>DOWN (ROBLOX DOWNGRADE REQUIRED)</a>
-                <span class="mobile-downgrade-notice" id="mobile-downgrade-notice" role="status" hidden>Roblox downgrade unavailable on mobile. Use a Windows PC.</span>
             </div>
             <div class="release-history" id="release-history">
                 <button class="release-history-toggle" type="button" onclick="toggleReleaseHistory()" aria-expanded="false" aria-controls="release-history-content"><span class="release-history-heading"><span>Release History</span><span class="release-current-version">Current version: v1.0.6</span></span></button>
@@ -1633,8 +1611,6 @@
             const container = document.getElementById('velocity-status-content');
             const banner = document.getElementById('velocity-status-bar');
             const statusText = document.getElementById('velocity-status-text');
-            const statusAction = document.getElementById('velocity-status-action');
-            const mobileNotice = document.getElementById('mobile-downgrade-notice');
             const homeStatus = document.getElementById('home-velocity-status');
 
             try {
@@ -1642,8 +1618,8 @@
                 if (!response.ok) throw new Error('Status request failed');
                 const data = await response.json();
                 const state = data && ['up', 'down'].includes(data.velocity) ? data.velocity : 'unknown';
-                const label = state === 'up' ? 'Operational' : state === 'down' ? 'Roblox downgrade required' : 'Status unavailable';
-                const bannerLabel = state === 'up' ? 'UP (OPERATIONAL)' : state === 'down' ? '' : 'STATUS UNAVAILABLE';
+                const label = state === 'up' ? 'Operational' : state === 'down' ? 'Down' : 'Status unavailable';
+                const bannerLabel = state === 'up' ? 'UP (OPERATIONAL)' : state === 'down' ? 'DOWN' : 'STATUS UNAVAILABLE';
                 const homeLabel = state === 'up' ? 'UP' : state === 'down' ? 'DOWN' : 'STATUS UNAVAILABLE';
 
                 if (container) {
@@ -1656,11 +1632,6 @@
                 }
                 if (banner) banner.dataset.state = state;
                 if (statusText) statusText.textContent = bannerLabel;
-                if (statusAction) {
-                    statusAction.textContent = 'DOWN (ROBLOX DOWNGRADE REQUIRED)';
-                    statusAction.hidden = state !== 'down';
-                }
-                if (mobileNotice) mobileNotice.hidden = state !== 'down';
                 if (homeStatus) {
                     homeStatus.dataset.state = state;
                     homeStatus.textContent = homeLabel;
@@ -1669,8 +1640,6 @@
                 if (container) container.innerHTML = '<div class="status-row"><span>Fragment Velocity API</span><span><span class="status-indicator unknown"></span>Status unavailable</span></div>';
                 if (banner) banner.dataset.state = 'unknown';
                 if (statusText) statusText.textContent = 'STATUS UNAVAILABLE';
-                if (statusAction) statusAction.hidden = true;
-                if (mobileNotice) mobileNotice.hidden = true;
                 if (homeStatus) {
                     homeStatus.dataset.state = 'unknown';
                     homeStatus.textContent = 'STATUS UNAVAILABLE';
