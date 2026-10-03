@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#0c0b0a">
+    <title>Page Not Found | Fragment</title>
+    <link rel="icon" type="image/png" href="/fragment-halloween.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <script>
+        try {
+            const savedTheme = localStorage.getItem('fragment-theme');
+            if (savedTheme === 'light' || savedTheme === 'dark') {
+                document.documentElement.dataset.theme = savedTheme;
+            }
+        } catch {
+            // Keep the default dark theme when browser storage is unavailable.
+        }
+    </script>
+    <style>
+        :root {
+            color-scheme: dark;
+            --page-bg: #0c0b0a;
+            --surface: #121212;
+            --surface-border: rgba(255, 255, 255, 0.08);
+            --text: #f2efe8;
+            --muted: #b7b0a7;
+            --accent: #d77a2d;
+            --accent-soft: #f0a15d;
+        }
+
+        :root[data-theme="light"] {
+            color-scheme: light;
+            --page-bg: #f5f3ef;
+            --surface: #fff;
+            --surface-border: rgba(51, 42, 34, 0.14);
+            --text: #24211e;
+            --muted: #5d5751;
+            --accent: #bc611d;
+            --accent-soft: #a95113;
+        }
+
+        * { box-sizing: border-box; }
+        body {
+            min-height: 100vh;
+            margin: 0;
+            display: grid;
+            place-items: center;
+            overflow-x: hidden;
+            padding: 28px;
+            color: var(--text);
+            background: var(--page-bg);
+            font-family: 'Inter', sans-serif;
+        }
+
+        body::before {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background: radial-gradient(circle at 50% 35%, rgba(215, 122, 45, 0.07), transparent 42%);
+            content: "";
+        }
+
+        .topbar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: flex;
+            width: 100%;
+            align-items: center;
+            justify-content: space-between;
+            padding: 24px clamp(20px, 5vw, 64px);
+        }
+
+        .brand {
+            color: var(--text);
+            font-size: 1.05rem;
+            font-weight: 900;
+            letter-spacing: -0.06em;
+            text-decoration: none;
+        }
+
+        .theme-toggle {
+            min-height: 40px;
+            padding: 8px 13px;
+            border: 1px solid var(--surface-border);
+            border-radius: 100px;
+            color: var(--text);
+            background: var(--surface);
+            font: 600 0.8rem 'Inter', sans-serif;
+            cursor: pointer;
+        }
+
+        .theme-toggle:focus-visible,
+        .actions a:focus-visible {
+            outline: 2px solid var(--accent-soft);
+            outline-offset: 3px;
+        }
+
+        .error-card {
+            width: min(100%, 580px);
+            padding: clamp(28px, 6vw, 48px);
+            border: 1px solid var(--surface-border);
+            border-radius: 20px;
+            background: var(--surface);
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--accent-soft);
+            font: 700 0.7rem 'JetBrains Mono', monospace;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .eyebrow::before {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+            content: "";
+        }
+
+        h1 {
+            margin: 18px 0 10px;
+            color: var(--text);
+            font-size: clamp(2rem, 8vw, 3rem);
+            font-weight: 800;
+            letter-spacing: -0.06em;
+            line-height: 1.1;
+        }
+
+        .message {
+            max-width: 440px;
+            margin: 0;
+            color: var(--muted);
+            font-size: 0.95rem;
+            line-height: 1.7;
+            overflow-wrap: anywhere;
+        }
+
+        .requested-path {
+            display: block;
+            max-width: 100%;
+            margin-top: 8px;
+            color: var(--muted);
+            font: 0.75rem 'JetBrains Mono', monospace;
+            overflow-wrap: anywhere;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: flex-start;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .actions a {
+            display: inline-flex;
+            min-height: 48px;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 20px;
+            border: 1px solid var(--surface-border);
+            border-radius: 10px;
+            color: var(--text);
+            font-size: 0.88rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: transform 180ms ease, background 180ms ease, border-color 180ms ease;
+        }
+
+        .actions a:hover { transform: translateY(-1px); }
+        .actions .home-link {
+            border-color: transparent;
+            color: #140d09;
+            background: var(--accent);
+        }
+        .actions .home-link:hover { background: var(--accent-soft); }
+        .actions .back-link:hover { border-color: var(--accent); }
+
+        @media (max-width: 480px) {
+            body { padding: 20px; }
+            .topbar { padding: 18px 20px; }
+            .error-card { border-radius: 16px; }
+            .actions { flex-direction: column; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; }
+        }
+    </style>
+</head>
+<body>
+    <header class="topbar">
+        <a class="brand" href="/">FRAGMENT</a>
+        <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch to light mode" aria-pressed="false">☼ Light mode</button>
+    </header>
+    <main class="error-card">
+        <span class="eyebrow">404 · Page not found</span>
+        <h1>Nothing here.</h1>
+        <p class="message">There’s no page at this address.
+            <span class="requested-path" id="requested-path"></span>
+        </p>
+        <div class="actions">
+            <a class="home-link" href="/">Go to home</a>
+            <a class="back-link" href="/">Go to home</a>
+        </div>
+    </main>
+    <script>
+        const requestedPath = document.getElementById('requested-path');
+        requestedPath.textContent = window.location.pathname;
+
+        const themeToggle = document.getElementById('theme-toggle');
+        function updateThemeToggle() {
+            const isLight = document.documentElement.dataset.theme === 'light';
+            themeToggle.textContent = `${isLight ? '☾' : '☼'} ${isLight ? 'Dark' : 'Light'} mode`;
+            themeToggle.setAttribute('aria-label', `Switch to ${isLight ? 'dark' : 'light'} mode`);
+            themeToggle.setAttribute('aria-pressed', String(isLight));
+        }
+
+        updateThemeToggle();
+        themeToggle.addEventListener('click', () => {
+            const isLight = document.documentElement.dataset.theme !== 'light';
+            document.documentElement.dataset.theme = isLight ? 'light' : 'dark';
+            updateThemeToggle();
+            try {
+                localStorage.setItem('fragment-theme', isLight ? 'light' : 'dark');
+            } catch {
+                // Keep the selected theme for this page view if storage is unavailable.
+            }
+        });
+    </script>
+</body>
+</html>
