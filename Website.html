@@ -9,6 +9,16 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&family=JetBrains+Mono&display=swap" rel="stylesheet">
     <link href="/Review%20Handler/feedback.css" rel="stylesheet">
+    <script>
+        try {
+            const savedTheme = localStorage.getItem('fragment-theme');
+            if (savedTheme === 'light' || savedTheme === 'dark') {
+                document.documentElement.dataset.theme = savedTheme;
+            }
+        } catch {
+            // Keep the default dark theme when browser storage is unavailable.
+        }
+    </script>
     <style>
         :root {
             --bg: #0c0b0a;
@@ -23,6 +33,22 @@
             --transition: all 0.3s ease;
             --glass: rgba(255, 255, 255, 0.025);
             --pumpkin-soft: #f0a15d;
+            color-scheme: dark;
+        }
+
+        :root[data-theme="light"] {
+            --bg: #f5f3ef;
+            --text-white: #24211e;
+            --text-gray: #5d5751;
+            --text-muted: #817970;
+            --accent: #d77a2d;
+            --accent-strong: #bc611d;
+            --accent-2: #8b5e37;
+            --card-bg: #fff;
+            --card-border: rgba(51, 42, 34, 0.14);
+            --glass: rgba(255, 255, 255, 0.72);
+            --pumpkin-soft: #a95113;
+            color-scheme: light;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
@@ -32,6 +58,10 @@
             color: var(--text-white); 
             overflow-x: hidden; 
             scroll-behavior: smooth; 
+        }
+
+        :root[data-theme="light"] body {
+            background: linear-gradient(180deg, #fbfaf8 0%, #f0ede8 100%);
         }
 
         body::before {
@@ -46,6 +76,15 @@
             content: ""; position: fixed; inset: 0; pointer-events: none;
             background: linear-gradient(90deg, rgba(255,255,255,0.015) 0, rgba(255,255,255,0.015) 1px, transparent 1px, transparent 32px);
             opacity: 0.2;
+        }
+
+        :root[data-theme="light"] body::before {
+            background:
+                radial-gradient(circle at 18% 8%, rgba(215, 122, 45, 0.1), transparent 18%),
+                radial-gradient(circle at 78% 12%, rgba(210, 130, 70, 0.06), transparent 16%);
+        }
+        :root[data-theme="light"] body::after {
+            background: linear-gradient(90deg, rgba(71, 55, 39, 0.025) 0, rgba(71, 55, 39, 0.025) 1px, transparent 1px, transparent 32px);
         }
 
         /* NAVIGATION SYSTEM */
@@ -139,6 +178,25 @@
             transform: translateY(-1px);
             box-shadow: none;
         }
+
+        .theme-toggle {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            flex: 0 0 auto;
+            padding: 8px 12px;
+            border: 1px solid var(--card-border);
+            border-radius: 100px;
+            color: var(--text-white);
+            background: var(--glass);
+            font: 600 0.75rem 'Inter', sans-serif;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .theme-toggle:hover { border-color: rgba(215, 122, 45, 0.55); }
+        .theme-toggle:focus-visible { outline: 2px solid var(--pumpkin-soft); outline-offset: 3px; }
+        .theme-toggle-icon { font-size: 1rem; line-height: 1; }
 
         .nav-btn {
             background: var(--accent) !important; 
@@ -960,6 +1018,93 @@
             letter-spacing: 0.5px;
             text-align: center;
         }
+
+        :root[data-theme="light"] .nav-capsule,
+        :root[data-theme="light"] nav.initial .nav-capsule,
+        :root[data-theme="light"] nav.scrolled .nav-capsule {
+            border-color: var(--card-border);
+            background: rgba(250, 248, 245, 0.94);
+            box-shadow: 0 12px 30px rgba(62, 48, 34, 0.08);
+        }
+        :root[data-theme="light"] .nav-logo,
+        :root[data-theme="light"] .footer-brand { color: var(--text-white); }
+        :root[data-theme="light"] .nav-links a:hover,
+        :root[data-theme="light"] .nav-links a.active { background: rgba(48, 39, 31, 0.07); }
+        :root[data-theme="light"] .card {
+            border-color: var(--card-border);
+            background: rgba(255, 255, 255, 0.78);
+            box-shadow: 0 18px 45px rgba(62, 48, 34, 0.06);
+        }
+        :root[data-theme="light"] .card:hover {
+            border-color: rgba(100, 75, 52, 0.24);
+            background: #fff;
+        }
+        :root[data-theme="light"] .home-actions .secondary-btn {
+            color: var(--text-white);
+            background: #e7e2da;
+        }
+        :root[data-theme="light"] .home-actions .secondary-btn:hover { background: #ddd6cc; }
+        :root[data-theme="light"] .about-message {
+            border-color: var(--card-border);
+            background: linear-gradient(145deg, #fff, #f0ede8);
+            color: var(--text-gray);
+        }
+        :root[data-theme="light"] .about-note { color: #655a70; }
+        :root[data-theme="light"] .about-note strong { color: #544277; }
+        :root[data-theme="light"] .executor-preview,
+        :root[data-theme="light"] .release-card,
+        :root[data-theme="light"] .release-history {
+            border-color: var(--card-border);
+            background: linear-gradient(145deg, #fff, #f0ede8);
+            box-shadow: 0 24px 60px rgba(62, 48, 34, 0.1);
+        }
+        :root[data-theme="light"] .preview-topbar { color: #3c3740; }
+        :root[data-theme="light"] .preview-version,
+        :root[data-theme="light"] .preview-heading small,
+        :root[data-theme="light"] .preview-stat span { color: #716a78; }
+        :root[data-theme="light"] .preview-stat,
+        :root[data-theme="light"] .preview-image { border-color: rgba(61, 50, 72, 0.16); }
+        :root[data-theme="light"] .preview-stat { background: rgba(54, 43, 65, 0.04); }
+        :root[data-theme="light"] .velocity-status-bar { background: #f4e9e5; }
+        :root[data-theme="light"] .velocity-status-bar[data-state="up"] { background: #e8f4eb; }
+        :root[data-theme="light"] .velocity-status-bar[data-state="unknown"] { background: #f0ede8; }
+        :root[data-theme="light"] .release-meta > div,
+        :root[data-theme="light"] .release-changelog-tile {
+            border-color: var(--card-border);
+            background: rgba(255, 255, 255, 0.62);
+        }
+        :root[data-theme="light"] .release-meta span,
+        :root[data-theme="light"] .release-entry time,
+        :root[data-theme="light"] .footer-tagline { color: var(--text-muted); }
+        :root[data-theme="light"] .release-history-content { border-top-color: var(--card-border); }
+        :root[data-theme="light"] .release-entry { border-left-color: rgba(61, 50, 72, 0.2); }
+        :root[data-theme="light"] .status-row,
+        :root[data-theme="light"] .incident-entry,
+        :root[data-theme="light"] .test-info div,
+        :root[data-theme="light"] .credit-section,
+        :root[data-theme="light"] .sunc-widget-card {
+            border-color: var(--card-border);
+            background: rgba(255, 255, 255, 0.72);
+        }
+        :root[data-theme="light"] .executor-search input,
+        :root[data-theme="light"] .executor-search-field,
+        :root[data-theme="light"] .executor-filter { background: rgba(255, 255, 255, 0.78); }
+        :root[data-theme="light"] .executor-search-field:focus-within { background: #fff; }
+        :root[data-theme="light"] .executor-filter button[aria-pressed="true"] { color: #fff; }
+        :root[data-theme="light"] .test-result { color: #5a4cac; }
+        :root[data-theme="light"] .test-link,
+        :root[data-theme="light"] .sunc-widget-card a { color: #5146a1; }
+        :root[data-theme="light"] .test-link:hover,
+        :root[data-theme="light"] .sunc-widget-card a:hover { color: #30256f; }
+        :root[data-theme="light"] footer {
+            border-top-color: var(--card-border);
+            background: linear-gradient(180deg, rgba(245, 243, 239, 0.72), #e9e5df);
+        }
+        :root[data-theme="light"] .footer-copy {
+            border-top-color: var(--card-border);
+            color: var(--text-muted);
+        }
+
         @media (max-width: 650px) {
             .nav-capsule,
             nav.initial .nav-capsule,
@@ -986,6 +1131,7 @@
             }
             .nav-links::-webkit-scrollbar { display: none; }
             .nav-links a { flex: 0 0 auto; padding: 8px 11px; }
+            .nav-links .theme-toggle { flex: 0 0 auto; }
             .nav-links .discord-btn { padding: 8px 12px !important; }
             main { margin-top: 90px; }
             .page { padding: 48px 5%; }
@@ -1034,6 +1180,10 @@
                 <a href="/executors" onclick="navigateToPage(event, 'executors')" id="link-executors">Other Executors</a>
                 <a href="/socials" onclick="navigateToPage(event, 'socials')" id="link-socials">Socials</a>
                 <a href="/credits" onclick="navigateToPage(event, 'credits')" id="link-credits">Credits</a>
+                <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch to light mode" aria-pressed="false">
+                    <span class="theme-toggle-icon" id="theme-toggle-icon" aria-hidden="true">☼</span>
+                    <span id="theme-toggle-label">Light mode</span>
+                </button>
                 <a href="https://discord.gg/VvSK3zUHZP" class="nav-btn discord-btn" target="_blank" rel="noopener noreferrer">
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.54 5.27A16.9 16.9 0 0 0 15.4 4l-.5 1.02a15.3 15.3 0 0 0-5.8 0L8.6 4a16.9 16.9 0 0 0-4.14 1.27C1.84 9.17 1.13 12.98 1.48 16.74a16.7 16.7 0 0 0 5.1 2.57l1.24-1.69a10.3 10.3 0 0 1-1.95-.94l.48-.37c3.76 1.76 7.83 1.76 11.54 0l.49.37c-.62.37-1.27.69-1.96.94l1.24 1.69a16.7 16.7 0 0 0 5.1-2.57c.41-4.36-.7-8.13-3.22-11.47ZM8.66 14.58c-1.1 0-2-.99-2-2.2s.88-2.2 2-2.2c1.13 0 2.02.99 2 2.2 0 1.21-.88 2.2-2 2.2Zm6.68 0c-1.1 0-2-.99-2-2.2s.88-2.2 2-2.2c1.13 0 2.02.99 2 2.2s-.88 2.2-2 2.2Z"/></svg>
                     Join Discord
@@ -1602,6 +1752,37 @@
             });
         }
 
+        function setTheme(theme, savePreference = true) {
+            const isLight = theme === 'light';
+            document.documentElement.dataset.theme = isLight ? 'light' : 'dark';
+
+            const toggle = document.getElementById('theme-toggle');
+            const icon = document.getElementById('theme-toggle-icon');
+            const label = document.getElementById('theme-toggle-label');
+            toggle.setAttribute('aria-pressed', String(isLight));
+            toggle.setAttribute('aria-label', `Switch to ${isLight ? 'dark' : 'light'} mode`);
+            icon.textContent = isLight ? '☾' : '☼';
+            label.textContent = `${isLight ? 'Dark' : 'Light'} mode`;
+
+            if (savePreference) {
+                try {
+                    localStorage.setItem('fragment-theme', isLight ? 'light' : 'dark');
+                } catch {
+                    // Keep the selected theme for this page view if storage is unavailable.
+                }
+            }
+        }
+
+        function initialiseThemeToggle() {
+            const toggle = document.getElementById('theme-toggle');
+            const currentTheme = document.documentElement.dataset.theme === 'light' ? 'light' : 'dark';
+            setTheme(currentTheme, false);
+            toggle.addEventListener('click', () => {
+                const nextTheme = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light';
+                setTheme(nextTheme);
+            });
+        }
+
         function getPageFromPath() {
             const pathPage = window.location.pathname.replace(/^\/+|\/+$/g, '');
             const page = document.getElementById(pathPage);
@@ -1644,6 +1825,7 @@
         }
         showPage(initialPage, false);
         initialiseSuncWidgets();
+        initialiseThemeToggle();
 
         function loadBuildPage() {
             const apiData = FragmentAPI.getNavAPIs();
