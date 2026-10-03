@@ -876,6 +876,44 @@
         .test-result { color: #8b84ff; font-family: 'JetBrains Mono', monospace; font-weight: 700 !important; }
         .test-link { color: #aaa8ff; text-decoration: none; font-size: 0.8rem; }
         .test-link:hover { color: white; text-decoration: underline; }
+        .sunc-widget-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 20px;
+            margin-top: 28px;
+        }
+        .sunc-widget-card {
+            padding: 18px;
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            background: var(--glass);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+        }
+        .sunc-widget-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        .sunc-widget-card h3 {
+            margin: 0;
+            font-size: 1rem;
+        }
+        .sunc-widget-card a {
+            color: #aaa8ff;
+            text-decoration: none;
+            font-size: 0.8rem;
+        }
+        .sunc-widget-card a:hover { color: white; text-decoration: underline; }
+        .sunc-widget {
+            width: 100%;
+            min-height: 610px;
+            border: 0;
+            border-radius: 16px;
+            background: rgba(0, 0, 0, 0.12);
+        }
+        @media (max-width: 900px) { .sunc-widget-grid { grid-template-columns: 1fr; } }
         @media (max-width: 650px) { .test-info { grid-template-columns: 1fr; } }
 
         .faq-container { max-width: 800px; margin: 0 auto; }
@@ -1259,11 +1297,27 @@
                 <p>Fragment Velocity API test results.</p>
             </div>
             <div class="test-info">
-                <div><span>API Version Tested</span><strong>v1.4.1</strong></div>
+                <div><span>API Version Tested</span><strong>v1.4.2</strong></div>
                 <div><span>Roblox Version Tested</span><strong>version-02c37bc51a384b8f</strong></div>
             </div>
             <div class="test-table-wrap">
                 <table class="test-table" id="tests-content"></table>
+            </div>
+            <div class="sunc-widget-grid">
+                <div class="sunc-widget-card">
+                    <div class="sunc-widget-card-header">
+                        <h3>+SUNC TEST 1</h3>
+                        <a href="https://r.sunc.su/JfgngWPbmy" target="_blank" rel="noopener noreferrer">Open result</a>
+                    </div>
+                    <iframe id="sunc-widget-1" class="sunc-widget" src="https://sunc.rubis.app/widget/" title="sUNC Test 1 result embed" allowfullscreen loading="lazy"></iframe>
+                </div>
+                <div class="sunc-widget-card">
+                    <div class="sunc-widget-card-header">
+                        <h3>+SUNC TEST 2</h3>
+                        <a href="https://r.sunc.su/Uctk6Mgn6w" target="_blank" rel="noopener noreferrer">Open result</a>
+                    </div>
+                    <iframe id="sunc-widget-2" class="sunc-widget" src="https://sunc.rubis.app/widget/" title="sUNC Test 2 result embed" allowfullscreen loading="lazy"></iframe>
+                </div>
             </div>
         </section>
 
@@ -1511,14 +1565,42 @@
             getTestsData: () => [
                 { name: "+UNC TEST 1", result: "98% (81/83)" },
                 { name: "+UNC TEST 2", result: "98% (81/83)" },
-                { name: "+SUNC TEST 1", result: "DIDN'T FINISH"},
-                { name: "+SUNC TEST 2", result: "DIDN'T FINISH"},
+                { name: "+SUNC TEST 1", result: "95% (82/86)", link: "https://r.sunc.su/JfgngWPbmy" },
+                { name: "+SUNC TEST 2", result: "94% (81/86)", link: "https://r.sunc.su/Uctk6Mgn6w" },
                 { name: "+MYRAD TEST 1", result: "99% (138/140)" },
                 { name: "+MYRAD TEST 2", result: "99% (139/140)" },
                 { name: "+VULNERABILITY TEST 1", result: "100% (159/159)" },
                 { name: "+VULNERABILITY TEST 2", result: "100% (159/159)" },
             ]
         };
+
+        const suncWidgetConfigs = [
+            {
+                id: 'sunc-widget-1',
+                scrapId: 'vqBa2HQXq6Zw2C2s',
+                key: 'yWzGXBTC5hV5mU5B78NxAkUJfAYkMrsa'
+            },
+            {
+                id: 'sunc-widget-2',
+                scrapId: 'XGImAcw3RzrfR88n',
+                key: 'cFzYTotltKkaOs9EJjQTAAWKpItggWmo'
+            }
+        ];
+
+        function initialiseSuncWidgets() {
+            const targetOrigin = 'https://sunc.rubis.app';
+            suncWidgetConfigs.forEach(({ id, scrapId, key }) => {
+                const iframe = document.getElementById(id);
+                if (!iframe) return;
+
+                iframe.addEventListener('load', () => {
+                    iframe.contentWindow.postMessage({
+                        type: 'sunc-widget:loadScrap',
+                        payload: { scrapId, key }
+                    }, targetOrigin);
+                }, { once: true });
+            });
+        }
 
         function getPageFromPath() {
             const pathPage = window.location.pathname.replace(/^\/+|\/+$/g, '');
@@ -1561,6 +1643,7 @@
             window.history.replaceState({ pageId: initialPage }, '', `/${initialPage}`);
         }
         showPage(initialPage, false);
+        initialiseSuncWidgets();
 
         function loadBuildPage() {
             const apiData = FragmentAPI.getNavAPIs();
