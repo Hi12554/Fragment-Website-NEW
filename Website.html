@@ -934,6 +934,158 @@
         .test-result { color: #8b84ff; font-family: 'JetBrains Mono', monospace; font-weight: 700 !important; }
         .test-link { color: #aaa8ff; text-decoration: none; font-size: 0.8rem; }
         .test-link:hover { color: white; text-decoration: underline; }
+        .web-executor-shell {
+            max-width: 1000px;
+            margin: 0 auto;
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            background: #111114;
+        }
+        .web-executor-tabbar {
+            display: flex;
+            align-items: stretch;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .web-executor-tabs {
+            display: flex;
+            flex: 1;
+            min-height: 42px;
+            align-items: stretch;
+            gap: 2px;
+            overflow-x: auto;
+            padding: 5px 7px 0;
+            scrollbar-width: thin;
+        }
+        .web-executor-tab {
+            display: inline-flex;
+            min-width: 100px;
+            max-width: 190px;
+            flex: 0 0 auto;
+            align-items: center;
+            padding: 0 10px;
+            border: 0;
+            border-bottom: 2px solid transparent;
+            color: #9999a4;
+            background: transparent;
+            font: 0.75rem 'JetBrains Mono', monospace;
+            cursor: pointer;
+        }
+        .web-executor-tab-item { display: flex; flex: 0 0 auto; align-items: stretch; }
+        .web-executor-tab[aria-selected="true"] {
+            border-bottom-color: var(--accent);
+            color: #e9e9ef;
+            background: rgba(255, 255, 255, 0.035);
+        }
+        .web-executor-tab-name {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .web-executor-tab-close {
+            flex: 0 0 auto;
+            width: 19px;
+            align-self: center;
+            height: 24px;
+            margin-right: 4px;
+            padding: 0;
+            border: 0;
+            border-radius: 4px;
+            color: inherit;
+            background: transparent;
+            font: 1rem/1 'Inter', sans-serif;
+            cursor: pointer;
+        }
+        .web-executor-tab-close:hover { color: #fff; background: rgba(255, 255, 255, 0.1); }
+        .web-executor-add-tab {
+            align-self: center;
+            flex: 0 0 30px;
+            width: 34px;
+            height: 30px;
+            margin: 0 6px;
+            padding: 0;
+            border: 0;
+            border-radius: 5px;
+            color: #aaaab4;
+            background: transparent;
+            font: 1.2rem 'Inter', sans-serif;
+            cursor: pointer;
+        }
+        .web-executor-add-tab:hover { color: #fff; background: rgba(255, 255, 255, 0.06); }
+        .web-executor-toolbar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px;
+        }
+        .web-executor-toolbar button {
+            min-height: 32px;
+            padding: 6px 12px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 6px;
+            color: #e9e9ef;
+            background: rgba(255, 255, 255, 0.045);
+            font: 500 0.75rem 'Inter', sans-serif;
+            cursor: pointer;
+        }
+        .web-executor-toolbar button:hover:not(:disabled) { background: rgba(255, 255, 255, 0.1); }
+        .web-executor-toolbar button:disabled { cursor: wait; opacity: 0.65; }
+        .web-executor-status {
+            min-height: 1.3em;
+            padding: 0 10px 10px;
+            color: var(--text-gray);
+            font-size: 0.75rem;
+        }
+        .web-executor-editor {
+            display: block;
+            width: 100%;
+            min-height: 420px;
+            padding: 16px;
+            resize: vertical;
+            border: 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            outline: 0;
+            color: #d7d7df;
+            background: #0e0e11;
+            font: 0.78rem/1.7 'JetBrains Mono', monospace;
+            tab-size: 4;
+        }
+        .web-executor-editor:focus-visible { outline: 2px solid var(--pumpkin-soft); outline-offset: -2px; }
+        .web-executor-editor::placeholder { color: #777784; }
+        .web-executor-shell button:focus-visible { outline: 2px solid var(--pumpkin-soft); outline-offset: -2px; }
+        .web-executor-help {
+            width: min(460px, calc(100% - 32px));
+            max-width: none;
+            padding: 0;
+            border: 1px solid var(--card-border);
+            border-radius: 14px;
+            color: var(--text-white);
+            background: var(--card-bg);
+            box-shadow: 0 24px 70px rgba(0, 0, 0, 0.35);
+        }
+        .web-executor-help::backdrop { background: rgba(0, 0, 0, 0.68); }
+        .web-executor-help-content { padding: 24px; }
+        .web-executor-help h2 { margin-bottom: 10px; font-size: 1.2rem; }
+        .web-executor-help p,
+        .web-executor-help li { color: var(--text-gray); font-size: 0.88rem; line-height: 1.6; }
+        .web-executor-help ol { display: grid; gap: 8px; padding-left: 22px; margin: 16px 0 0; }
+        .web-executor-help-actions { display: flex; justify-content: flex-end; gap: 9px; margin-top: 22px; }
+        .web-executor-help-actions button {
+            min-height: 38px;
+            padding: 8px 14px;
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            color: var(--text-white);
+            background: var(--glass);
+            font: 600 0.8rem 'Inter', sans-serif;
+            cursor: pointer;
+        }
+        .web-executor-help-actions .help-primary {
+            border-color: transparent;
+            color: #140d09;
+            background: var(--accent);
+        }
+        .web-executor-help [hidden] { display: none; }
+        .web-executor-help button:focus-visible { outline: 2px solid var(--pumpkin-soft); outline-offset: 2px; }
         .sunc-widget-grid {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1173,6 +1325,7 @@
             <div class="nav-links">
                 <a href="/home" onclick="navigateToPage(event, 'home')" id="link-home" class="active">Home</a>
                 <a href="/download" onclick="navigateToPage(event, 'download')" id="link-download">Download</a>
+                <a href="/web-executor" onclick="navigateToPage(event, 'web-executor')" id="link-web-executor">Web UI</a>
                 <a href="/about" onclick="navigateToPage(event, 'about')" id="link-about">About</a>
                 <a href="/build" onclick="navigateToPage(event, 'build')" id="link-build">Build</a>
                 <a href="/status" onclick="navigateToPage(event, 'status')" id="link-status">Status</a>
@@ -1309,6 +1462,22 @@
                     <ul><li>Release.</li></ul>
                 </div>
                 </div>
+            </div>
+        </section>
+
+        <!-- Web Executor UI Demo -->
+        <section id="web-executor" class="page">
+            <div class="web-executor-shell">
+                <div class="web-executor-tabbar">
+                    <div class="web-executor-tabs" id="web-executor-tabs" role="tablist" aria-label="Script tabs"></div>
+                    <button class="web-executor-add-tab" id="web-executor-add-tab" type="button" aria-label="New tab" title="New tab">+</button>
+                </div>
+                <div class="web-executor-toolbar" aria-label="Executor controls">
+                    <button type="button" id="web-executor-inject" title="Send an attach request to the local Velocity bridge">Inject</button>
+                    <button type="button" id="web-executor-execute" title="Send the current script to the local Velocity bridge">Execute</button>
+                </div>
+                <textarea class="web-executor-editor" id="web-executor-editor" aria-label="Script editor" placeholder="-- Write or paste a script here" spellcheck="false" autocapitalize="off" autocomplete="off"></textarea>
+                <p class="web-executor-status" id="web-executor-status" role="status" aria-live="polite"></p>
             </div>
         </section>
 
@@ -1509,6 +1678,31 @@
         </section>
     </main>
 
+    <dialog class="web-executor-help" id="web-executor-help" aria-labelledby="web-executor-help-title">
+        <div class="web-executor-help-content">
+            <h2 id="web-executor-help-title">Have you used this editor before?</h2>
+            <div id="web-executor-help-question">
+                <p>This editor sends requests to the Velocity bridge running on this computer. Need a quick walkthrough?</p>
+                <div class="web-executor-help-actions">
+                    <button type="button" id="web-executor-help-no">No</button>
+                    <button class="help-primary" type="button" id="web-executor-help-yes">Yes</button>
+                </div>
+            </div>
+            <div id="web-executor-help-steps" hidden>
+                <ol>
+                    <li>Type or paste text in the editor.</li>
+                    <li>Select <strong>+</strong> to make another tab. Double-click a tab or select it and press <strong>F2</strong> to rename it.</li>
+                    <li>Your tabs and their text are saved in this browser.</li>
+                    <li>Start the local Velocity bridge first. <strong>Inject</strong> requests an attachment; <strong>Execute</strong> sends the current editor contents.</li>
+                    <li>The bridge listens at <code>http://127.0.0.1:4873</code>. The browser cannot read its response, so check the bridge window for confirmation or errors.</li>
+                </ol>
+                <div class="web-executor-help-actions">
+                    <button class="help-primary" type="button" id="web-executor-help-done">Got it</button>
+                </div>
+            </div>
+        </div>
+    </dialog>
+
     <footer style="margin-top: 50px;">
         <div class="footer-content">
             <div>
@@ -1519,6 +1713,7 @@
                 <a href="https://discord.gg/VvSK3zUHZP" target="_blank" rel="noopener noreferrer">Discord</a>
                 <a href="https://www.youtube.com/@FragmentExecutor" target="_blank" rel="noopener noreferrer">YouTube</a>
                 <a href="/download" onclick="navigateToPage(event, 'download')">Download</a>
+                <a href="/web-executor" onclick="navigateToPage(event, 'web-executor')">Web UI</a>
                 <a href="/executors" onclick="navigateToPage(event, 'executors')">Other Executors</a>
                 <a href="/about" onclick="navigateToPage(event, 'about')">About</a>
             </div>
@@ -1562,6 +1757,252 @@
 
     <script src="/Review%20Handler/feedback.js"></script>
     <script>
+        const webExecutorStorageKey = 'fragment-web-editor-tabs';
+        let webExecutorTabs = [{ id: 'script-1', name: 'Script 1', content: '' }];
+        let activeWebExecutorTabId = webExecutorTabs[0].id;
+
+        function saveWebExecutorTabs() {
+            try {
+                localStorage.setItem(webExecutorStorageKey, JSON.stringify({
+                    tabs: webExecutorTabs,
+                    activeTabId: activeWebExecutorTabId
+                }));
+            } catch {
+                // Keep tab edits available for this page view if storage is unavailable.
+            }
+        }
+
+        function renderWebExecutorTabs(focusTabId) {
+            const tabList = document.getElementById('web-executor-tabs');
+            tabList.replaceChildren();
+
+            webExecutorTabs.forEach(tabData => {
+                const tabItem = document.createElement('div');
+                tabItem.className = 'web-executor-tab-item';
+                const tab = document.createElement('button');
+                tab.className = 'web-executor-tab';
+                tab.type = 'button';
+                tab.id = `web-executor-tab-${tabData.id}`;
+                tab.setAttribute('role', 'tab');
+                tab.setAttribute('aria-selected', String(tabData.id === activeWebExecutorTabId));
+                tab.tabIndex = tabData.id === activeWebExecutorTabId ? 0 : -1;
+                tab.title = 'Double-click to rename';
+
+                const name = document.createElement('span');
+                name.className = 'web-executor-tab-name';
+                name.textContent = tabData.name;
+                tab.append(name);
+                tab.addEventListener('click', () => activateWebExecutorTab(tabData.id));
+                tab.addEventListener('dblclick', () => renameWebExecutorTab(tabData.id));
+                tab.addEventListener('keydown', event => {
+                    if (event.key === 'F2') {
+                        event.preventDefault();
+                        renameWebExecutorTab(tabData.id);
+                    }
+                });
+                tabItem.append(tab);
+
+                if (webExecutorTabs.length > 1) {
+                    const closeButton = document.createElement('button');
+                    closeButton.className = 'web-executor-tab-close';
+                    closeButton.type = 'button';
+                    closeButton.textContent = '×';
+                    closeButton.title = `Close ${tabData.name}`;
+                    closeButton.setAttribute('aria-label', `Close ${tabData.name}`);
+                    closeButton.addEventListener('click', () => closeWebExecutorTab(tabData.id));
+                    tabItem.append(closeButton);
+                }
+                tab.setAttribute('aria-label', `${tabData.name}; double-click or press F2 to rename`);
+                tabList.append(tabItem);
+            });
+
+            const activeTab = webExecutorTabs.find(tab => tab.id === activeWebExecutorTabId);
+            const editor = document.getElementById('web-executor-editor');
+            if (activeTab && editor.value !== activeTab.content) editor.value = activeTab.content;
+            if (focusTabId) document.getElementById(`web-executor-tab-${focusTabId}`)?.focus();
+        }
+
+        function activateWebExecutorTab(tabId) {
+            const currentTab = webExecutorTabs.find(tab => tab.id === activeWebExecutorTabId);
+            if (currentTab) currentTab.content = document.getElementById('web-executor-editor').value;
+            activeWebExecutorTabId = tabId;
+            renderWebExecutorTabs();
+            saveWebExecutorTabs();
+        }
+
+        function createWebExecutorTab() {
+            const currentTab = webExecutorTabs.find(tab => tab.id === activeWebExecutorTabId);
+            if (currentTab) currentTab.content = document.getElementById('web-executor-editor').value;
+            let number = 1;
+            while (webExecutorTabs.some(tab => tab.name === `Script ${number}`)) number++;
+            const id = `script-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+            const newTab = { id, name: `Script ${number}`, content: '' };
+            webExecutorTabs.push(newTab);
+            activeWebExecutorTabId = id;
+            renderWebExecutorTabs(id);
+            saveWebExecutorTabs();
+            document.getElementById('web-executor-editor').focus();
+        }
+
+        function renameWebExecutorTab(tabId) {
+            const tabData = webExecutorTabs.find(tab => tab.id === tabId);
+            if (!tabData) return;
+            const nameElement = document.querySelector(`#web-executor-tab-${CSS.escape(tabId)} .web-executor-tab-name`);
+            if (!nameElement) return;
+
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = tabData.name;
+            input.maxLength = 40;
+            input.setAttribute('aria-label', 'Rename script tab');
+            input.style.cssText = 'width: 120px; min-width: 0; border: 0; outline: 0; color: inherit; background: transparent; font: inherit;';
+            nameElement.replaceWith(input);
+            input.focus();
+            input.select();
+
+            let finished = false;
+            const finish = save => {
+                if (finished) return;
+                finished = true;
+                const name = input.value.trim();
+                if (save && name) tabData.name = name;
+                renderWebExecutorTabs(tabId);
+                saveWebExecutorTabs();
+            };
+            input.addEventListener('keydown', event => {
+                if (event.key === 'Enter') finish(true);
+                if (event.key === 'Escape') finish(false);
+            });
+            input.addEventListener('blur', () => finish(true), { once: true });
+        }
+
+        function closeWebExecutorTab(tabId) {
+            if (webExecutorTabs.length < 2) return;
+            const closingIndex = webExecutorTabs.findIndex(tab => tab.id === tabId);
+            if (closingIndex < 0) return;
+            if (tabId === activeWebExecutorTabId) {
+                webExecutorTabs[closingIndex].content = document.getElementById('web-executor-editor').value;
+                const nextTab = webExecutorTabs[closingIndex === 0 ? 1 : closingIndex - 1];
+                activeWebExecutorTabId = nextTab.id;
+            }
+            webExecutorTabs = webExecutorTabs.filter(tab => tab.id !== tabId);
+            renderWebExecutorTabs(activeWebExecutorTabId);
+            saveWebExecutorTabs();
+        }
+
+        function initialiseWebExecutorTabs() {
+            try {
+                const saved = JSON.parse(localStorage.getItem(webExecutorStorageKey));
+                if (saved && Array.isArray(saved.tabs)) {
+                    const validTabs = saved.tabs.filter(tab =>
+                        tab && typeof tab.id === 'string' && typeof tab.name === 'string' &&
+                        typeof tab.content === 'string'
+                    );
+                    if (validTabs.length) {
+                        webExecutorTabs = validTabs;
+                        activeWebExecutorTabId = validTabs.some(tab => tab.id === saved.activeTabId)
+                            ? saved.activeTabId
+                            : validTabs[0].id;
+                    }
+                }
+            } catch {
+                // Start with an empty script tab if saved tab data is unavailable or invalid.
+            }
+
+            renderWebExecutorTabs();
+            document.getElementById('web-executor-add-tab').addEventListener('click', createWebExecutorTab);
+            document.getElementById('web-executor-editor').addEventListener('input', event => {
+                const activeTab = webExecutorTabs.find(tab => tab.id === activeWebExecutorTabId);
+                if (activeTab) {
+                    activeTab.content = event.currentTarget.value;
+                    saveWebExecutorTabs();
+                }
+            });
+            document.getElementById('web-executor-inject').addEventListener('click', () => sendWebExecutorRequest('/attach'));
+            document.getElementById('web-executor-execute').addEventListener('click', () => sendWebExecutorRequest('/execute'));
+        }
+
+        async function sendWebExecutorRequest(endpoint) {
+            const editor = document.getElementById('web-executor-editor');
+            const status = document.getElementById('web-executor-status');
+            const buttons = [
+                document.getElementById('web-executor-inject'),
+                document.getElementById('web-executor-execute')
+            ];
+
+            if (endpoint === '/execute' && !editor.value.trim()) {
+                status.textContent = 'Enter a script before selecting Execute.';
+                editor.focus();
+                return;
+            }
+
+            buttons.forEach(button => { button.disabled = true; });
+            status.textContent = 'Sending request to the local Velocity bridge...';
+            try {
+                await fetch(`http://127.0.0.1:4873${endpoint}`, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
+                    body: endpoint === '/execute' ? editor.value : ''
+                });
+                status.textContent = 'Request sent. Check the Velocity bridge window for confirmation or errors.';
+            } catch {
+                status.textContent = 'Could not reach the local bridge. Make sure it is running at http://127.0.0.1:4873.';
+            } finally {
+                buttons.forEach(button => { button.disabled = false; });
+            }
+        }
+
+        const webExecutorHelpStorageKey = 'fragment-web-executor-help-seen';
+        let webExecutorHelpShownThisSession = false;
+
+        function rememberWebExecutorHelpChoice() {
+            try {
+                localStorage.setItem(webExecutorHelpStorageKey, 'true');
+            } catch {
+                // The prompt still stays dismissed for this page view if storage is unavailable.
+            }
+        }
+
+        function closeWebExecutorHelp() {
+            rememberWebExecutorHelpChoice();
+            document.getElementById('web-executor-help').close();
+        }
+
+        function maybeShowWebExecutorHelp() {
+            if (webExecutorHelpShownThisSession) return;
+            try {
+                if (localStorage.getItem(webExecutorHelpStorageKey) === 'true') return;
+            } catch {
+                // Show the prompt for this visit when browser storage is unavailable.
+            }
+
+            webExecutorHelpShownThisSession = true;
+            document.getElementById('web-executor-help-question').hidden = false;
+            document.getElementById('web-executor-help-steps').hidden = true;
+            document.getElementById('web-executor-help-title').textContent = 'Have you used this editor before?';
+            document.getElementById('web-executor-help').showModal();
+        }
+
+        function initialiseWebExecutorHelp() {
+            const dialog = document.getElementById('web-executor-help');
+            document.getElementById('web-executor-help-yes').addEventListener('click', closeWebExecutorHelp);
+            document.getElementById('web-executor-help-no').addEventListener('click', () => {
+                document.getElementById('web-executor-help-question').hidden = true;
+                document.getElementById('web-executor-help-steps').hidden = false;
+                document.getElementById('web-executor-help-title').textContent = 'Using the editor';
+                document.getElementById('web-executor-help-done').focus();
+            });
+            document.getElementById('web-executor-help-done').addEventListener('click', closeWebExecutorHelp);
+            dialog.addEventListener('cancel', event => {
+                event.preventDefault();
+                closeWebExecutorHelp();
+            });
+        }
+
+        initialiseWebExecutorTabs();
+        initialiseWebExecutorHelp();
+
         function openImageLightbox() {
             const lightbox = document.getElementById('image-lightbox');
             lightbox.classList.remove('closing');
@@ -1813,6 +2254,7 @@
             if(pageId === 'status') loadStatusPage();
             if(pageId === 'home' || pageId === 'download') loadVelocityStatus();
             if(pageId === 'tests') loadTestsPage();
+            if(pageId === 'web-executor') maybeShowWebExecutorHelp();
 
             window.scrollTo(0, 0);
         }
