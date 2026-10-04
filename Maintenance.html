@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="theme-color" content="#0c0b0a">
+    <title>Scheduled Maintenance | Fragment</title>
+    <link rel="icon" type="image/png" href="/fragment-halloween.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <script>
+        try {
+            const savedTheme = localStorage.getItem('fragment-theme');
+            if (savedTheme === 'light' || savedTheme === 'dark') {
+                document.documentElement.dataset.theme = savedTheme;
+            }
+        } catch {
+            // Keep the default dark theme when browser storage is unavailable.
+        }
+    </script>
+    <style>
+        :root {
+            color-scheme: dark;
+            --page-bg: #0c0b0a;
+            --surface: #121212;
+            --surface-border: rgba(255, 255, 255, 0.08);
+            --text: #f2efe8;
+            --muted: #b7b0a7;
+            --subtle: #7d736d;
+            --accent: #d77a2d;
+            --accent-soft: #f0a15d;
+            --input-bg: #0c0b0a;
+        }
+
+        :root[data-theme="light"] {
+            color-scheme: light;
+            --page-bg: #f5f3ef;
+            --surface: #fff;
+            --surface-border: rgba(51, 42, 34, 0.14);
+            --text: #24211e;
+            --muted: #5d5751;
+            --subtle: #817970;
+            --accent: #bc611d;
+            --accent-soft: #a95113;
+            --input-bg: #fbfaf8;
+        }
+
+        * { box-sizing: border-box; }
+        body {
+            min-height: 100vh;
+            margin: 0;
+            display: grid;
+            place-items: center;
+            padding: 24px;
+            color: var(--text);
+            background:
+                radial-gradient(circle at 50% 0, rgba(215, 122, 45, 0.08), transparent 38%),
+                var(--page-bg);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .topbar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: flex;
+            width: 100%;
+            align-items: center;
+            justify-content: space-between;
+            padding: 22px clamp(20px, 5vw, 56px);
+        }
+
+        .brand {
+            color: var(--text);
+            font-size: 1.05rem;
+            font-weight: 900;
+            letter-spacing: -0.06em;
+            text-decoration: none;
+        }
+
+        button, input { font: inherit; }
+        .theme-toggle {
+            padding: 8px 12px;
+            border: 1px solid var(--surface-border);
+            border-radius: 100px;
+            color: var(--text);
+            background: var(--surface);
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .maintenance-card {
+            width: min(100%, 520px);
+            padding: clamp(28px, 6vw, 44px);
+            border: 1px solid var(--surface-border);
+            border-radius: 20px;
+            background: var(--surface);
+        }
+
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            color: var(--accent-soft);
+            font: 700 0.7rem 'JetBrains Mono', monospace;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .status::before {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: currentColor;
+            content: "";
+        }
+
+        h1 {
+            margin: 18px 0 12px;
+            font-size: clamp(2rem, 7vw, 2.8rem);
+            font-weight: 800;
+            letter-spacing: -0.06em;
+            line-height: 1.1;
+        }
+
+        .message {
+            margin: 0;
+            color: var(--muted);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .admin {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--surface-border);
+        }
+
+        [hidden] { display: none !important; }
+        .admin-form { display: grid; gap: 10px; margin-top: 16px; }
+        .admin-form label { color: var(--muted); font-size: 0.8rem; font-weight: 600; }
+        .admin-form input {
+            width: 100%;
+            min-height: 46px;
+            padding: 10px 12px;
+            border: 1px solid var(--surface-border);
+            border-radius: 9px;
+            color: var(--text);
+            background: var(--input-bg);
+        }
+
+        .admin-form input:focus-visible,
+        button:focus-visible,
+        summary:focus-visible {
+            outline: 2px solid var(--accent-soft);
+            outline-offset: 3px;
+        }
+
+        .admin-form button {
+            min-height: 44px;
+            padding: 10px 14px;
+            border: 0;
+            border-radius: 9px;
+            color: #140d09;
+            background: var(--accent);
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .admin-form button:hover { background: var(--accent-soft); }
+        .admin-form button:disabled { cursor: wait; opacity: 0.65; }
+        .feedback { min-height: 1.3em; margin: 2px 0 0; color: var(--muted); font-size: 0.8rem; }
+        .feedback[data-state="error"] { color: #df7770; }
+        .logout-button {
+            margin-top: 8px;
+            padding: 0;
+            border: 0;
+            color: var(--subtle);
+            background: transparent;
+            font-size: 0.8rem;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+            cursor: pointer;
+        }
+        .logout-button:hover { color: var(--text); }
+
+        @media (max-width: 480px) {
+            body { padding: 20px; }
+            .topbar { padding: 18px 20px; }
+            .maintenance-card { border-radius: 16px; }
+        }
+    </style>
+</head>
+<body>
+    <header class="topbar">
+        <a class="brand" href="/">FRAGMENT</a>
+        <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch to light mode" aria-pressed="false">☼ Light mode</button>
+    </header>
+    <main class="maintenance-card">
+        <span class="status">Scheduled maintenance</span>
+        <h1>We’ll be back soon.</h1>
+        <p class="message">The Fragment website is temporarily unavailable while we make some updates. Please check back shortly.</p>
+
+        <section class="admin" id="admin-access" aria-label="Admin sign in" hidden>
+            <form class="admin-form" id="admin-login">
+                <label for="admin-password">Admin password</label>
+                <input id="admin-password" name="password" type="password" autocomplete="current-password" required>
+                <button type="submit">Continue to website</button>
+                <p class="feedback" id="admin-feedback" role="status" aria-live="polite"></p>
+            </form>
+            <button class="logout-button" id="admin-logout" type="button">End admin session</button>
+        </section>
+    </main>
+    <script>
+        if (new URLSearchParams(window.location.search).get('admin') === '1') {
+            document.getElementById('admin-access').hidden = false;
+        }
+
+        const themeToggle = document.getElementById('theme-toggle');
+        function updateThemeToggle() {
+            const isLight = document.documentElement.dataset.theme === 'light';
+            themeToggle.textContent = `${isLight ? '☾' : '☼'} ${isLight ? 'Dark' : 'Light'} mode`;
+            themeToggle.setAttribute('aria-label', `Switch to ${isLight ? 'dark' : 'light'} mode`);
+            themeToggle.setAttribute('aria-pressed', String(isLight));
+        }
+
+        updateThemeToggle();
+        themeToggle.addEventListener('click', () => {
+            const isLight = document.documentElement.dataset.theme !== 'light';
+            document.documentElement.dataset.theme = isLight ? 'light' : 'dark';
+            updateThemeToggle();
+            try {
+                localStorage.setItem('fragment-theme', isLight ? 'light' : 'dark');
+            } catch {
+                // Keep the selected theme for this page view if storage is unavailable.
+            }
+        });
+
+        const loginForm = document.getElementById('admin-login');
+        const passwordInput = document.getElementById('admin-password');
+        const feedback = document.getElementById('admin-feedback');
+        loginForm.addEventListener('submit', async event => {
+            event.preventDefault();
+            const submitButton = loginForm.querySelector('button[type="submit"]');
+            submitButton.disabled = true;
+            feedback.dataset.state = '';
+            feedback.textContent = 'Checking password...';
+
+            try {
+                const response = await fetch('/api/maintenance-auth', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'same-origin',
+                    body: JSON.stringify({ password: passwordInput.value })
+                });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Could not sign in.');
+                window.location.replace('/');
+            } catch (error) {
+                feedback.dataset.state = 'error';
+                feedback.textContent = error.message || 'Could not sign in. Please try again.';
+                submitButton.disabled = false;
+                passwordInput.focus();
+            }
+        });
+
+        document.getElementById('admin-logout').addEventListener('click', async () => {
+            feedback.dataset.state = '';
+            feedback.textContent = 'Ending admin session...';
+            try {
+                const response = await fetch('/api/maintenance-auth', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'same-origin',
+                    body: JSON.stringify({ action: 'logout' })
+                });
+                if (!response.ok) {
+                    const result = await response.json();
+                    throw new Error(result.error || 'Could not end the admin session.');
+                }
+                window.location.replace('/');
+            } catch (error) {
+                feedback.dataset.state = 'error';
+                feedback.textContent = error.message || 'Could not end the admin session.';
+            }
+        });
+    </script>
+</body>
+</html>
