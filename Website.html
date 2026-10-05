@@ -1053,8 +1053,14 @@
         .web-executor-editor::placeholder { color: #777784; }
         .web-executor-shell button:focus-visible { outline: 2px solid var(--pumpkin-soft); outline-offset: -2px; }
         .web-executor-help {
+            position: fixed;
+            inset: 50% auto auto 50%;
             width: min(460px, calc(100% - 32px));
+            max-height: min(80vh, 80dvh);
             max-width: none;
+            margin: 0;
+            overflow-y: auto;
+            transform: translate(-50%, -50%);
             padding: 0;
             border: 1px solid var(--card-border);
             border-radius: 14px;
@@ -1086,6 +1092,18 @@
         }
         .web-executor-help [hidden] { display: none; }
         .web-executor-help button:focus-visible { outline: 2px solid var(--pumpkin-soft); outline-offset: 2px; }
+        .web-executor-mobile-notice {
+            max-width: 620px;
+            margin: 48px auto;
+            padding: 24px;
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            background: var(--card-bg);
+            text-align: center;
+        }
+        .web-executor-mobile-notice h2 { margin-bottom: 10px; }
+        .web-executor-mobile-notice p { color: var(--text-gray); line-height: 1.6; }
+        .web-executor-mobile-notice[hidden] { display: none; }
         .sunc-widget-grid {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1467,7 +1485,11 @@
 
         <!-- Web Executor UI Demo -->
         <section id="web-executor" class="page">
-            <div class="web-executor-shell">
+            <div class="web-executor-mobile-notice" id="web-executor-mobile-notice" role="status" hidden>
+                <h2>Web UI unavailable on mobile</h2>
+                <p>You can't use this executor on a mobile device. Please switch to a Windows device to use the Web UI and local Velocity bridge.</p>
+            </div>
+            <div class="web-executor-shell" id="web-executor-shell">
                 <div class="web-executor-tabbar">
                     <div class="web-executor-tabs" id="web-executor-tabs" role="tablist" aria-label="Script tabs"></div>
                     <button class="web-executor-add-tab" id="web-executor-add-tab" type="button" aria-label="New tab" title="New tab">+</button>
@@ -1682,7 +1704,7 @@
         <div class="web-executor-help-content">
             <h2 id="web-executor-help-title">Have you used this editor before?</h2>
             <div id="web-executor-help-question">
-                <p>This editor sends requests to the Velocity bridge running on this computer. Need a quick walkthrough?</p>
+                <p id="web-executor-help-message">This editor sends requests to the Velocity bridge running on this computer. Need a quick walkthrough?</p>
                 <div class="web-executor-help-actions">
                     <button type="button" id="web-executor-help-no">No</button>
                     <button class="help-primary" type="button" id="web-executor-help-yes">Yes</button>
@@ -1969,18 +1991,49 @@
             document.getElementById('web-executor-help').close();
         }
 
+        function isMobileWebExecutorDevice() {
+            return /Android|iPhone|iPad|iPod|Mobile|Windows Phone/i.test(navigator.userAgent) ||
+                (navigator.maxTouchPoints > 1 && /Macintosh/i.test(navigator.userAgent));
+        }
+
         function maybeShowWebExecutorHelp() {
             if (webExecutorHelpShownThisSession) return;
+            webExecutorHelpShownThisSession = true;
+
+            const shell = document.getElementById('web-executor-shell');
+            const mobileNotice = document.getElementById('web-executor-mobile-notice');
+            const title = document.getElementById('web-executor-help-title');
+            const message = document.getElementById('web-executor-help-message');
+            const noButton = document.getElementById('web-executor-help-no');
+            const yesButton = document.getElementById('web-executor-help-yes');
+            const question = document.getElementById('web-executor-help-question');
+            const steps = document.getElementById('web-executor-help-steps');
+
+            question.hidden = false;
+            steps.hidden = true;
+            if (isMobileWebExecutorDevice()) {
+                shell.hidden = true;
+                mobileNotice.hidden = false;
+                title.textContent = 'Web UI unavailable on mobile';
+                message.textContent = "You can't use this executor on a mobile device. Please switch to a Windows device to use the Web UI and local Velocity bridge.";
+                noButton.hidden = true;
+                yesButton.textContent = 'Got it';
+                document.getElementById('web-executor-help').showModal();
+                return;
+            }
+
+            shell.hidden = false;
+            mobileNotice.hidden = true;
+            title.textContent = 'Have you used this editor before?';
+            message.textContent = 'This editor sends requests to the Velocity bridge running on this computer. Need a quick walkthrough?';
+            noButton.hidden = false;
+            yesButton.textContent = 'Yes';
             try {
                 if (localStorage.getItem(webExecutorHelpStorageKey) === 'true') return;
             } catch {
                 // Show the prompt for this visit when browser storage is unavailable.
             }
 
-            webExecutorHelpShownThisSession = true;
-            document.getElementById('web-executor-help-question').hidden = false;
-            document.getElementById('web-executor-help-steps').hidden = true;
-            document.getElementById('web-executor-help-title').textContent = 'Have you used this editor before?';
             document.getElementById('web-executor-help').showModal();
         }
 
