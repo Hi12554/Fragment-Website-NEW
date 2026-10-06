@@ -934,17 +934,55 @@
         .test-result { color: #8b84ff; font-family: 'JetBrains Mono', monospace; font-weight: 700 !important; }
         .test-link { color: #aaa8ff; text-decoration: none; font-size: 0.8rem; }
         .test-link:hover { color: white; text-decoration: underline; }
+        .web-executor-page-heading {
+            display: flex;
+            max-width: 1000px;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 24px;
+            margin: 0 auto 22px;
+        }
+        .web-executor-page-heading[hidden] { display: none; }
+        .web-executor-page-heading-copy { max-width: 620px; }
+        .web-executor-page-heading-label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--pumpkin-soft);
+            font: 600 0.68rem 'JetBrains Mono', monospace;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+        .web-executor-page-heading h1 {
+            margin-bottom: 7px;
+            color: var(--text-white);
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            letter-spacing: -0.055em;
+        }
+        .web-executor-page-heading p { color: var(--text-gray); font-size: 0.9rem; line-height: 1.55; }
+        .web-executor-page-heading kbd {
+            flex: 0 0 auto;
+            padding: 7px 10px;
+            border: 1px solid var(--card-border);
+            border-radius: 6px;
+            color: var(--text-gray);
+            background: var(--glass);
+            font: 0.72rem 'JetBrains Mono', monospace;
+        }
         .web-executor-shell {
             max-width: 1000px;
             margin: 0 auto;
-            border: 1px solid var(--card-border);
-            border-radius: 12px;
-            background: #111114;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            background: #11100f;
+            box-shadow: 0 18px 48px rgba(0, 0, 0, 0.18);
         }
         .web-executor-tabbar {
             display: flex;
             align-items: stretch;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            min-height: 46px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+            background: #171513;
         }
         .web-executor-tabs {
             display: flex;
@@ -1014,42 +1052,83 @@
         .web-executor-toolbar {
             display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 10px;
+            min-height: 52px;
+            gap: 10px;
+            padding: 9px 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+            background: #141210;
+        }
+        .web-executor-toolbar-label {
+            margin-right: auto;
+            color: #827970;
+            font: 600 0.65rem 'JetBrains Mono', monospace;
+            letter-spacing: 0.1em;
         }
         .web-executor-toolbar button {
-            min-height: 32px;
-            padding: 6px 12px;
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: 6px;
-            color: #e9e9ef;
-            background: rgba(255, 255, 255, 0.045);
-            font: 500 0.75rem 'Inter', sans-serif;
+            min-height: 34px;
+            padding: 7px 14px;
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            border-radius: 5px;
+            color: #e9e3dc;
+            background: rgba(255, 255, 255, 0.04);
+            font: 600 0.76rem 'Inter', sans-serif;
             cursor: pointer;
+            transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
         }
-        .web-executor-toolbar button:hover:not(:disabled) { background: rgba(255, 255, 255, 0.1); }
+        .web-executor-toolbar button:hover:not(:disabled) {
+            border-color: rgba(240, 161, 93, 0.55);
+            background: rgba(255, 255, 255, 0.08);
+        }
+        .web-executor-toolbar button:active:not(:disabled) { transform: translateY(1px); }
+        .web-executor-toolbar #web-executor-execute {
+            border-color: var(--accent);
+            color: #1b1008;
+            background: var(--accent);
+        }
+        .web-executor-toolbar #web-executor-execute:hover:not(:disabled) {
+            border-color: var(--pumpkin-soft);
+            background: var(--pumpkin-soft);
+        }
         .web-executor-toolbar button:disabled { cursor: wait; opacity: 0.65; }
+        .web-executor-editor-wrap { position: relative; }
         .web-executor-status {
-            min-height: 1.3em;
-            padding: 0 10px 10px;
-            color: var(--text-gray);
-            font-size: 0.75rem;
+            min-width: 0;
+            margin: 0;
+            overflow: hidden;
+            color: #a59a8e;
+            font-size: 0.72rem;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .web-executor-footer {
+            display: flex;
+            min-height: 38px;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 7px 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.07);
+            background: #171513;
+        }
+        .web-executor-count {
+            flex: 0 0 auto;
+            color: #827970;
+            font: 0.68rem 'JetBrains Mono', monospace;
         }
         .web-executor-editor {
             display: block;
             width: 100%;
             min-height: 420px;
-            padding: 16px;
+            padding: 18px 20px;
             resize: vertical;
             border: 0;
-            border-top: 1px solid rgba(255, 255, 255, 0.08);
             outline: 0;
-            color: #d7d7df;
-            background: #0e0e11;
-            font: 0.78rem/1.7 'JetBrains Mono', monospace;
+            color: #e1d9d0;
+            background: #100f0e;
+            font: 0.8rem/1.75 'JetBrains Mono', monospace;
             tab-size: 4;
         }
-        .web-executor-editor:focus-visible { outline: 2px solid var(--pumpkin-soft); outline-offset: -2px; }
+        .web-executor-editor:focus-visible { box-shadow: inset 0 0 0 1px rgba(240, 161, 93, 0.45); }
         .web-executor-editor::placeholder { color: #777784; }
         .web-executor-shell button:focus-visible { outline: 2px solid var(--pumpkin-soft); outline-offset: -2px; }
         .web-executor-help {
@@ -1104,6 +1183,17 @@
         .web-executor-mobile-notice h2 { margin-bottom: 10px; }
         .web-executor-mobile-notice p { color: var(--text-gray); line-height: 1.6; }
         .web-executor-mobile-notice[hidden] { display: none; }
+        @media (max-width: 650px) {
+            .web-executor-page-heading { align-items: flex-start; flex-direction: column; gap: 12px; }
+            .web-executor-page-heading kbd { align-self: flex-start; }
+            .web-executor-toolbar { gap: 7px; padding: 8px; }
+            .web-executor-toolbar-label { display: none; }
+            .web-executor-toolbar button { flex: 1; padding-inline: 9px; }
+            .web-executor-editor { min-height: 55vh; padding: 14px; font-size: 0.74rem; }
+            .web-executor-footer { gap: 8px; padding-inline: 9px; }
+            .web-executor-status { font-size: 0.67rem; }
+            .web-executor-count { font-size: 0.63rem; }
+        }
         .sunc-widget-grid {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1489,17 +1579,31 @@
                 <h2>Web UI unavailable on mobile</h2>
                 <p>You can't use this executor on a mobile device. Please switch to a Windows device to use the Web UI and local Velocity bridge.</p>
             </div>
+            <div class="web-executor-page-heading" id="web-executor-page-heading">
+                <div class="web-executor-page-heading-copy">
+                    <span class="web-executor-page-heading-label">Fragment / Tools</span>
+                    <h1>Web Executor</h1>
+                    <p>Write a script below, then send it to the Fragment app running on your PC.</p>
+                </div>
+                <kbd>Ctrl + Enter to execute</kbd>
+            </div>
             <div class="web-executor-shell" id="web-executor-shell">
                 <div class="web-executor-tabbar">
                     <div class="web-executor-tabs" id="web-executor-tabs" role="tablist" aria-label="Script tabs"></div>
                     <button class="web-executor-add-tab" id="web-executor-add-tab" type="button" aria-label="New tab" title="New tab">+</button>
                 </div>
                 <div class="web-executor-toolbar" aria-label="Executor controls">
+                    <span class="web-executor-toolbar-label">ACTIONS</span>
                     <button type="button" id="web-executor-inject" title="Send an attach request to the local Velocity bridge">Inject</button>
                     <button type="button" id="web-executor-execute" title="Send the current script to the local Velocity bridge">Execute</button>
                 </div>
-                <textarea class="web-executor-editor" id="web-executor-editor" aria-label="Script editor" placeholder="-- Write or paste a script here" spellcheck="false" autocapitalize="off" autocomplete="off"></textarea>
-                <p class="web-executor-status" id="web-executor-status" role="status" aria-live="polite"></p>
+                <div class="web-executor-editor-wrap">
+                    <textarea class="web-executor-editor" id="web-executor-editor" aria-label="Script editor" placeholder="-- Write or paste a script here" spellcheck="false" autocapitalize="off" autocomplete="off"></textarea>
+                </div>
+                <div class="web-executor-footer">
+                    <p class="web-executor-status" id="web-executor-status" role="status" aria-live="polite">Ready</p>
+                    <span class="web-executor-count" id="web-executor-count" aria-live="polite">1 line · 0 characters</span>
+                </div>
             </div>
         </section>
 
@@ -1840,6 +1944,7 @@
             const activeTab = webExecutorTabs.find(tab => tab.id === activeWebExecutorTabId);
             const editor = document.getElementById('web-executor-editor');
             if (activeTab && editor.value !== activeTab.content) editor.value = activeTab.content;
+            updateWebExecutorCount();
             if (focusTabId) document.getElementById(`web-executor-tab-${focusTabId}`)?.focus();
         }
 
@@ -1938,9 +2043,25 @@
                     activeTab.content = event.currentTarget.value;
                     saveWebExecutorTabs();
                 }
+                updateWebExecutorCount();
+            });
+            document.getElementById('web-executor-editor').addEventListener('keydown', event => {
+                if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
+                    event.preventDefault();
+                    sendWebExecutorRequest('/execute');
+                }
             });
             document.getElementById('web-executor-inject').addEventListener('click', () => sendWebExecutorRequest('/attach'));
             document.getElementById('web-executor-execute').addEventListener('click', () => sendWebExecutorRequest('/execute'));
+            updateWebExecutorCount();
+        }
+
+        function updateWebExecutorCount() {
+            const editor = document.getElementById('web-executor-editor');
+            const count = document.getElementById('web-executor-count');
+            const lines = editor.value.split('\n').length;
+            const characters = editor.value.length;
+            count.textContent = `${lines} ${lines === 1 ? 'line' : 'lines'} · ${characters} ${characters === 1 ? 'character' : 'characters'}`;
         }
 
         async function sendWebExecutorRequest(endpoint) {
@@ -2000,6 +2121,7 @@
             webExecutorHelpShownThisSession = true;
 
             const shell = document.getElementById('web-executor-shell');
+            const pageHeading = document.getElementById('web-executor-page-heading');
             const mobileNotice = document.getElementById('web-executor-mobile-notice');
             const title = document.getElementById('web-executor-help-title');
             const message = document.getElementById('web-executor-help-message');
@@ -2012,6 +2134,7 @@
             steps.hidden = true;
             if (isMobileWebExecutorDevice()) {
                 shell.hidden = true;
+                pageHeading.hidden = true;
                 mobileNotice.hidden = false;
                 title.textContent = 'Web UI unavailable on mobile';
                 message.textContent = "You can't use this executor on a mobile device. Please switch to a Windows device to use the Web UI and local Velocity bridge.";
@@ -2022,6 +2145,7 @@
             }
 
             shell.hidden = false;
+            pageHeading.hidden = false;
             mobileNotice.hidden = true;
             title.textContent = 'Have you used this editor before?';
             message.textContent = 'This editor sends requests to the Velocity bridge running on this computer. Need a quick walkthrough?';
