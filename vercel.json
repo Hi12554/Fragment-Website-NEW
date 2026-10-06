@@ -5,6 +5,7 @@
     { "source": "/api/update", "destination": "/update.json" },
     { "source": "/api/bot-status", "destination": "/bot-status.json" },
     { "source": "/api/incidents", "destination": "/incidents.json" },
+    { "source": "/api/test-results.json", "destination": "/test-results.json" },
     { "source": "/maintenance", "destination": "/Maintenance.html" },
     { "source": "/home", "destination": "/Website.html" },
     { "source": "/download", "destination": "/Website.html" },
