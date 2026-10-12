@@ -1,7 +1,7 @@
 {
-  "CurrentVersion": "1.0.9",
+  "CurrentVersion": "1.0.7",
   "Changelogs": [
-    "test"
+    "Updated the backend URLs"
   ],
-  "DownloadUrl": "https://www.use-fragment.lol/"
+  "DownloadUrl": "https://www.use-fragment.lol/download"
 }
