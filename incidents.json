@@ -2,6 +2,13 @@
   "incidents": [
     {
       "service": "Fragment Velocity API",
+      "status": "down",
+      "reportedAt": "2026-10-13",
+      "reportedAtLabel": "Tuesday, October 13, 2026 5:04 PM CDT",
+      "summary": "Fragment Velocity API is now outdated and requires a Roblox downgrade to use it."
+    },
+    {
+      "service": "Fragment Velocity API",
       "status": "up",
       "reportedAt": "2026-10-07",
       "reportedAtLabel": "Wednesday, October 7, 2026 3:26 PM CDT",
