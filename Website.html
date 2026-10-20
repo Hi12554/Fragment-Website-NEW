@@ -300,39 +300,6 @@
             background: rgba(255, 104, 104, 0.08);
         }
 
-        .new-ui-countdown {
-            width: min(100%, 620px);
-            margin: 28px auto 0;
-            padding: 20px 24px;
-            border: 1px solid rgba(215, 122, 45, 0.3);
-            border-radius: 18px;
-            background: rgba(215, 122, 45, 0.07);
-        }
-        .new-ui-countdown h2 {
-            margin-bottom: 16px;
-            color: var(--pumpkin-soft);
-            font: 700 0.78rem 'JetBrains Mono', monospace;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-        .new-ui-countdown-units {
-            display: flex;
-            justify-content: center;
-            gap: clamp(12px, 4vw, 32px);
-        }
-        .new-ui-countdown-unit strong {
-            display: block;
-            color: var(--text-white);
-            font: 800 clamp(1.5rem, 5vw, 2.25rem) 'JetBrains Mono', monospace;
-            line-height: 1.2;
-        }
-        .new-ui-countdown-unit span {
-            color: var(--text-muted);
-            font: 600 0.62rem 'JetBrains Mono', monospace;
-            letter-spacing: 0.8px;
-            text-transform: uppercase;
-        }
-
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; margin-bottom: 100px; }
         
         .card {
@@ -1361,7 +1328,6 @@
         :root[data-theme="light"] .velocity-status-bar { background: #f4e9e5; }
         :root[data-theme="light"] .velocity-status-bar[data-state="up"] { background: #e8f4eb; }
         :root[data-theme="light"] .velocity-status-bar[data-state="unknown"] { background: #f0ede8; }
-        :root[data-theme="light"] .new-ui-countdown { background: rgba(215, 122, 45, 0.09); }
         :root[data-theme="light"] .release-meta > div,
         :root[data-theme="light"] .release-changelog-tile {
             border-color: var(--card-border);
@@ -1494,15 +1460,6 @@
                 <div class="home-velocity-status" id="home-velocity-status" data-state="loading" role="status" aria-live="polite">CHECKING...</div>
                 <h1 style="margin-top: 18px;">Fragment Executor<br><span class="halloween-mark">Halloween Theme</span></h1>
                 <p>A free and keyless Roblox executor made by the people, for the people.</p>
-                <div class="new-ui-countdown" id="new-ui-countdown">
-                    <h2 id="new-ui-countdown-title">New UI launches at <time datetime="2026-10-20T01:00:00Z">8:00 PM Central</time></h2>
-                    <div class="new-ui-countdown-units" id="new-ui-countdown-units" role="timer" aria-label="Time remaining until the new UI launches">
-                        <div class="new-ui-countdown-unit"><strong id="new-ui-days">0</strong><span>Days</span></div>
-                        <div class="new-ui-countdown-unit"><strong id="new-ui-hours">00</strong><span>Hours</span></div>
-                        <div class="new-ui-countdown-unit"><strong id="new-ui-minutes">00</strong><span>Minutes</span></div>
-                        <div class="new-ui-countdown-unit"><strong id="new-ui-seconds">00</strong><span>Seconds</span></div>
-                    </div>
-                </div>
                 <div class="roblox-version" id="roblox-version" role="status" aria-live="polite" data-state="loading">
                     <span class="roblox-version-dot" aria-hidden="true"></span>
                     <div class="roblox-version-details">
@@ -1542,32 +1499,32 @@
                 <div class="executor-preview" role="img" aria-label="Fragment executor preview showing 99 percent UNC and 96 percent sUNC test results">
                     <div class="preview-topbar">
                         <div class="preview-brand"><span class="preview-brand-mark">F</span> Fragment</div>
-                        <span class="preview-version">v1.0.7</span>
+                        <span class="preview-version">v1.0.8</span>
                     </div>
                     <div class="preview-heading">
                         <small>FRAGMENT VELOCITY API</small>
                         <h2>Executor</h2>
                     </div>
                     <div class="preview-stats">
-                        <div class="preview-stat"><strong>99%</strong><span>UNC</span></div>
-                        <div class="preview-stat"><strong>96%</strong><span>sUNC</span></div>
+                        <div class="preview-stat"><strong>98%</strong><span>UNC</span></div>
+                        <div class="preview-stat"><strong>93%</strong><span>sUNC</span></div>
                     </div>
                     <button class="preview-image-button" type="button" onclick="openImageLightbox()" aria-label="Open larger Fragment executor preview">
-                        <img class="preview-image" src="/v1.0.7.png" alt="Fragment v1.0.7 executor interface preview">
+                        <img class="preview-image" src="/v1.0.8.png" alt="Fragment v1.0.8 executor interface preview">
                     </button>
                 </div>
                 <div class="release-card">
-                    <h2>Fragment v1.0.7</h2>
+                    <h2>Fragment v1.0.8</h2>
                     <p>The latest Fragment version.</p>
                     <div class="release-meta">
-                        <div><span>Supported Roblox version</span><strong>version-cec3ad5889b447cf</strong></div>
+                        <div><span>Supported Roblox version</span><strong>version-11f155f3450f4c8e</strong></div>
                         <div><span>VirusTotal scan</span><strong>0/68 detections</strong></div>
-                        <div><span>UNC score</span><strong>99%</strong></div>
-                        <div><span>sUNC score</span><strong>96%</strong></div>
-                        <div class="release-changelog-tile"><span>v1.0.7 Changelog</span><ul class="release-changelog-list"><li>Updated the backend URLs.</li></ul></div>
+                        <div><span>UNC score</span><strong>98%</strong></div>
+                        <div><span>sUNC score</span><strong>93%</strong></div>
+                        <div class="release-changelog-tile"><span>v1.0.8 Changelog</span><ul class="release-changelog-list"><li>Updated the backend URLs.</li></ul></div>
                     </div>
                     <div class="release-actions">
-                        <a href="/Fragment_1.0.7_x64-setup.exe" class="card-btn download-installer" download>Download v1.0.7</a>
+                        <a href="/Fragment_1.0.8_x64-setup.exe" class="card-btn download-installer" download>Download v1.0.8</a>
                         <p class="mobile-download-notice" role="status">Download unavailable on mobile. Use a Windows PC to download Fragment.</p>
                         <a href="https://www.virustotal.com/gui/file/8809c81548f67242f72dc1da8c21237a3187584d4fad6c08e1963c62adf78363" class="card-btn secondary-btn" target="_blank" rel="noopener noreferrer">View VirusTotal</a>
                     </div>
@@ -1578,11 +1535,15 @@
                 <span id="velocity-status-text">Checking status...</span>
             </div>
             <div class="release-history" id="release-history">
-                <button class="release-history-toggle" type="button" onclick="toggleReleaseHistory()" aria-expanded="false" aria-controls="release-history-content"><span class="release-history-heading"><span>Release History</span><span class="release-current-version">Current version: v1.0.7</span></span></button>
+                <button class="release-history-toggle" type="button" onclick="toggleReleaseHistory()" aria-expanded="false" aria-controls="release-history-content"><span class="release-history-heading"><span>Release History</span><span class="release-current-version">Current version: v1.0.8</span></span></button>
                 <div class="release-history-content" id="release-history-content">
                 <div class="release-entry">
+                    <h3>v1.0.8</h3><time>October 19th, 2026</time>
+                    <ul><li>New UI</li></ul>
+                </div>
+                <div class="release-entry">
                     <h3>v1.0.7</h3><time>October 1st, 2026</time>
-                    <ul><li>Updated the backend URLs.</li></ul>
+                    <ul><li>Updated the backend URLs</li></ul>
                 </div>
                 <div class="release-entry">
                     <h3>v1.0.6</h3><time>September 27th, 2026</time>
@@ -1891,7 +1852,7 @@
 
     <div id="image-lightbox" class="image-lightbox" role="dialog" aria-modal="true" aria-label="Expanded executor preview" onclick="closeImageLightbox(event)">
         <button class="lightbox-close" type="button" aria-label="Close expanded image" onclick="closeImageLightbox()">&times;</button>
-        <img src="/v1.0.7.png" alt="Expanded Fragment v1.0.7 executor interface preview" onclick="event.stopPropagation()">
+        <img src="/v1.0.8.png" alt="Expanded Fragment v1.0.8 executor interface preview" onclick="event.stopPropagation()">
     </div>
 
     <div id="feedback-modal" class="feedback-modal" hidden onclick="handleFeedbackBackdrop(event)">
@@ -2441,29 +2402,6 @@
                 const nextTheme = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light';
                 setTheme(nextTheme);
             });
-        }
-
-        function updateNewUiCountdown() {
-            const launchTime = Date.parse('2026-10-20T01:00:00Z');
-            const remainingSeconds = Math.max(0, Math.floor((launchTime - Date.now()) / 1000));
-            const title = document.getElementById('new-ui-countdown-title');
-            const units = document.getElementById('new-ui-countdown-units');
-
-            if (remainingSeconds === 0) {
-                title.textContent = 'The new UI is live!';
-                units.hidden = true;
-                return false;
-            }
-
-            document.getElementById('new-ui-days').textContent = Math.floor(remainingSeconds / 86400);
-            document.getElementById('new-ui-hours').textContent = String(Math.floor((remainingSeconds % 86400) / 3600)).padStart(2, '0');
-            document.getElementById('new-ui-minutes').textContent = String(Math.floor((remainingSeconds % 3600) / 60)).padStart(2, '0');
-            document.getElementById('new-ui-seconds').textContent = String(remainingSeconds % 60).padStart(2, '0');
-            return true;
-        }
-
-        if (updateNewUiCountdown()) {
-            window.setInterval(updateNewUiCountdown, 1000);
         }
 
         function getPageFromPath() {
