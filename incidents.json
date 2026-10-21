@@ -2,10 +2,19 @@
   "incidents": [
     {
       "service": "Discord Bot",
-      "status": "maintenance",
+      "status": "up",
+      "reportedAt": "2026-10-20T20:33:25-05:00",
+      "reportedAtLabel": "Tuesday, October 20, 2026 8:33 PM CDT",
+      "summary": "The Discord bot is back online and commands are available again."
+    },
+    {
+      "service": "Discord Bot",
+      "status": "resolved",
       "startedAt": "2026-10-20T19:19:00-05:00",
       "startedAtLabel": "Tuesday, October 20, 2026 7:19 PM CDT",
-      "summary": "The Discord bot is temporarily unavailable due to maintenance. Commands may not work during this time."
+      "resolvedAt": "2026-10-20T20:33:25-05:00",
+      "resolvedAtLabel": "Tuesday, October 20, 2026 8:33 PM CDT",
+      "summary": "The Discord bot maintenance is complete and the bot is back online."
     },
     {
       "service": "Fragment Velocity API",
