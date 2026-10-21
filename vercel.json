@@ -6,6 +6,7 @@
     { "source": "/api/bot-status", "destination": "/bot-status.json" },
     { "source": "/api/incidents", "destination": "/incidents.json" },
     { "source": "/api/test-results.json", "destination": "/test-results.json" },
+    { "source": "/status/advanced", "destination": "/Advanced-Status.html" },
     { "source": "/maintenance", "destination": "/Maintenance.html" },
     { "source": "/home", "destination": "/Website.html" },
     { "source": "/download", "destination": "/Website.html" },

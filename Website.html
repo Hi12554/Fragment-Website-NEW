@@ -908,7 +908,10 @@
 
         .status-container { max-width: 700px; margin: 0 auto; }
         .incident-history { max-width: 700px; margin: 50px auto 0; }
-        .incident-history h2 { margin-bottom: 16px; font-size: 1.4rem; }
+        .incident-history-heading { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 16px; }
+        .incident-history h2 { font-size: 1.4rem; }
+        .advanced-status-link { flex: 0 0 auto; padding: 9px 13px; border: 1px solid var(--card-border); border-radius: 8px; color: var(--text-white); background: var(--glass); text-decoration: none; font-size: 0.8rem; }
+        .advanced-status-link:hover { border-color: var(--accent); color: var(--pumpkin-soft); }
         .incident-history-message { margin-bottom: 14px; color: var(--text-gray); }
         .incident-list { display: grid; gap: 12px; }
         .incident-entry { padding: 18px 20px; border: 1px solid var(--card-border); border-radius: 12px; background: var(--glass); }
@@ -1746,7 +1749,10 @@
                 </div>
             </div>
             <section class="incident-history" aria-labelledby="incident-history-heading">
-                <h2 id="incident-history-heading">Incident History</h2>
+                <div class="incident-history-heading">
+                    <h2 id="incident-history-heading">Incident History</h2>
+                    <a class="advanced-status-link" href="/status/advanced">View detailed report</a>
+                </div>
                 <p class="incident-history-message" id="incident-history-message" role="status">Loading incident history...</p>
                 <div class="incident-list" id="incident-list"></div>
             </section>

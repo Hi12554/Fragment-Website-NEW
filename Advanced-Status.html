@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#0c0b0a">
+    <title>Detailed Service Status | Fragment</title>
+    <link rel="icon" type="image/png" href="/fragment-halloween.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg: #0c0b0a;
+            --surface: #141210;
+            --surface-soft: rgba(255, 255, 255, 0.025);
+            --border: rgba(255, 255, 255, 0.09);
+            --text: #f2efe8;
+            --muted: #aaa198;
+            --subtle: #77716b;
+            --accent: #d77a2d;
+            --green: #35ce87;
+            --red: #f05c5c;
+            --yellow: #efbb45;
+        }
+        * { box-sizing: border-box; }
+        body {
+            min-height: 100vh;
+            margin: 0;
+            background:
+                radial-gradient(ellipse at 50% -15%, rgba(215, 122, 45, 0.13), transparent 46%),
+                linear-gradient(180deg, #0a0908, var(--bg) 420px);
+            color: var(--text);
+            font-family: Inter, sans-serif;
+        }
+        a { color: inherit; }
+        .shell { width: min(960px, calc(100% - 32px)); margin: 0 auto; padding: 28px 0 64px; }
+        .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 38px; }
+        .brand { color: var(--text); font-size: 1.02rem; font-weight: 700; text-decoration: none; }
+        .back-link { color: var(--muted); font-size: 0.88rem; text-decoration: none; }
+        .back-link:hover { color: var(--text); }
+        .overview { padding: 30px; border: 1px solid var(--border); border-radius: 18px; background: var(--surface-soft); }
+        .eyebrow { margin: 0 0 12px; color: var(--accent); font: 700 0.7rem 'JetBrains Mono', monospace; letter-spacing: 0.1em; text-transform: uppercase; }
+        h1 { margin: 0; font-size: clamp(1.7rem, 4vw, 2.4rem); letter-spacing: -0.04em; }
+        .updated { margin: 10px 0 0; color: var(--muted); font-size: 0.86rem; }
+        .services { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; margin-top: 22px; }
+        .service-card, .panel { border: 1px solid var(--border); border-radius: 14px; background: var(--surface); }
+        .service-card { min-width: 0; padding: 18px 20px; }
+        .service-heading { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+        .service-name { display: flex; align-items: center; gap: 10px; font-weight: 600; }
+        .state-label { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-size: 0.8rem; }
+        .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--subtle); }
+        [data-state="up"] .dot { background: var(--green); box-shadow: 0 0 10px rgba(53, 206, 135, 0.45); }
+        [data-state="down"] .dot { background: var(--red); box-shadow: 0 0 10px rgba(240, 92, 92, 0.45); }
+        [data-state="maintenance"] .dot { background: var(--yellow); }
+        .service-note { margin: 14px 0 10px; color: var(--muted); font-size: 0.77rem; }
+        .timeline-scroll { min-width: 0; overflow-x: auto; padding: 2px 0 6px; }
+        .timeline { display: grid; grid-template-columns: repeat(60, minmax(3px, 1fr)); gap: 3px; min-width: 650px; }
+        .day { position: relative; height: 24px; padding: 0; border: 0; border-radius: 3px; background: #35332f; cursor: pointer; }
+        .day:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
+        .day[data-state="up"] { background: #35a977; }
+        .day[data-state="down"] { background: #d95050; }
+        .day[data-state="maintenance"] { background: #d6a632; }
+        .day[data-state="partial"] { background: linear-gradient(180deg, #d95050 0 48%, #35a977 52%); }
+        .report-tooltip { position: fixed; z-index: 20; width: min(310px, calc(100vw - 24px)); padding: 13px 15px; border: 1px solid rgba(215, 122, 45, 0.48); border-radius: 11px; background: #191612; box-shadow: 0 12px 35px rgba(0, 0, 0, 0.55); color: var(--text); pointer-events: none; }
+        .report-tooltip[hidden] { display: none; }
+        .report-tooltip-status { margin: 0; color: var(--green); font-size: 0.85rem; font-weight: 700; }
+        .report-tooltip-status[data-state="down"] { color: var(--red); }
+        .report-tooltip-duration { margin: 7px 0 0; color: var(--muted); font-size: 0.77rem; }
+        .report-tooltip-date { margin: 7px 0 0; color: var(--subtle); font: 0.68rem 'JetBrains Mono', monospace; }
+        .timeline-labels { display: flex; justify-content: space-between; min-width: 650px; margin-top: 7px; color: var(--subtle); font: 0.65rem 'JetBrains Mono', monospace; }
+        .history-key { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 17px; color: var(--muted); font-size: 0.75rem; }
+        .key-item { display: inline-flex; align-items: center; gap: 6px; }
+        .key-swatch { width: 9px; height: 9px; border-radius: 2px; background: #35332f; }
+        .key-swatch.up { background: #35a977; }
+        .key-swatch.down { background: #d95050; }
+        .key-swatch.partial { background: linear-gradient(180deg, #d95050 0 48%, #35a977 52%); }
+        .key-swatch.maintenance { background: #d6a632; }
+        .notice { margin: 18px 0 0; color: var(--subtle); font-size: 0.78rem; line-height: 1.6; }
+        .panel { margin-top: 24px; padding: 24px; }
+        .panel-heading { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 16px; }
+        h2 { margin: 0; font-size: 1.15rem; }
+        .panel-caption { color: var(--subtle); font-size: 0.75rem; }
+        .incident-list { display: grid; gap: 10px; }
+        .incident { padding: 16px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface-soft); }
+        .incident-top { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+        .incident-service { margin: 0; font-size: 0.9rem; }
+        .incident-status { color: var(--green); font: 700 0.68rem 'JetBrains Mono', monospace; text-transform: uppercase; }
+        .incident-status[data-state="down"], .incident-status[data-state="ongoing"] { color: var(--red); }
+        .incident-status[data-state="maintenance"] { color: var(--yellow); }
+        .incident-summary { margin: 9px 0 0; color: var(--muted); font-size: 0.83rem; line-height: 1.6; }
+        .incident-date { display: block; margin-top: 10px; color: var(--subtle); font: 0.68rem 'JetBrains Mono', monospace; }
+        .empty, .error { margin: 0; color: var(--muted); line-height: 1.6; }
+        @media (max-width: 600px) {
+            .shell { width: min(100% - 22px, 960px); padding-top: 18px; }
+            .overview, .panel { padding: 20px 16px; }
+            .service-card { padding: 16px; }
+            .panel-heading { align-items: flex-start; flex-direction: column; }
+            .incident-top { align-items: flex-start; flex-direction: column; gap: 6px; }
+        }
+    </style>
+</head>
+<body>
+    <main class="shell">
+        <nav class="topbar" aria-label="Main navigation">
+            <a class="brand" href="/">Fragment status</a>
+            <a class="back-link" href="/status">Back to status page</a>
+        </nav>
+        <section class="overview" aria-labelledby="page-title">
+            <p class="eyebrow">Service status · 60 day history</p>
+            <h1 id="page-title">Loading service status…</h1>
+            <p class="updated" id="updated-time"></p>
+            <div class="services" id="services" aria-live="polite"></div>
+            <div class="history-key" aria-label="Timeline legend">
+                <span class="key-item"><span class="key-swatch up"></span>Operational</span>
+                <span class="key-item"><span class="key-swatch down"></span>Down</span>
+                <span class="key-item"><span class="key-swatch partial"></span>Multiple reports</span>
+                <span class="key-item"><span class="key-swatch maintenance"></span>Maintenance</span>
+                <span class="key-item"><span class="key-swatch"></span>No report data</span>
+            </div>
+            <p class="notice">This report is built from the published entries in <code>incidents.json</code>. Each day's bar shows the most recent report for that service, carried forward until the next report; gray means there was no report yet. This is incident history, not continuous monitoring, so uptime percentages are not available.</p>
+        </section>
+        <section class="panel" aria-labelledby="incident-heading">
+            <div class="panel-heading">
+                <h2 id="incident-heading">Incident reports</h2>
+                <span class="panel-caption" id="incident-range">Past 60 days</span>
+            </div>
+            <div class="incident-list" id="incident-list" aria-live="polite">
+                <p class="empty">Loading incident reports…</p>
+            </div>
+        </section>
+    </main>
+    <div class="report-tooltip" id="report-tooltip" role="tooltip" aria-hidden="true" hidden></div>
+    <script>
+        const DAYS = 60;
+        const dateKey = date => `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, '0')}-${String(date.getUTCDate()).padStart(2, '0')}`;
+        const addDays = (date, days) => new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate() + days));
+        const validState = state => ['up', 'down', 'maintenance'].includes(state) ? state : 'unknown';
+        const timelineState = report => {
+            const state = validState(report?.status);
+            return state === 'maintenance' ? 'down' : state;
+        };
+        const formatDay = date => date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', timeZone: 'UTC' });
+
+        async function getIncidents() {
+            const response = await fetch('/api/incidents', { cache: 'no-store' });
+            if (!response.ok) throw new Error('Incident report request failed');
+            const data = await response.json();
+            if (!data || !Array.isArray(data.incidents)) throw new Error('Invalid incident report data');
+            return data.incidents;
+        }
+
+        function getReportDay(report) {
+            const value = report.reportedAt || report.startedAt;
+            if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}/.test(value)) return null;
+            return value.slice(0, 10);
+        }
+
+        function getReportTimestamp(report) {
+            const value = report.reportedAt || report.startedAt;
+            if (typeof value === 'string' && value.length > 10) {
+                const timestamp = Date.parse(value);
+                if (!Number.isNaN(timestamp)) return { value: timestamp, precise: true };
+            }
+
+            const label = report.reportedAtLabel || report.startedAtLabel;
+            const match = typeof label === 'string' && label.match(
+                /^[A-Za-z]+,\s+[A-Za-z]+\s+\d{1,2},\s+\d{4}\s+(\d{1,2}):(\d{2})\s+(AM|PM)\s+(CST|CDT)$/
+            );
+            const day = getReportDay(report);
+            if (match && day) {
+                const [, rawHour, rawMinute, meridiem, zone] = match;
+                let hour = Number(rawHour) % 12;
+                if (meridiem === 'PM') hour += 12;
+                const offsetMinutes = zone === 'CDT' ? -5 * 60 : -6 * 60;
+                return {
+                    value: Date.parse(`${day}T${String(hour).padStart(2, '0')}:${rawMinute}:00Z`) - offsetMinutes * 60_000,
+                    precise: true
+                };
+            }
+
+            return day ? { value: Date.parse(`${day}T00:00:00Z`), precise: false } : null;
+        }
+
+        function formatDuration(milliseconds) {
+            const totalMinutes = Math.max(0, Math.floor(milliseconds / 60_000));
+            const days = Math.floor(totalMinutes / 1_440);
+            const hours = Math.floor((totalMinutes % 1_440) / 60);
+            const minutes = totalMinutes % 60;
+            const parts = [];
+            if (days) parts.push(`${days}d`);
+            if (hours) parts.push(`${hours}h`);
+            if (minutes || parts.length === 0) parts.push(`${minutes}m`);
+            return parts.join(' ');
+        }
+
+        function getDowntimeDuration(events, eventIndex, now) {
+            const event = events[eventIndex];
+            if (!event || timelineState(event.report) !== 'down' || !event.timestamp.precise) return null;
+            const recovery = events.slice(eventIndex + 1).find(next => timelineState(next.report) === 'up');
+            if (recovery && !recovery.timestamp.precise) return null;
+            return Math.max(0, (recovery ? recovery.timestamp.value : now) - event.timestamp.value);
+        }
+
+        function makeTimeline(serviceName, incidents, startDay) {
+            const events = incidents
+                .map((report, index) => ({ report, index, day: getReportDay(report), timestamp: getReportTimestamp(report) }))
+                .filter(item => item.day && item.timestamp && Number.isFinite(item.timestamp.value) && item.report.service === serviceName)
+                .sort((a, b) => a.timestamp.value - b.timestamp.value || a.index - b.index);
+            let eventIndex = 0;
+            let latestEvent = null;
+            let latestDowntime = null;
+            const days = [];
+
+            for (let offset = 0; offset < DAYS; offset += 1) {
+                const day = addDays(startDay, offset);
+                const key = dateKey(day);
+                while (eventIndex < events.length && events[eventIndex].day <= key) {
+                    const event = events[eventIndex];
+                    latestEvent = event;
+                    if (timelineState(event.report) === 'down') {
+                        latestDowntime = getDowntimeDuration(events, eventIndex, Date.now());
+                    } else if (timelineState(event.report) === 'up') {
+                        const previousDownIndex = events.slice(0, eventIndex)
+                            .map((previous, index) => ({ previous, index }))
+                            .reverse()
+                            .find(({ previous }) => timelineState(previous.report) === 'down')?.index;
+                        latestDowntime = previousDownIndex === undefined
+                            ? null
+                            : getDowntimeDuration(events, previousDownIndex, Date.now());
+                    }
+                    eventIndex += 1;
+                }
+                const dayState = timelineState(latestEvent?.report);
+                days.push({ day, state: dayState, downtime: latestDowntime });
+            }
+            return days;
+        }
+
+        function showReportTooltip(bar, day, state, downtime) {
+            const tooltip = document.getElementById('report-tooltip');
+            tooltip.replaceChildren();
+
+            const status = document.createElement('p');
+            status.className = 'report-tooltip-status';
+            status.dataset.state = state;
+            status.textContent = state === 'up' ? 'Operational' : state === 'down' ? 'Down' : 'No report data';
+            tooltip.append(status);
+
+            if (state === 'down') {
+                const durationLabel = document.createElement('p');
+                durationLabel.className = 'report-tooltip-duration';
+                durationLabel.textContent = `Downtime: ${downtime === null ? 'Unknown' : formatDuration(downtime)}`;
+                tooltip.append(durationLabel);
+            }
+
+            const dateLabel = document.createElement('p');
+            dateLabel.className = 'report-tooltip-date';
+            dateLabel.textContent = day.toLocaleDateString(undefined, {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                timeZone: 'UTC'
+            });
+            tooltip.append(dateLabel);
+
+            tooltip.hidden = false;
+            tooltip.setAttribute('aria-hidden', 'false');
+            const target = bar.getBoundingClientRect();
+            const bounds = tooltip.getBoundingClientRect();
+            const left = Math.max(12, Math.min(target.left + target.width / 2 - bounds.width / 2, window.innerWidth - bounds.width - 12));
+            const top = target.top - bounds.height - 10 >= 12
+                ? target.top - bounds.height - 10
+                : Math.min(target.bottom + 10, window.innerHeight - bounds.height - 12);
+            tooltip.style.left = `${left}px`;
+            tooltip.style.top = `${Math.max(12, top)}px`;
+        }
+
+        function hideReportTooltip() {
+            const tooltip = document.getElementById('report-tooltip');
+            tooltip.hidden = true;
+            tooltip.setAttribute('aria-hidden', 'true');
+        }
+
+        function renderService(serviceName, incidents, today, startDay) {
+            const latestReport = incidents.find(report => report.service === serviceName);
+            const currentState = validState(latestReport && latestReport.status);
+            const card = document.createElement('article');
+            card.className = 'service-card';
+            const heading = document.createElement('div');
+            heading.className = 'service-heading';
+            const name = document.createElement('span');
+            name.className = 'service-name';
+            name.textContent = serviceName;
+            const stateLabel = document.createElement('span');
+            stateLabel.className = 'state-label';
+            stateLabel.dataset.state = currentState;
+            const dot = document.createElement('span');
+            dot.className = 'dot';
+            dot.setAttribute('aria-hidden', 'true');
+            const stateText = document.createElement('span');
+            const statusLabels = { up: 'Operational', down: 'Down', maintenance: 'Maintenance', unknown: 'Status unavailable' };
+            stateText.textContent = statusLabels[currentState];
+            stateLabel.append(dot, stateText);
+            heading.append(name, stateLabel);
+
+            const note = document.createElement('p');
+            note.className = 'service-note';
+            note.textContent = latestReport
+                ? `Latest report: ${latestReport.summary || currentState}`
+                : 'No incident report is available for this service.';
+            const scroller = document.createElement('div');
+            scroller.className = 'timeline-scroll';
+            scroller.setAttribute('role', 'group');
+            scroller.setAttribute('aria-label', `${serviceName} daily status for the past 60 days`);
+            const timeline = document.createElement('div');
+            timeline.className = 'timeline';
+            makeTimeline(serviceName, incidents, startDay).forEach(({ day, state, downtime }) => {
+                const bar = document.createElement('button');
+                bar.type = 'button';
+                bar.className = 'day';
+                bar.dataset.state = state;
+                const stateDescription = state === 'up' ? 'Operational' : state === 'down' ? 'Down' : 'No report data';
+                const downtimeDescription = state === 'down' && downtime !== null ? `; downtime ${formatDuration(downtime)}` : '';
+                bar.setAttribute('aria-label', `${formatDay(day)}: ${stateDescription}${downtimeDescription}`);
+                bar.setAttribute('aria-describedby', 'report-tooltip');
+                bar.addEventListener('mouseenter', () => showReportTooltip(bar, day, state, downtime));
+                bar.addEventListener('focus', () => showReportTooltip(bar, day, state, downtime));
+                bar.addEventListener('mouseleave', hideReportTooltip);
+                bar.addEventListener('blur', hideReportTooltip);
+                timeline.append(bar);
+            });
+            scroller.append(timeline);
+            const labelsRow = document.createElement('div');
+            labelsRow.className = 'timeline-labels';
+            const oldest = document.createElement('span');
+            oldest.textContent = `${formatDay(startDay)} · 60 days ago`;
+            const latest = document.createElement('span');
+            latest.textContent = `Today · ${formatDay(today)}`;
+            labelsRow.append(oldest, latest);
+            scroller.append(labelsRow);
+            card.append(heading, note, scroller);
+            return card;
+        }
+
+        function renderIncident(report) {
+            const article = document.createElement('article');
+            article.className = 'incident';
+            const header = document.createElement('div');
+            header.className = 'incident-top';
+            const service = document.createElement('h3');
+            service.className = 'incident-service';
+            service.textContent = typeof report.service === 'string' ? report.service : 'Service update';
+            const status = document.createElement('span');
+            status.className = 'incident-status';
+            status.dataset.state = validState(report.status);
+            status.textContent = validState(report.status);
+            header.append(service, status);
+            article.append(header);
+            if (typeof report.summary === 'string' && report.summary) {
+                const summary = document.createElement('p');
+                summary.className = 'incident-summary';
+                summary.textContent = report.summary;
+                article.append(summary);
+            }
+            const date = document.createElement('time');
+            date.className = 'incident-date';
+            const rawDate = getReportDay(report);
+            if (rawDate) date.dateTime = rawDate;
+            date.textContent = report.reportedAtLabel || report.startedAtLabel || rawDate || 'Date unavailable';
+            article.append(date);
+            return article;
+        }
+
+        async function loadReport() {
+            const servicesElement = document.getElementById('services');
+            const incidentsElement = document.getElementById('incident-list');
+            const today = new Date();
+            const todayUtc = new Date(Date.UTC(today.getFullYear(), today.getMonth(), today.getDate()));
+            const startDay = addDays(todayUtc, -(DAYS - 1));
+            document.getElementById('updated-time').textContent = `Updated ${today.toLocaleString()}`;
+            document.getElementById('incident-range').textContent = `${formatDay(startDay)} – ${formatDay(todayUtc)}`;
+
+            try {
+                const allIncidents = await getIncidents();
+                const incidents = allIncidents.filter(report => {
+                    const day = getReportDay(report);
+                    return day && day >= dateKey(startDay) && day <= dateKey(todayUtc);
+                });
+                const serviceNames = [...new Set(allIncidents
+                    .map(report => report.service)
+                    .filter(service => typeof service === 'string' && service.trim()))];
+                const currentStates = serviceNames.map(serviceName =>
+                    validState(allIncidents.find(report => report.service === serviceName)?.status)
+                );
+                document.getElementById('page-title').textContent = serviceNames.length === 0
+                    ? 'No recent incident reports'
+                    : currentStates.some(state => ['down', 'maintenance'].includes(state))
+                        ? 'Some services are experiencing issues'
+                        : 'Service incident report';
+                servicesElement.replaceChildren();
+                serviceNames.forEach(serviceName => {
+                    servicesElement.append(renderService(serviceName, allIncidents, todayUtc, startDay));
+                });
+                incidentsElement.replaceChildren();
+                if (incidents.length === 0) {
+                    const empty = document.createElement('p');
+                    empty.className = 'empty';
+                    empty.textContent = 'No incident reports were recorded in this 60-day period.';
+                    incidentsElement.append(empty);
+                } else {
+                    incidents.forEach(report => incidentsElement.append(renderIncident(report)));
+                }
+            } catch {
+                document.getElementById('page-title').textContent = 'Service status is unavailable';
+                const error = document.createElement('p');
+                error.className = 'error';
+                error.textContent = 'We could not load the current statuses and incident reports. Please try again later.';
+                servicesElement.replaceChildren(error);
+                incidentsElement.replaceChildren();
+                const incidentError = document.createElement('p');
+                incidentError.className = 'error';
+                incidentError.textContent = 'Incident reports could not be loaded.';
+                incidentsElement.append(incidentError);
+            }
+        }
+
+        loadReport();
+    </script>
+</body>
+</html>

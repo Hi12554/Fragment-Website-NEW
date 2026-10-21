@@ -1,6 +1,13 @@
 {
   "incidents": [
     {
+      "service": "Website",
+      "status": "up",
+      "reportedAt": "2026-10-20T20:52:43-05:00",
+      "reportedAtLabel": "Tuesday, October 20, 2026 8:52 PM CDT",
+      "summary": "The Fragment Website is online and operating normally."
+    },
+    {
       "service": "Discord Bot",
       "status": "up",
       "reportedAt": "2026-10-20",
