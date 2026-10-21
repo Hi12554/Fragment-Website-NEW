@@ -1738,7 +1738,7 @@
                 <div id="velocity-status-content"></div>
                 <div class="status-row">
                     <span>Discord Bot</span>
-                    <span><span class="status-indicator maintenance"></span>Maintenance</span>
+                    <span id="discord-bot-status"><span class="status-indicator unknown"></span>Status unavailable</span>
                 </div>
                 <div class="status-row">
                     <span>Website</span>
@@ -2476,7 +2476,29 @@
 
         function loadStatusPage() {
             loadVelocityStatus();
+            loadDiscordBotStatus();
             loadIncidentHistory();
+        }
+
+        async function loadDiscordBotStatus() {
+            const statusElement = document.getElementById('discord-bot-status');
+
+            try {
+                const response = await fetch('/api/bot-status', { cache: 'no-store' });
+                if (!response.ok) throw new Error('Bot status request failed');
+                const data = await response.json();
+                const status = data && ['up', 'down', 'maintenance'].includes(data['bot-status'])
+                    ? data['bot-status']
+                    : 'unknown';
+                const labels = { up: 'Operational', down: 'Down', maintenance: 'Maintenance', unknown: 'Status unavailable' };
+                const indicator = document.createElement('span');
+                indicator.className = `status-indicator ${status}`;
+                statusElement.replaceChildren(indicator, document.createTextNode(labels[status]));
+            } catch {
+                const indicator = document.createElement('span');
+                indicator.className = 'status-indicator unknown';
+                statusElement.replaceChildren(indicator, document.createTextNode('Status unavailable'));
+            }
         }
 
         async function loadVelocityStatus() {
