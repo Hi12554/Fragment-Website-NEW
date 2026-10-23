@@ -90,6 +90,8 @@
 .feedback-privacy,
 .feedback-status { margin-top: 12px; color: var(--text-muted); font-size: 0.78rem; line-height: 1.5; }
 .feedback-status { min-height: 1.2em; color: var(--pumpkin-soft); }
+.feedback-no-show { display: flex; align-items: center; gap: 8px; margin-top: 14px; color: var(--text-gray); font-size: 0.82rem; cursor: pointer; }
+.feedback-no-show input { accent-color: var(--accent); }
 .feedback-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; }
 .feedback-cancel {
     padding: 12px 18px;

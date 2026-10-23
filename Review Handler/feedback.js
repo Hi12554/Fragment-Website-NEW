@@ -1,7 +1,26 @@
 let feedbackReturnFocus = null;
+const feedbackDismissalStorageKey = 'fragment-feedback-dismissed';
+
+function hasDismissedFeedback() {
+    try {
+        return localStorage.getItem(feedbackDismissalStorageKey) === 'true';
+    } catch {
+        return false;
+    }
+}
+
+function saveFeedbackDismissalPreference() {
+    if (!document.getElementById('feedback-no-show').checked) return;
+    try {
+        localStorage.setItem(feedbackDismissalStorageKey, 'true');
+    } catch {
+        // Keep the current dismissal behavior when browser storage is unavailable.
+    }
+}
 
 function openFeedbackModal(event) {
     if (event) event.preventDefault();
+    if (hasDismissedFeedback()) return;
     const modal = document.getElementById('feedback-modal');
     feedbackReturnFocus = document.activeElement;
     document.getElementById('feedback-form').reset();
@@ -18,6 +37,7 @@ function openFeedbackModal(event) {
 function closeFeedbackModal() {
     const modal = document.getElementById('feedback-modal');
     if (modal.hidden) return;
+    saveFeedbackDismissalPreference();
     modal.classList.remove('open');
     document.body.style.overflow = '';
     window.setTimeout(() => {
@@ -66,7 +86,10 @@ async function submitWebsiteFeedback(event) {
         const result = await response.json().catch(() => ({}));
         if (!response.ok) throw new Error(result.error || 'Feedback could not be sent.');
 
+        const dontShowAgain = document.getElementById('feedback-no-show').checked;
+        saveFeedbackDismissalPreference();
         form.reset();
+        document.getElementById('feedback-no-show').checked = dontShowAgain;
         updateFeedbackStars();
         status.textContent = 'Thanks for your feedback!';
     } catch (error) {
