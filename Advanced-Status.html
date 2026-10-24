@@ -67,6 +67,7 @@
         .report-tooltip[hidden] { display: none; }
         .report-tooltip-status { margin: 0; color: var(--green); font-size: 0.85rem; font-weight: 700; }
         .report-tooltip-status[data-state="down"] { color: var(--red); }
+        .report-tooltip-status[data-state="maintenance"] { color: var(--yellow); }
         .report-tooltip-duration { margin: 7px 0 0; color: var(--muted); font-size: 0.77rem; }
         .report-tooltip-date { margin: 7px 0 0; color: var(--subtle); font: 0.68rem 'JetBrains Mono', monospace; }
         .timeline-labels { display: flex; justify-content: space-between; min-width: 650px; margin-top: 7px; color: var(--subtle); font: 0.65rem 'JetBrains Mono', monospace; }
@@ -137,10 +138,7 @@
         const dateKey = date => `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, '0')}-${String(date.getUTCDate()).padStart(2, '0')}`;
         const addDays = (date, days) => new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate() + days));
         const validState = state => ['up', 'down', 'maintenance'].includes(state) ? state : 'unknown';
-        const timelineState = report => {
-            const state = validState(report?.status);
-            return state === 'maintenance' ? 'down' : state;
-        };
+        const timelineState = report => validState(report?.status);
         const formatDay = date => date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', timeZone: 'UTC' });
 
         async function getIncidents() {
@@ -245,7 +243,8 @@
             const status = document.createElement('p');
             status.className = 'report-tooltip-status';
             status.dataset.state = state;
-            status.textContent = state === 'up' ? 'Operational' : state === 'down' ? 'Down' : 'No report data';
+            const statusLabels = { up: 'Operational', down: 'Down', maintenance: 'Maintenance', unknown: 'No report data' };
+            status.textContent = statusLabels[state];
             tooltip.append(status);
 
             if (state === 'down') {

@@ -1,6 +1,13 @@
 {
   "incidents": [
     {
+      "service": "Discord Bot",
+      "status": "maintenance",
+      "reportedAt": "2026-10-23",
+      "reportedAtLabel": "Friday, October 13, 2026 10:21 PM CDT",
+      "summary": "The Discord bot is temporarily unavailable due to maintenance. Commands may not work during this time."
+    },
+    {
       "service": "Website",
       "status": "up",
       "reportedAt": "2026-10-20T20:52:43-05:00",
@@ -16,7 +23,7 @@
     },
     {
       "service": "Discord Bot",
-      "status": "down",
+      "status": "maintenance",
       "reportedAt": "2026-10-20",
       "reportedAtLabel": "Tuesday, October 20, 2026 7:19 PM CDT",
       "summary": "The Discord bot is temporarily unavailable due to maintenance. Commands may not work during this time."
