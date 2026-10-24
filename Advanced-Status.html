@@ -76,7 +76,7 @@
         .key-swatch { width: 9px; height: 9px; border-radius: 2px; background: #35332f; }
         .key-swatch.up { background: #35a977; }
         .key-swatch.down { background: #d95050; }
-        .key-swatch.partial { background: linear-gradient(180deg, #d95050 0 48%, #35a977 52%); }
+        .key-swatch.partial { background: linear-gradient(90deg, #d6a632 0 50%, #35a977 50%); }
         .key-swatch.maintenance { background: #d6a632; }
         .notice { margin: 18px 0 0; color: var(--subtle); font-size: 0.78rem; line-height: 1.6; }
         .panel { margin-top: 24px; padding: 24px; }
@@ -231,29 +231,44 @@
                     eventIndex += 1;
                 }
                 const dayState = timelineState(latestEvent?.report);
-                days.push({ day, state: dayState, downtime: latestDowntime });
+                const dayEvents = events.filter(event => event.day === key);
+                const segments = [];
+                dayEvents.forEach(event => {
+                    const eventState = timelineState(event.report);
+                    if (segments.length && segments[segments.length - 1].state === eventState) return;
+                    segments.push({
+                        state: eventState,
+                        duration: ['down', 'maintenance'].includes(eventState)
+                            ? getIssueDuration(events, events.indexOf(event), Date.now())
+                            : null
+                    });
+                });
+                days.push({ day, state: dayState, downtime: latestDowntime, segments });
             }
             return days;
         }
 
-        function showReportTooltip(bar, day, state, downtime) {
+        function showReportTooltip(bar, day, state, downtime, segments) {
             const tooltip = document.getElementById('report-tooltip');
             tooltip.replaceChildren();
 
-            const status = document.createElement('p');
-            status.className = 'report-tooltip-status';
-            status.dataset.state = state;
             const statusLabels = { up: 'Operational', down: 'Down', maintenance: 'Maintenance', unknown: 'No report data' };
-            status.textContent = statusLabels[state];
-            tooltip.append(status);
+            const tooltipSegments = segments.length > 1 ? segments : [{ state, duration: downtime }];
+            tooltipSegments.forEach(segment => {
+                const status = document.createElement('p');
+                status.className = 'report-tooltip-status';
+                status.dataset.state = segment.state;
+                status.textContent = statusLabels[segment.state];
+                tooltip.append(status);
 
-            if (state === 'down' || state === 'maintenance') {
-                const durationLabel = document.createElement('p');
-                durationLabel.className = 'report-tooltip-duration';
-                const durationName = state === 'maintenance' ? 'Maintenance duration' : 'Downtime';
-                durationLabel.textContent = `${durationName}: ${downtime === null ? 'Unknown' : formatDuration(downtime)}`;
-                tooltip.append(durationLabel);
-            }
+                if (segment.state === 'down' || segment.state === 'maintenance') {
+                    const durationLabel = document.createElement('p');
+                    durationLabel.className = 'report-tooltip-duration';
+                    const durationName = segment.state === 'maintenance' ? 'Maintenance duration' : 'Downtime';
+                    durationLabel.textContent = `${durationName}: ${segment.duration === null ? 'Unknown' : formatDuration(segment.duration)}`;
+                    tooltip.append(durationLabel);
+                }
+            });
 
             const dateLabel = document.createElement('p');
             dateLabel.className = 'report-tooltip-date';
@@ -317,20 +332,37 @@
             scroller.setAttribute('aria-label', `${serviceName} daily status for the past 60 days`);
             const timeline = document.createElement('div');
             timeline.className = 'timeline';
-            makeTimeline(serviceName, incidents, startDay).forEach(({ day, state, downtime }) => {
+            makeTimeline(serviceName, incidents, startDay).forEach(({ day, state, downtime, segments }) => {
                 const bar = document.createElement('button');
                 bar.type = 'button';
                 bar.className = 'day';
-                bar.dataset.state = state;
+                bar.dataset.state = segments.length > 1 ? 'partial' : state;
+                if (segments.length > 1) {
+                    const colors = { up: '#35a977', down: '#d95050', maintenance: '#d6a632', unknown: '#35332f' };
+                    const segmentSize = 100 / segments.length;
+                    const stops = segments.map((segment, index) => {
+                        const start = (index * segmentSize).toFixed(2);
+                        const end = ((index + 1) * segmentSize).toFixed(2);
+                        return `${colors[segment.state]} ${start}% ${end}%`;
+                    });
+                    bar.style.backgroundImage = `linear-gradient(90deg, ${stops.join(', ')})`;
+                }
                 const stateDescription = { up: 'Operational', down: 'Down', maintenance: 'Maintenance', unknown: 'No report data' }[state];
-                const durationName = state === 'maintenance' ? 'maintenance duration' : 'downtime';
-                const durationDescription = ['down', 'maintenance'].includes(state) && downtime !== null
-                    ? `; ${durationName} ${formatDuration(downtime)}`
-                    : '';
-                bar.setAttribute('aria-label', `${formatDay(day)}: ${stateDescription}${durationDescription}`);
+                const descriptions = segments.length > 1
+                    ? segments.map(segment => {
+                        const durationName = segment.state === 'maintenance' ? 'maintenance duration' : 'downtime';
+                        const duration = ['down', 'maintenance'].includes(segment.state) && segment.duration !== null
+                            ? `; ${durationName} ${formatDuration(segment.duration)}`
+                            : '';
+                        return `${statusLabels[segment.state]}${duration}`;
+                    })
+                    : [stateDescription, ...(['down', 'maintenance'].includes(state) && downtime !== null
+                        ? [`${state === 'maintenance' ? 'maintenance duration' : 'downtime'} ${formatDuration(downtime)}`]
+                        : [])];
+                bar.setAttribute('aria-label', `${formatDay(day)}: ${descriptions.join('; ')}`);
                 bar.setAttribute('aria-describedby', 'report-tooltip');
-                bar.addEventListener('mouseenter', () => showReportTooltip(bar, day, state, downtime));
-                bar.addEventListener('focus', () => showReportTooltip(bar, day, state, downtime));
+                bar.addEventListener('mouseenter', () => showReportTooltip(bar, day, state, downtime, segments));
+                bar.addEventListener('focus', () => showReportTooltip(bar, day, state, downtime, segments));
                 bar.addEventListener('mouseleave', hideReportTooltip);
                 bar.addEventListener('blur', hideReportTooltip);
                 timeline.append(bar);
