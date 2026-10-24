@@ -157,6 +157,32 @@
         }
 
         .nav-links { display: flex; gap: 5px; align-items: center; }
+
+        .mobile-menu-toggle {
+            display: none;
+            width: 42px;
+            height: 42px;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 5px;
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            color: var(--text-white);
+            background: var(--glass);
+            cursor: pointer;
+        }
+        .mobile-menu-toggle span {
+            width: 18px;
+            height: 2px;
+            border-radius: 2px;
+            background: currentColor;
+            transition: transform 180ms ease, opacity 180ms ease;
+        }
+        .mobile-menu-toggle[aria-expanded="true"] span:first-child { transform: translateY(7px) rotate(45deg); }
+        .mobile-menu-toggle[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+        .mobile-menu-toggle[aria-expanded="true"] span:last-child { transform: translateY(-7px) rotate(-45deg); }
+        .mobile-menu-toggle:focus-visible { outline: 2px solid var(--pumpkin-soft); outline-offset: 3px; }
         
         .nav-links a {
             color: var(--text-gray); 
@@ -1388,31 +1414,50 @@
             .nav-capsule,
             nav.initial .nav-capsule,
             nav.scrolled .nav-capsule {
+                position: relative;
                 width: 100%;
-                height: auto;
-                min-height: 72px;
+                height: 64px;
+                min-height: 64px;
                 padding: 10px 14px;
                 border: 0;
-                border-bottom: 1px solid rgba(255,255,255,0.08);
                 border-radius: 0;
-                flex-direction: column;
-                align-items: stretch;
-                gap: 6px;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                gap: 12px;
             }
             nav.scrolled { top: 0; }
             .nav-logo { font-size: 1.05rem; }
+            .mobile-menu-toggle { display: inline-flex; }
+            #link-web-executor { display: none; }
+            .footer-links a[href="/web-executor"] { display: none; }
             .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
                 width: 100%;
-                gap: 2px;
-                overflow-x: auto;
-                overscroll-behavior-x: contain;
-                scrollbar-width: none;
+                max-height: calc(100dvh - 64px);
+                overflow-y: auto;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 4px;
+                padding: 10px 14px 16px;
+                border: 1px solid var(--card-border);
+                border-top: 0;
+                border-radius: 0 0 16px 16px;
+                background: var(--card-bg);
+                box-shadow: 0 18px 30px rgba(0, 0, 0, 0.24);
             }
-            .nav-links::-webkit-scrollbar { display: none; }
-            .nav-links a { flex: 0 0 auto; padding: 8px 11px; }
-            .nav-links .theme-toggle { flex: 0 0 auto; }
-            .nav-links .discord-btn { padding: 8px 12px !important; }
-            main { margin-top: 90px; }
+            nav.mobile-menu-open .nav-links { display: flex; }
+            .nav-links a { flex: 0 0 auto; padding: 11px 12px; }
+            .nav-links .theme-toggle { flex: 0 0 auto; justify-content: flex-start; }
+            .nav-links .discord-btn { justify-content: center; padding: 10px 12px !important; }
+            main { margin-top: 64px; }
+            #web-executor-page-heading,
+            #web-executor-shell { display: none; }
+            .web-executor-mobile-notice[hidden] { display: block; }
             .page { padding: 48px 5%; }
             .section-center { margin-bottom: 48px; }
             .section-center h1 { font-size: clamp(2.4rem, 12vw, 4rem); letter-spacing: -2px; }
@@ -1449,7 +1494,10 @@
     <nav id="main-nav" class="initial">
         <div class="nav-capsule">
             <div class="nav-logo" onclick="showPage('home')">FRAGMENT</div>
-            <div class="nav-links">
+            <button class="mobile-menu-toggle" id="mobile-menu-toggle" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="nav-links" onclick="toggleMobileMenu()">
+                <span></span><span></span><span></span>
+            </button>
+            <div class="nav-links" id="nav-links">
                 <a href="/home" onclick="navigateToPage(event, 'home')" id="link-home" class="active">Home</a>
                 <a href="/download" onclick="navigateToPage(event, 'download')" id="link-download">Download</a>
                 <a href="/web-executor" onclick="navigateToPage(event, 'web-executor')" id="link-web-executor">Web UI</a>
@@ -2141,7 +2189,8 @@
         }
 
         function isMobileWebExecutorDevice() {
-            return /Android|iPhone|iPad|iPod|Mobile|Windows Phone/i.test(navigator.userAgent) ||
+            return window.matchMedia('(max-width: 650px)').matches ||
+                /Android|iPhone|iPad|iPod|Mobile|Windows Phone/i.test(navigator.userAgent) ||
                 (navigator.maxTouchPoints > 1 && /Macintosh/i.test(navigator.userAgent));
         }
 
@@ -2165,11 +2214,6 @@
                 shell.hidden = true;
                 pageHeading.hidden = true;
                 mobileNotice.hidden = false;
-                title.textContent = 'Web UI unavailable on mobile';
-                message.textContent = "You can't use this executor on a mobile device. Please switch to a Windows device to use the Web UI and local Velocity bridge.";
-                noButton.hidden = true;
-                yesButton.textContent = 'Got it';
-                document.getElementById('web-executor-help').showModal();
                 return;
             }
 
@@ -2440,9 +2484,23 @@
             showPage(pageId);
         }
 
+        function toggleMobileMenu() {
+            const nav = document.getElementById('main-nav');
+            const button = document.getElementById('mobile-menu-toggle');
+            const isOpen = nav.classList.toggle('mobile-menu-open');
+            button.setAttribute('aria-expanded', String(isOpen));
+            button.setAttribute('aria-label', isOpen ? 'Close navigation menu' : 'Open navigation menu');
+        }
+
         function showPage(pageId, updateUrl = true) {
             const page = document.getElementById(pageId);
             if (!page || !page.classList.contains('page')) pageId = 'home';
+
+            const nav = document.getElementById('main-nav');
+            const menuButton = document.getElementById('mobile-menu-toggle');
+            nav.classList.remove('mobile-menu-open');
+            menuButton.setAttribute('aria-expanded', 'false');
+            menuButton.setAttribute('aria-label', 'Open navigation menu');
 
             if (updateUrl && window.location.pathname !== `/${pageId}`) {
                 window.history.pushState({ pageId }, '', `/${pageId}`);
@@ -2463,6 +2521,18 @@
 
             window.scrollTo(0, 0);
         }
+
+        document.addEventListener('keydown', event => {
+            if (event.key === 'Escape') {
+                const nav = document.getElementById('main-nav');
+                const menuButton = document.getElementById('mobile-menu-toggle');
+                if (!nav.classList.contains('mobile-menu-open')) return;
+                nav.classList.remove('mobile-menu-open');
+                menuButton.setAttribute('aria-expanded', 'false');
+                menuButton.setAttribute('aria-label', 'Open navigation menu');
+                menuButton.focus();
+            }
+        });
 
         window.addEventListener('popstate', () => showPage(getPageFromPath(), false));
 
