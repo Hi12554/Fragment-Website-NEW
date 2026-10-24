@@ -2682,7 +2682,7 @@
 
                     const dates = document.createElement('div');
                     dates.className = 'incident-entry-dates';
-                    const dateEntries = ['down', 'up'].includes(statusState)
+                    const dateEntries = ['down', 'up', 'maintenance'].includes(statusState)
                         ? [['Reported', incident.reportedAt]]
                         : [['Started', incident.startedAt], ['Resolved', incident.resolvedAt]];
                     dateEntries.forEach(([label, value]) => {
