@@ -193,9 +193,9 @@
             return parts.join(' ');
         }
 
-        function getDowntimeDuration(events, eventIndex, now) {
+        function getIssueDuration(events, eventIndex, now) {
             const event = events[eventIndex];
-            if (!event || timelineState(event.report) !== 'down' || !event.timestamp.precise) return null;
+            if (!event || !['down', 'maintenance'].includes(timelineState(event.report)) || !event.timestamp.precise) return null;
             const recovery = events.slice(eventIndex + 1).find(next => timelineState(next.report) === 'up');
             if (recovery && !recovery.timestamp.precise) return null;
             return Math.max(0, (recovery ? recovery.timestamp.value : now) - event.timestamp.value);
@@ -217,16 +217,16 @@
                 while (eventIndex < events.length && events[eventIndex].day <= key) {
                     const event = events[eventIndex];
                     latestEvent = event;
-                    if (timelineState(event.report) === 'down') {
-                        latestDowntime = getDowntimeDuration(events, eventIndex, Date.now());
+                    if (['down', 'maintenance'].includes(timelineState(event.report))) {
+                        latestDowntime = getIssueDuration(events, eventIndex, Date.now());
                     } else if (timelineState(event.report) === 'up') {
-                        const previousDownIndex = events.slice(0, eventIndex)
+                        const previousIssueIndex = events.slice(0, eventIndex)
                             .map((previous, index) => ({ previous, index }))
                             .reverse()
-                            .find(({ previous }) => timelineState(previous.report) === 'down')?.index;
-                        latestDowntime = previousDownIndex === undefined
+                            .find(({ previous }) => ['down', 'maintenance'].includes(timelineState(previous.report)))?.index;
+                        latestDowntime = previousIssueIndex === undefined
                             ? null
-                            : getDowntimeDuration(events, previousDownIndex, Date.now());
+                            : getIssueDuration(events, previousIssueIndex, Date.now());
                     }
                     eventIndex += 1;
                 }
@@ -247,10 +247,11 @@
             status.textContent = statusLabels[state];
             tooltip.append(status);
 
-            if (state === 'down') {
+            if (state === 'down' || state === 'maintenance') {
                 const durationLabel = document.createElement('p');
                 durationLabel.className = 'report-tooltip-duration';
-                durationLabel.textContent = `Downtime: ${downtime === null ? 'Unknown' : formatDuration(downtime)}`;
+                const durationName = state === 'maintenance' ? 'Maintenance duration' : 'Downtime';
+                durationLabel.textContent = `${durationName}: ${downtime === null ? 'Unknown' : formatDuration(downtime)}`;
                 tooltip.append(durationLabel);
             }
 
@@ -321,9 +322,12 @@
                 bar.type = 'button';
                 bar.className = 'day';
                 bar.dataset.state = state;
-                const stateDescription = state === 'up' ? 'Operational' : state === 'down' ? 'Down' : 'No report data';
-                const downtimeDescription = state === 'down' && downtime !== null ? `; downtime ${formatDuration(downtime)}` : '';
-                bar.setAttribute('aria-label', `${formatDay(day)}: ${stateDescription}${downtimeDescription}`);
+                const stateDescription = { up: 'Operational', down: 'Down', maintenance: 'Maintenance', unknown: 'No report data' }[state];
+                const durationName = state === 'maintenance' ? 'maintenance duration' : 'downtime';
+                const durationDescription = ['down', 'maintenance'].includes(state) && downtime !== null
+                    ? `; ${durationName} ${formatDuration(downtime)}`
+                    : '';
+                bar.setAttribute('aria-label', `${formatDay(day)}: ${stateDescription}${durationDescription}`);
                 bar.setAttribute('aria-describedby', 'report-tooltip');
                 bar.addEventListener('mouseenter', () => showReportTooltip(bar, day, state, downtime));
                 bar.addEventListener('focus', () => showReportTooltip(bar, day, state, downtime));
