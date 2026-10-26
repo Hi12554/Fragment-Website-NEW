@@ -1,7 +1,8 @@
 {
-  "CurrentVersion": "1.0.8",
+  "CurrentVersion": "1.0.9",
   "Changelogs": [
-    "New UI"
+    "Added dropdown navigation setting",
+    "Added the ability to import and export settings"
   ],
   "DownloadUrl": "https://www.use-fragment.lol/download"
 }

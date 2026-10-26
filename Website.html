@@ -691,75 +691,42 @@
 
         .download-panel {
             display: grid;
-            grid-template-columns: minmax(280px, 0.9fr) minmax(320px, 1.1fr);
-            gap: 25px;
-            align-items: stretch;
+            grid-template-columns: minmax(0, 1fr);
             margin-bottom: 80px;
         }
 
-        .executor-preview, .release-card, .release-history {
+        .release-card, .release-history {
             background: linear-gradient(145deg, #17172a, #0a0a0d);
             border: 1px solid #262640;
             border-radius: 24px;
             box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
         }
 
-        .executor-preview {
-            min-height: 360px;
-            padding: 24px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .preview-topbar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .preview-topbar { color: #d8d8e8; font-size: 0.75rem; font-weight: 700; }
-        .preview-brand { display: flex; align-items: center; gap: 8px; }
-        .preview-brand-mark {
+        .release-card-featured {
             display: grid;
-            place-items: center;
-            width: 24px;
-            height: 24px;
-            border-radius: 7px;
-            color: white;
-            background: #5b55e8;
-            font-size: 0.65rem;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+            align-items: center;
+            gap: 32px;
         }
-        .preview-version { color: #777797; font: 0.65rem 'JetBrains Mono', monospace; }
-        .preview-heading { margin: 42px 0 28px; }
-        .preview-heading small { color: #6e6e8d; font: 0.65rem 'JetBrains Mono', monospace; letter-spacing: 1px; }
-        .preview-heading h2 { margin-top: 8px; font-size: 2rem; letter-spacing: -1px; }
-        .preview-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .preview-stat { padding: 16px; border: 1px solid #282844; border-radius: 14px; background: rgba(255,255,255,0.035); }
-        .preview-stat strong { display: block; color: #8b84ff; font-size: 2rem; }
-        .preview-stat span { color: #777797; font: 0.65rem 'JetBrains Mono', monospace; letter-spacing: 1px; }
+        .release-card-content { min-width: 0; }
         .preview-image-button {
             display: block;
             width: 100%;
             padding: 0;
-            margin: 18px 0 0;
-            border: 0;
+            margin: 0;
+            border: 1px solid #282844;
             border-radius: 14px;
             background: transparent;
             cursor: zoom-in;
+            overflow: hidden;
         }
         .preview-image {
             display: block;
             width: 100%;
             height: auto;
-            max-height: 230px;
-            object-fit: contain;
-            border: 1px solid #282844;
-            border-radius: 14px;
             transition: var(--transition);
         }
         .preview-image-button:hover .preview-image {
-            border-color: #716bff;
-            box-shadow: 0 0 24px rgba(113, 107, 255, 0.25);
             transform: scale(1.015);
         }
         .image-lightbox {
@@ -1356,20 +1323,13 @@
         }
         :root[data-theme="light"] .about-note { color: #655a70; }
         :root[data-theme="light"] .about-note strong { color: #544277; }
-        :root[data-theme="light"] .executor-preview,
         :root[data-theme="light"] .release-card,
         :root[data-theme="light"] .release-history {
             border-color: var(--card-border);
             background: linear-gradient(145deg, #fff, #f0ede8);
             box-shadow: 0 24px 60px rgba(62, 48, 34, 0.1);
         }
-        :root[data-theme="light"] .preview-topbar { color: #3c3740; }
-        :root[data-theme="light"] .preview-version,
-        :root[data-theme="light"] .preview-heading small,
-        :root[data-theme="light"] .preview-stat span { color: #716a78; }
-        :root[data-theme="light"] .preview-stat,
-        :root[data-theme="light"] .preview-image { border-color: rgba(61, 50, 72, 0.16); }
-        :root[data-theme="light"] .preview-stat { background: rgba(54, 43, 65, 0.04); }
+        :root[data-theme="light"] .preview-image-button { border-color: rgba(61, 50, 72, 0.16); }
         :root[data-theme="light"] .velocity-status-bar { background: #f4e9e5; }
         :root[data-theme="light"] .velocity-status-bar[data-state="up"] { background: #e8f4eb; }
         :root[data-theme="light"] .velocity-status-bar[data-state="unknown"] { background: #f0ede8; }
@@ -1465,8 +1425,8 @@
             .grid { grid-template-columns: minmax(0, 1fr); gap: 16px; margin-bottom: 56px; }
             .card { padding: 32px 24px; }
             .download-panel { grid-template-columns: minmax(0, 1fr); }
-            .executor-preview { min-height: 0; padding: 18px; }
             .release-card { padding: 22px; }
+            .release-card-featured { grid-template-columns: minmax(0, 1fr); gap: 24px; }
             .release-meta { grid-template-columns: minmax(0, 1fr); }
             .release-meta .release-changelog-tile { grid-column: auto; }
             .release-actions { flex-direction: column; }
@@ -1563,38 +1523,26 @@
                 <p>Fragment Velocity API for Roblox. Compatible with Windows 10/11.</p>
             </div>
             <div class="download-panel">
-                <div class="executor-preview" role="img" aria-label="Fragment executor preview showing 99 percent UNC and 96 percent sUNC test results">
-                    <div class="preview-topbar">
-                        <div class="preview-brand"><span class="preview-brand-mark">F</span> Fragment</div>
-                        <span class="preview-version">v1.0.8</span>
-                    </div>
-                    <div class="preview-heading">
-                        <small>FRAGMENT VELOCITY API</small>
-                        <h2>Executor</h2>
-                    </div>
-                    <div class="preview-stats">
-                        <div class="preview-stat"><strong>98%</strong><span>UNC</span></div>
-                        <div class="preview-stat"><strong>93%</strong><span>sUNC</span></div>
+                <div class="release-card release-card-featured">
+                    <div class="release-card-content">
+                        <h2>Fragment v1.0.9</h2>
+                        <p>The latest Fragment version.</p>
+                        <div class="release-meta">
+                            <div><span>Supported Roblox version</span><strong>version-11f155f3450f4c8e</strong></div>
+                            <div><span>VirusTotal scan</span><strong>0/68 detections</strong></div>
+                            <div><span>UNC score</span><strong>98%</strong></div>
+                            <div><span>sUNC score</span><strong>93%</strong></div>
+                            <div class="release-changelog-tile"><span>v1.0.9 Changelog</span><ul class="release-changelog-list"><li>Added dropdown navigation setting</li><li>Added the ability to import and export settings</li></ul></div>
+                        </div>
+                        <div class="release-actions">
+                            <a href="/Fragment_1.0.9_x64-setup.exe" class="card-btn download-installer" download>Download v1.0.9</a>
+                            <p class="mobile-download-notice" role="status">Download unavailable on mobile. Use a Windows PC to download Fragment.</p>
+                            <a href="https://www.virustotal.com/gui/file/8809c81548f67242f72dc1da8c21237a3187584d4fad6c08e1963c62adf78363" class="card-btn secondary-btn" target="_blank" rel="noopener noreferrer">View VirusTotal</a>
+                        </div>
                     </div>
                     <button class="preview-image-button" type="button" onclick="openImageLightbox()" aria-label="Open larger Fragment executor preview">
-                        <img class="preview-image" src="/v1.0.8.png" alt="Fragment v1.0.8 executor interface preview">
+                        <img class="preview-image" src="/v1.0.9.png" alt="Fragment v1.0.9 executor interface preview">
                     </button>
-                </div>
-                <div class="release-card">
-                    <h2>Fragment v1.0.8</h2>
-                    <p>The latest Fragment version.</p>
-                    <div class="release-meta">
-                        <div><span>Supported Roblox version</span><strong>version-11f155f3450f4c8e</strong></div>
-                        <div><span>VirusTotal scan</span><strong>0/68 detections</strong></div>
-                        <div><span>UNC score</span><strong>98%</strong></div>
-                        <div><span>sUNC score</span><strong>93%</strong></div>
-                        <div class="release-changelog-tile"><span>v1.0.8 Changelog</span><ul class="release-changelog-list"><li>New UI</li></ul></div>
-                    </div>
-                    <div class="release-actions">
-                        <a href="/Fragment_1.0.8_x64-setup.exe" class="card-btn download-installer" download>Download v1.0.8</a>
-                        <p class="mobile-download-notice" role="status">Download unavailable on mobile. Use a Windows PC to download Fragment.</p>
-                        <a href="https://www.virustotal.com/gui/file/8809c81548f67242f72dc1da8c21237a3187584d4fad6c08e1963c62adf78363" class="card-btn secondary-btn" target="_blank" rel="noopener noreferrer">View VirusTotal</a>
-                    </div>
                 </div>
             </div>
             <div class="velocity-status-bar" id="velocity-status-bar" data-state="unknown">
@@ -1602,8 +1550,12 @@
                 <span id="velocity-status-text">Checking status...</span>
             </div>
             <div class="release-history" id="release-history">
-                <button class="release-history-toggle" type="button" onclick="toggleReleaseHistory()" aria-expanded="false" aria-controls="release-history-content"><span class="release-history-heading"><span>Release History</span><span class="release-current-version">Current version: v1.0.8</span></span></button>
+                <button class="release-history-toggle" type="button" onclick="toggleReleaseHistory()" aria-expanded="false" aria-controls="release-history-content"><span class="release-history-heading"><span>Release History</span><span class="release-current-version">Current version: v1.0.9</span></span></button>
                 <div class="release-history-content" id="release-history-content">
+                    <div class="release-entry">
+                    <h3>v1.0.9</h3><time>October 25th, 2026</time>
+                    <ul><li>Added dropdown navigation setting</li><li>Added the ability to import and export settings</li></ul>
+                </div>
                 <div class="release-entry">
                     <h3>v1.0.8</h3><time>October 19th, 2026</time>
                     <ul><li>New UI</li></ul>
@@ -1924,7 +1876,7 @@
 
     <div id="image-lightbox" class="image-lightbox" role="dialog" aria-modal="true" aria-label="Expanded executor preview" onclick="closeImageLightbox(event)">
         <button class="lightbox-close" type="button" aria-label="Close expanded image" onclick="closeImageLightbox()">&times;</button>
-        <img src="/v1.0.8.png" alt="Expanded Fragment v1.0.8 executor interface preview" onclick="event.stopPropagation()">
+        <img src="/v1.0.9.png" alt="Expanded Fragment v1.0.9 executor interface preview" onclick="event.stopPropagation()">
     </div>
 
     <div id="feedback-modal" class="feedback-modal" hidden onclick="handleFeedbackBackdrop(event)">
