@@ -1,6 +1,13 @@
 {
   "incidents": [
     {
+      "service": "External",
+      "status": "up",
+      "reportedAt": "2026-10-27",
+      "reportedAtLabel": "Tuesday, October 27, 2026 8:00 PM CDT",
+      "summary": "The Fragment External is now released."
+    },
+    {
       "service": "Discord Bot",
       "status": "up",
       "reportedAt": "2026-10-23",

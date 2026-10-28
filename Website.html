@@ -692,6 +692,7 @@
         .download-panel {
             display: grid;
             grid-template-columns: minmax(0, 1fr);
+            gap: 24px;
             margin-bottom: 80px;
         }
 
@@ -845,6 +846,7 @@
             padding: 0;
             overflow: hidden;
         }
+        #external-release-history { margin-top: 24px; }
         .release-history-toggle {
             display: flex;
             align-items: center;
@@ -1520,7 +1522,7 @@
         <section id="download" class="page">
             <div class="section-center">
                 <h1>Download Fragment</h1>
-                <p>Fragment Velocity API for Roblox. Compatible with Windows 10/11.</p>
+                <p>Fragment Velocity API and External for Roblox. Compatible with Windows 10/11.</p>
             </div>
             <div class="download-panel">
                 <div class="release-card release-card-featured">
@@ -1529,7 +1531,7 @@
                         <p>The latest Fragment version.</p>
                         <div class="release-meta">
                             <div><span>Supported Roblox version</span><strong>version-11f155f3450f4c8e</strong></div>
-                            <div><span>VirusTotal scan</span><strong>0/68 detections</strong></div>
+                            <div><span>VirusTotal scan</span><strong>0/71 detections</strong></div>
                             <div><span>UNC score</span><strong>98%</strong></div>
                             <div><span>sUNC score</span><strong>93%</strong></div>
                             <div class="release-changelog-tile"><span>v1.0.9 Changelog</span><ul class="release-changelog-list"><li>Added dropdown navigation setting</li><li>Added the ability to import and export settings</li></ul></div>
@@ -1542,6 +1544,25 @@
                     </div>
                     <button class="preview-image-button" type="button" onclick="openImageLightbox()" aria-label="Open larger Fragment executor preview">
                         <img class="preview-image" src="/v1.0.9.png" alt="Fragment v1.0.9 executor interface preview">
+                    </button>
+                </div>
+                <div class="release-card release-card-featured">
+                    <div class="release-card-content">
+                        <h2>Fragment External v1.0.0</h2>
+                        <p>The latest Fragment External version.</p>
+                        <div class="release-meta">
+                            <div><span>Supported Roblox version</span><strong>version-5a21b87bbc2641cf</strong></div>
+                            <div><span>VirusTotal scan</span><strong>45/71 detections</strong></div>
+                            <div class="release-changelog-tile"><span>v1.0.0 Changelog</span><ul class="release-changelog-list"><li>Release</li></ul></div>
+                        </div>
+                        <div class="release-actions">
+                            <a href="/Fragment External.zip" class="card-btn download-installer" download>Download v1.0.0</a>
+                            <p class="mobile-download-notice" role="status">Download unavailable on mobile. Use a Windows PC to download Fragment.</p>
+                            <a href="https://www.virustotal.com/gui/file/f4fdc21532e171f99d95bc70cd6905aaeb012708a76150fec5341ad48832c888?nocache=1" class="card-btn secondary-btn" target="_blank" rel="noopener noreferrer">View VirusTotal</a>
+                        </div>
+                    </div>
+                    <button class="preview-image-button" type="button" onclick="openImageLightbox()" aria-label="Open larger Fragment executor preview">
+                        <img class="preview-image" src="/exe.png" alt="Fragment v1.0.0 external interface preview">
                     </button>
                 </div>
             </div>
@@ -1591,6 +1612,15 @@
                 <div class="release-entry">
                     <h3>v1.0.0</h3><time>June 3, 2026</time>
                     <ul><li>Release.</li></ul>
+                </div>
+                </div>
+            </div>
+            <div class="release-history" id="external-release-history">
+                <button class="release-history-toggle" type="button" onclick="toggleReleaseHistory('external-release-history')" aria-expanded="false" aria-controls="external-release-history-content"><span class="release-history-heading"><span>External Release History</span><span class="release-current-version">Current version: v1.0.0</span></span></button>
+                <div class="release-history-content" id="external-release-history-content">
+                <div class="release-entry">
+                    <h3>v1.0.0</h3>
+                    <ul><li>Release</li></ul>
                 </div>
                 </div>
             </div>
@@ -1745,6 +1775,10 @@
             <div class="status-container" id="status-content">
                 <div id="velocity-status-content"></div>
                 <div class="status-row">
+                    <span>External</span>
+                    <span id="external-status"><span class="status-indicator unknown"></span>Status unavailable</span>
+                </div>
+                <div class="status-row">
                     <span>Discord Bot</span>
                     <span id="discord-bot-status"><span class="status-indicator unknown"></span>Status unavailable</span>
                 </div>
@@ -1876,7 +1910,7 @@
 
     <div id="image-lightbox" class="image-lightbox" role="dialog" aria-modal="true" aria-label="Expanded executor preview" onclick="closeImageLightbox(event)">
         <button class="lightbox-close" type="button" aria-label="Close expanded image" onclick="closeImageLightbox()">&times;</button>
-        <img src="/v1.0.9.png" alt="Expanded Fragment v1.0.9 executor interface preview" onclick="event.stopPropagation()">
+        <img src="/exe.png" alt="Expanded Fragment v1.0.0 external interface preview" onclick="event.stopPropagation()">
     </div>
 
     <div id="feedback-modal" class="feedback-modal" hidden onclick="handleFeedbackBackdrop(event)">
@@ -2223,8 +2257,8 @@
             document.body.style.overflow = '';
         }
 
-        function toggleReleaseHistory() {
-            const history = document.getElementById('release-history');
+        function toggleReleaseHistory(historyId = 'release-history') {
+            const history = document.getElementById(historyId);
             const toggle = history.querySelector('.release-history-toggle');
             const isOpen = history.classList.toggle('open');
             toggle.setAttribute('aria-expanded', isOpen);
@@ -2510,19 +2544,20 @@
 
         function loadStatusPage() {
             loadVelocityStatus();
-            loadDiscordBotStatus();
+            loadReportedServiceStatus('discord-bot-status', 'bot-status');
+            loadReportedServiceStatus('external-status', 'External-status');
             loadIncidentHistory();
         }
 
-        async function loadDiscordBotStatus() {
-            const statusElement = document.getElementById('discord-bot-status');
+        async function loadReportedServiceStatus(elementId, statusKey) {
+            const statusElement = document.getElementById(elementId);
 
             try {
                 const response = await fetch('/api/bot-status', { cache: 'no-store' });
                 if (!response.ok) throw new Error('Bot status request failed');
                 const data = await response.json();
-                const status = data && ['up', 'down', 'maintenance'].includes(data['bot-status'])
-                    ? data['bot-status']
+                const status = data && ['up', 'down', 'maintenance'].includes(data[statusKey])
+                    ? data[statusKey]
                     : 'unknown';
                 const labels = { up: 'Operational', down: 'Down', maintenance: 'Maintenance', unknown: 'Status unavailable' };
                 const indicator = document.createElement('span');

@@ -47,6 +47,9 @@
         .services { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; margin-top: 22px; }
         .service-card, .panel { border: 1px solid var(--border); border-radius: 14px; background: var(--surface); }
         .service-card { min-width: 0; padding: 18px 20px; }
+        .current-status { margin-top: 24px; }
+        .current-status h2 { font-size: 1.05rem; }
+        .current-status .services { margin-top: 12px; }
         .service-heading { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
         .service-name { display: flex; align-items: center; gap: 10px; font-weight: 600; }
         .state-label { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-size: 0.8rem; }
@@ -112,6 +115,12 @@
             <p class="eyebrow">Service status · 60 day history</p>
             <h1 id="page-title">Loading service status…</h1>
             <p class="updated" id="updated-time"></p>
+            <section class="current-status" aria-labelledby="current-status-heading">
+                <h2 id="current-status-heading">Current status</h2>
+                <div class="services" id="current-services" aria-live="polite">
+                    <p class="empty">Loading current status…</p>
+                </div>
+            </section>
             <div class="services" id="services" aria-live="polite"></div>
             <div class="history-key" aria-label="Timeline legend">
                 <span class="key-item"><span class="key-swatch up"></span>Operational</span>
@@ -409,6 +418,50 @@
             return article;
         }
 
+        async function loadCurrentStatus() {
+            const servicesElement = document.getElementById('current-services');
+            try {
+                const response = await fetch('/api/bot-status', { cache: 'no-store' });
+                if (!response.ok) throw new Error('Current status request failed');
+                const data = await response.json();
+                const currentState = validState(data && data['External-status']);
+                const statusLabels = { up: 'Operational', down: 'Down', maintenance: 'Maintenance', unknown: 'Status unavailable' };
+                const reportedExternal = [...document.querySelectorAll('#services .service-card')]
+                    .find(card => card.querySelector('.service-name')?.textContent === 'External');
+                if (reportedExternal) {
+                    const stateLabel = reportedExternal.querySelector('.state-label');
+                    stateLabel.dataset.state = currentState;
+                    stateLabel.lastChild.textContent = statusLabels[currentState];
+                    return;
+                }
+
+                const card = document.createElement('article');
+                card.className = 'service-card';
+                const heading = document.createElement('div');
+                heading.className = 'service-heading';
+                const name = document.createElement('span');
+                name.className = 'service-name';
+                name.textContent = 'External';
+                const stateLabel = document.createElement('span');
+                stateLabel.className = 'state-label';
+                stateLabel.dataset.state = currentState;
+                const dot = document.createElement('span');
+                dot.className = 'dot';
+                dot.setAttribute('aria-hidden', 'true');
+                const stateText = document.createElement('span');
+                stateText.textContent = statusLabels[currentState];
+                stateLabel.append(dot, stateText);
+                heading.append(name, stateLabel);
+                card.append(heading);
+                servicesElement.replaceChildren(card);
+            } catch {
+                const error = document.createElement('p');
+                error.className = 'error';
+                error.textContent = 'Current status is unavailable.';
+                servicesElement.replaceChildren(error);
+            }
+        }
+
         async function loadReport() {
             const servicesElement = document.getElementById('services');
             const incidentsElement = document.getElementById('incident-list');
@@ -462,7 +515,7 @@
             }
         }
 
-        loadReport();
+        loadReport().then(loadCurrentStatus);
     </script>
 </body>
 </html>
