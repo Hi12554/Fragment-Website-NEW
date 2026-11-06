@@ -160,8 +160,15 @@
 
         function getReportDay(report) {
             const value = report.reportedAt || report.startedAt;
-            if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}/.test(value)) return null;
-            return value.slice(0, 10);
+            if (typeof value !== 'string') return null;
+            const match = value.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+            if (!match) return null;
+            const [, year, month, day] = match;
+            const parsedDate = new Date(Date.UTC(Number(year), Number(month) - 1, Number(day)));
+            if (parsedDate.getUTCFullYear() !== Number(year)
+                || parsedDate.getUTCMonth() !== Number(month) - 1
+                || parsedDate.getUTCDate() !== Number(day)) return null;
+            return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
         }
 
         function getReportTimestamp(report) {
@@ -200,6 +207,13 @@
             if (hours) parts.push(`${hours}h`);
             if (minutes || parts.length === 0) parts.push(`${minutes}m`);
             return parts.join(' ');
+        }
+
+        function getLatestReport(serviceName, incidents) {
+            return incidents
+                .map((report, index) => ({ report, index, timestamp: getReportTimestamp(report) }))
+                .filter(item => item.report.service === serviceName && item.timestamp)
+                .sort((a, b) => b.timestamp.value - a.timestamp.value || a.index - b.index)[0]?.report;
         }
 
         function getIssueDuration(events, eventIndex, now) {
@@ -309,7 +323,7 @@
         }
 
         function renderService(serviceName, incidents, today, startDay) {
-            const latestReport = incidents.find(report => report.service === serviceName);
+            const latestReport = getLatestReport(serviceName, incidents);
             const currentState = validState(latestReport && latestReport.status);
             const card = document.createElement('article');
             card.className = 'service-card';
@@ -418,50 +432,6 @@
             return article;
         }
 
-        async function loadCurrentStatus() {
-            const servicesElement = document.getElementById('current-services');
-            try {
-                const response = await fetch('/api/bot-status', { cache: 'no-store' });
-                if (!response.ok) throw new Error('Current status request failed');
-                const data = await response.json();
-                const currentState = validState(data && data['External-status']);
-                const statusLabels = { up: 'Operational', down: 'Down', maintenance: 'Maintenance', unknown: 'Status unavailable' };
-                const reportedExternal = [...document.querySelectorAll('#services .service-card')]
-                    .find(card => card.querySelector('.service-name')?.textContent === 'External');
-                if (reportedExternal) {
-                    const stateLabel = reportedExternal.querySelector('.state-label');
-                    stateLabel.dataset.state = currentState;
-                    stateLabel.lastChild.textContent = statusLabels[currentState];
-                    return;
-                }
-
-                const card = document.createElement('article');
-                card.className = 'service-card';
-                const heading = document.createElement('div');
-                heading.className = 'service-heading';
-                const name = document.createElement('span');
-                name.className = 'service-name';
-                name.textContent = 'External';
-                const stateLabel = document.createElement('span');
-                stateLabel.className = 'state-label';
-                stateLabel.dataset.state = currentState;
-                const dot = document.createElement('span');
-                dot.className = 'dot';
-                dot.setAttribute('aria-hidden', 'true');
-                const stateText = document.createElement('span');
-                stateText.textContent = statusLabels[currentState];
-                stateLabel.append(dot, stateText);
-                heading.append(name, stateLabel);
-                card.append(heading);
-                servicesElement.replaceChildren(card);
-            } catch {
-                const error = document.createElement('p');
-                error.className = 'error';
-                error.textContent = 'Current status is unavailable.';
-                servicesElement.replaceChildren(error);
-            }
-        }
-
         async function loadReport() {
             const servicesElement = document.getElementById('services');
             const incidentsElement = document.getElementById('incident-list');
@@ -481,7 +451,7 @@
                     .map(report => report.service)
                     .filter(service => typeof service === 'string' && service.trim()))];
                 const currentStates = serviceNames.map(serviceName =>
-                    validState(allIncidents.find(report => report.service === serviceName)?.status)
+                    validState(getLatestReport(serviceName, allIncidents)?.status)
                 );
                 document.getElementById('page-title').textContent = serviceNames.length === 0
                     ? 'No recent incident reports'
@@ -515,7 +485,7 @@
             }
         }
 
-        loadReport().then(loadCurrentStatus);
+        loadReport();
     </script>
 </body>
 </html>
