@@ -162,6 +162,21 @@
             return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
         }
 
+        function getChicagoOffsetMinutes(day) {
+            const [year, month, date] = day.split('-').map(Number);
+            const parts = new Intl.DateTimeFormat('en-US', {
+                timeZone: 'America/Chicago',
+                timeZoneName: 'shortOffset'
+            }).formatToParts(new Date(Date.UTC(year, month - 1, date, 12)));
+            const zone = parts.find(part => part.type === 'timeZoneName')?.value;
+            if (zone === 'GMT') return 0;
+            const match = zone && zone.match(/^GMT([+-])(\d{1,2})(?::(\d{2}))?$/);
+            if (!match) return null;
+            const [, sign, hours, minutes = '0'] = match;
+            const offset = Number(hours) * 60 + Number(minutes);
+            return sign === '-' ? -offset : offset;
+        }
+
         function getReportTimestamp(report) {
             const value = report.reportedAt || report.startedAt;
             if (typeof value === 'string' && value.length > 10) {
@@ -175,10 +190,11 @@
             );
             const day = getReportDay(report);
             if (match && day) {
-                const [, rawHour, rawMinute, meridiem, zone] = match;
+                const [, rawHour, rawMinute, meridiem] = match;
                 let hour = Number(rawHour) % 12;
                 if (meridiem === 'PM') hour += 12;
-                const offsetMinutes = zone === 'CDT' ? -5 * 60 : -6 * 60;
+                const offsetMinutes = getChicagoOffsetMinutes(day);
+                if (offsetMinutes === null) return { value: Date.parse(`${day}T00:00:00Z`), precise: false };
                 return {
                     value: Date.parse(`${day}T${String(hour).padStart(2, '0')}:${rawMinute}:00Z`) - offsetMinutes * 60_000,
                     precise: true
