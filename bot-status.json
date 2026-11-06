@@ -1,9 +1,9 @@
 {
   "version": "v1.0.9",
-  "external-version": "v1.0.0",
+  "external-version": "v1.0.1",
   "apiVersion": "v1.5.7",
   "status": "down",
   "Website-status": "up",
   "bot-status": "up",
-  "External-status": "down"
+  "External-status": "up"
 }
