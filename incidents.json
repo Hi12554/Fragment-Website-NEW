@@ -1,6 +1,20 @@
 {
   "incidents": [
     {
+      "service": "External",
+      "status": "down",
+      "reportedAt": "2026-11-5",
+      "reportedAtLabel": "Thursday, November 5, 2026 6:14 PM CDT",
+      "summary": "Fragment External is now outdated and requires a Roblox downgrade to use it."
+    },
+    {
+      "service": "Fragment Velocity API",
+      "status": "down",
+      "reportedAt": "2026-11-5",
+      "reportedAtLabel": "Thursday, November 5, 2026 6:14 PM CDT",
+      "summary": "Fragment Velocity API is now outdated and requires a Roblox downgrade to use it."
+    },
+    {
       "service": "Fragment Velocity API",
       "status": "up",
       "reportedAt": "2026-10-29",
