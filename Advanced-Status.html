@@ -228,6 +228,7 @@
             for (let offset = 0; offset < DAYS; offset += 1) {
                 const day = addDays(startDay, offset);
                 const key = dateKey(day);
+                const previousState = timelineState(latestEvent?.report);
                 while (eventIndex < events.length && events[eventIndex].day <= key) {
                     const event = events[eventIndex];
                     latestEvent = event;
@@ -247,6 +248,10 @@
                 const dayState = timelineState(latestEvent?.report);
                 const dayEvents = events.filter(event => event.day === key);
                 const segments = [];
+                const firstDayState = timelineState(dayEvents[0]?.report);
+                if (previousState !== 'unknown' && firstDayState !== 'unknown' && previousState !== firstDayState) {
+                    segments.push({ state: previousState, duration: null });
+                }
                 dayEvents.forEach(event => {
                     const eventState = timelineState(event.report);
                     if (segments.length && segments[segments.length - 1].state === eventState) return;
