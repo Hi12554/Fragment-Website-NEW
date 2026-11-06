@@ -1,6 +1,13 @@
 {
   "incidents": [
     {
+      "service": "Fragment Velocity API",
+      "status": "up",
+      "reportedAt": "2026-11-6",
+      "reportedAtLabel": "Friday, November 5, 2026 5:05 PM CDT",
+      "summary": "Fragment Velocity API is now back up and is updated for the latest Roblox version."
+    },
+    {
       "service": "External",
       "status": "up",
       "reportedAt": "2026-11-05T19:26:33-06:00",
